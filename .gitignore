@@ -1,1 +1,6 @@
+# tex files
+*.tex
+*.dvi
+*.fdb_latexmk
+*.pdf
 
