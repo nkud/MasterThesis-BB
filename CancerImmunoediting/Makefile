@@ -7,10 +7,10 @@ TARGET = $(bin_dir)/main.exe
 .PHONY: run all
 
 $(TARGET): src/main.cpp
-	$(MKDIR) $(bin_dir)
-	$(CC) $^ -o $@ $(CPPFLAGS)
+	@$(MKDIR) $(bin_dir)
+	@$(CC) $^ -o $@ $(CPPFLAGS)
 
 run:
-	./$(TARGET)
+	@./$(TARGET)
 
 all: $(TARGET) run

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-using namespace std;
+#include <vector>
 
 // 汎用マクロ
 #define FOR(i, n)           for(int (i)=0; (i)<(n); (i)++) // i: 0 ~ (n-1)
@@ -29,9 +29,16 @@ using namespace std;
 
 #define SEPARATOR " "
 
-// 定数パラメータの定義
+// 定数パラメータの定義する。
+
+// ランドスケープの幅と高さを設定する。
 const int WIDTH = 20;
 const int HEIGHT = 20;
+// 最大計算期間を設定する。
+const int TERM = 100;
+
+// 細胞数を設定する。
+const int CELL_SIZE = 100;
 
 // クラスを定義していく。
 
@@ -53,6 +60,7 @@ class __Location {
   int y() const { return y_; }
   void setX(int x) { x_ = x; }
   void setY(int y) { y_ = y; }
+  void randomSet() { setX(0); setY(0); }
  private:
   int x_, y_;
 };
@@ -96,7 +104,8 @@ class GlucoseScape : public __SugerScape {
   int glucose(int x, int y) const { return glucose_map_[x][y]; }
  private:
   int glucose_map_[HEIGHT][WIDTH];
-}
+};
+
 // 酸素のクラスを作成する。
 class OxygenScape : public __SugerScape {
  public:
@@ -119,18 +128,29 @@ int main() {
   ECHO("Cancer Immunoediting Model");
 
   GlucoseScape *gs = new GlucoseScape();
+  // 細胞を初期化していく。
+  // TODO: 普通の細胞は細胞土地のほうがいいかも
+  VECTOR(NormalCell *) normal_cells;
+  FOR(i, CELL_SIZE) {
+    NormalCell *nm = new NormalCell();
+    nm->randomSet();
+    normal_cells.push_back( nm );
+  }
+  std::ofstream glucose_map_ofs("cell.txt");
+  FOR(i, CELL_SIZE) {
+  }
 
   // 現在のグルコースの分布を出力する。
   //stringstream ss;
-  ofstream glucose_map_ofs("test.txt");
+  std::ofstream glucose_map_ofs("test.txt");
   FOR(i, HEIGHT) {
     FOR(j, WIDTH) {
       glucose_map_ofs << i << SEPARATOR;
       glucose_map_ofs << j << SEPARATOR;
       glucose_map_ofs << gs->glucose(i, j);
-      glucose_map_ofs << endl;
+      glucose_map_ofs << std::endl;
     }
-    glucose_map_ofs << endl;
+    glucose_map_ofs << std::endl;
   }
 
   return 0;
