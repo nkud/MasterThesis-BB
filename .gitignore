@@ -1,6 +1,10 @@
 # tex files
+*.aux
 *.tex
 *.dvi
 *.fdb_latexmk
 *.pdf
-
+*.log
+*.out
+*.toc
+document.html
