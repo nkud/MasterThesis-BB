@@ -1,13 +1,15 @@
 //
 // - 正常細胞とがん細胞の、糖代謝の違いを表現するモデル
-// 
+//
 // - エネルギーの酸性には、酸化的リン酸化と嫌気的解糖系の２種類ある。
 // - がん細胞では、酸化的リン酸化の利用が低下し、
 //   嫌気的解糖系の利用が増加する。（ワールブルク効果）
-// 
+//
 // Author Naoki Ueda
 //
 #include <iostream>
+#include <sstream>
+#include <fstream>
 using namespace std;
 
 // 汎用マクロ
@@ -25,9 +27,11 @@ using namespace std;
 #define SAFE_DELETE(p)          delete p; p = NULL;
 #define SAFE_DELETE_ARRAY(p)    delete[] p; p = NULL;
 
+#define SEPARATOR " "
+
 // 定数パラメータの定義
-const int WIDTH = 10;
-const int HEIGHT = 10;
+const int WIDTH = 20;
+const int HEIGHT = 20;
 
 // クラスを定義していく。
 
@@ -76,24 +80,23 @@ class NormalCell : public __Location {
 class __SugerScape : public __Landscape {
  public:
   void generate();
- private:  
+ private:
 };
 
 // グルコースのクラスを作成する。
 class GlucoseScape : public __SugerScape {
  public:
   GlucoseScape() {
-    ECHO("Initialize Glucose Scape");
     FOR(i, HEIGHT) {
       FOR(j, WIDTH) {
-        map_[i][j] = 0;
+        glucose_map_[i][j] = i+j;
       }
     }
   }
-  int glucose(int x, int y) const;
+  int glucose(int x, int y) const { return glucose_map_[x][y]; }
  private:
-  int map_[HEIGHT][WIDTH];
-};
+  int glucose_map_[HEIGHT][WIDTH];
+}
 // 酸素のクラスを作成する。
 class OxygenScape : public __SugerScape {
  public:
@@ -116,6 +119,19 @@ int main() {
   ECHO("Cancer Immunoediting Model");
 
   GlucoseScape *gs = new GlucoseScape();
+
+  // 現在のグルコースの分布を出力する。
+  //stringstream ss;
+  ofstream glucose_map_ofs("test.txt");
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      glucose_map_ofs << i << SEPARATOR;
+      glucose_map_ofs << j << SEPARATOR;
+      glucose_map_ofs << gs->glucose(i, j);
+      glucose_map_ofs << endl;
+    }
+    glucose_map_ofs << endl;
+  }
 
   return 0;
 }
