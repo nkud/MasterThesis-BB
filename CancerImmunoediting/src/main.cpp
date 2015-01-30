@@ -10,7 +10,36 @@
 #include <iostream>
 using namespace std;
 
+// 汎用マクロ
+#define FOR(i, n)           for(int (i)=0; (i)<(n); (i)++) // i: 0 ~ (n-1)
+#define REP(i, min, max)    for(int (i)=(min); (i)<=(max); (i)++)
+
+// #define ECHO(x)             do { std::cout<< CLEAR_RIGHT << "----> "<<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<""<<std::endl; }while(0);
+#define ECHO(x)             do { std::cout << "---> "<<x<<""<<std::endl; }while(0);
+// #define POINT               do { static int point = 0; std::cerr<<BOLD<<RED<<"[ POINT ] "<<CLR_ST<<STANDARD<<"(L"<<__LINE__<<")"<<" "<<__FILE__<<" - "<<point++<<std::endl; }while(0);
+
+#define VECTOR(type)        std::vector< type >
+#define ITERATOR(type)      std::vector< type >::iterator
+#define EACH(i,c)           for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
+
+#define SAFE_DELETE(p)          delete p; p = NULL;
+#define SAFE_DELETE_ARRAY(p)    delete[] p; p = NULL;
+
+// 定数パラメータの定義
+const int WIDTH = 10;
+const int HEIGHT = 10;
+
 // クラスを定義していく。
+
+// 細胞土地のインターフェイスを作成する。
+// 幅と高さを持つ。
+class __Landscape {
+ public:
+  int width() const { return width_; }
+  int height() const { return height_; }
+ private:
+  int width_, height_;
+};
 
 // モデル上に存在するためには、座標が必要になるので、
 // 座標を持つエージェントのためのインターフェイスを作成する。
@@ -42,32 +71,31 @@ class NormalCell : public __Location {
  private:
 };
 
-// 細胞土地のインターフェイスを作成する。
-// 幅と高さを持つ。
-class __Landscape {
- public:
-  int width() const { return width_; }
-  int height() const { return height_; }
- private:
-  int width_, height_;
-};
-
 // シュガースケープのクラスを作成する。
 // シュガーを生産できる。
 class __SugerScape : public __Landscape {
  public:
   void generate();
- private:
+ private:  
 };
 
 // グルコースのクラスを作成する。
-class GlucoseScape : public __Landscape {
+class GlucoseScape : public __SugerScape {
  public:
+  GlucoseScape() {
+    ECHO("Initialize Glucose Scape");
+    FOR(i, HEIGHT) {
+      FOR(j, WIDTH) {
+        map_[i][j] = 0;
+      }
+    }
+  }
   int glucose(int x, int y) const;
  private:
+  int map_[HEIGHT][WIDTH];
 };
 // 酸素のクラスを作成する。
-class OxygenScape : public __Landscape {
+class OxygenScape : public __SugerScape {
  public:
   int oxygen(int x, int y) const;
  private:
@@ -85,7 +113,7 @@ class Term {
 
 // メインルーチン
 int main() {
-  cout << ">>> Cancer Immunoediting Model" << endl;
+  ECHO("Cancer Immunoediting Model");
 
   GlucoseScape *gs = new GlucoseScape();
 
