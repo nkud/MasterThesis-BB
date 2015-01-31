@@ -45,8 +45,14 @@
 #define FOR(i, n)               for(int (i)=0; (i)<(n); (i)++) // i: 0 ~ (n-1)
 #define REP(i, min, max)        for(int (i)=(min); (i)<=(max); (i)++)
 
-#define ECHO(x)                 do { std::cout<< CLEAR_RIGHT << "----> "<<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<""<<std::endl; }while(0);
-#define POINT                   do { static int point = 0; std::cerr<<BOLD<<RED<<"[ POINT ] "<<CLR_ST<<STANDARD<<"(L"<<__LINE__<<")"<<" "<<__FILE__<<" - "<<point++<<std::endl; }while(0);
+#define ECHO(x)                 do { std::cout<< CLEAR_RIGHT << "----> " \
+                                <<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<"" \
+                                <<std::endl; }while(0);
+#define POINT                   do { static int point = 0; std::cerr \
+                                <<BOLD<<RED<<"[ POINT ] "<<CLR_ST \
+                                <<STANDARD<<"(L"<<__LINE__<<")" \
+                                <<" "<<__FILE__<<" - "<<point++ \
+                                <<std::endl; }while(0);
 
 #define VECTOR(type)            std::vector< type >
 #define ITERATOR(type)          std::vector< type >::iterator
@@ -185,7 +191,9 @@ class OxygenScape : public __SugerScape {
 // シングルトンパターンを利用する。
 class StepKeeper {
  public:
-  static StepKeeper& Instance() { static StepKeeper singleton; return singleton; }
+  static StepKeeper& Instance() { 
+    static StepKeeper singleton; return singleton;
+    }
   void proceed() { step_++; }
   int step() const { return step_; }
   int maxStep() const { return max_step_; }
