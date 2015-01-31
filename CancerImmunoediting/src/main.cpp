@@ -46,7 +46,6 @@
 #define REP(i, min, max)        for(int (i)=(min); (i)<=(max); (i)++)
 
 #define ECHO(x)                 do { std::cout<< CLEAR_RIGHT << "----> "<<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<""<<std::endl; }while(0);
-// #define ECHO(x)                 do { std::cout << "---> "<<x<<""<<std::endl; }while(0);
 #define POINT                   do { static int point = 0; std::cerr<<BOLD<<RED<<"[ POINT ] "<<CLR_ST<<STANDARD<<"(L"<<__LINE__<<")"<<" "<<__FILE__<<" - "<<point++<<std::endl; }while(0);
 
 #define VECTOR(type)            std::vector< type >
@@ -64,6 +63,7 @@
 // ランドスケープの幅と高さを設定する。
 const int WIDTH = 50;
 const int HEIGHT = 50;
+
 // 最大計算期間を設定する。
 const int STEP = 10;
 
@@ -74,6 +74,7 @@ const int CELL_SIZE = 1000;
 // クラスを定義していく。
 
 // 乱数生成用のクラスを作成する。
+// シングルトンパターンを使用する。
 class Random {
 public:
   static Random& Instance() { static Random singleton; return singleton; }
@@ -115,9 +116,14 @@ class __Location {
 // 移動するエージェントのインターフェイスを作成する。
 class __Mobile : public __Location {
  public:
-  void move();
+  void move() { }
   void move(int tox, int toy);
- private:
+  void move( __Landscape& landscape ) {
+
+  }
+  int movementDistance() const { return movement_distance_; }
+  private:
+    int movement_distance_;
 };
 
 // 酸化的リン酸化を利用してエネルギーを産生するクラスを作成する。
@@ -229,8 +235,9 @@ int main() {
   // 細胞の分布を出力する
   std::ofstream cell_map_ofs("cell.txt");
   int cell_map[HEIGHT][WIDTH] = {0};
-  EACH(cell, cells) {
-    cell_map[(*cell)->y()][(*cell)->x()]++;
+  EACH(it_cell, cells) {
+    __Cell& cell = **it_cell;
+    cell_map[cell.y()][cell.x()]++;
   }
   FOR(i, HEIGHT) {
     FOR(j, WIDTH) {
@@ -256,6 +263,11 @@ int main() {
 
   // 計算を実行する
   while( stepKeeper.loop() ) {
+    // 細胞が移動する。
+    EACH( it_cell, cells ) {
+      __Cell& cell = **it_cell;
+      cell.move();
+    }
   }
 
   return 0;
