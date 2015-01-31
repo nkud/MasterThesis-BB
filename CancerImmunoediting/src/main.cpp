@@ -32,8 +32,8 @@
 // 定数パラメータの定義する。
 
 // ランドスケープの幅と高さを設定する。
-const int WIDTH = 20;
-const int HEIGHT = 20;
+const int WIDTH = 50;
+const int HEIGHT = 50;
 // 最大計算期間を設定する。
 const int STEP = 100;
 
@@ -78,6 +78,16 @@ class __Mobile : public __Location {
 
 // 嫌気的解糖系を利用してエネルギーを産生するクラスを作成する。
 // グルコースのみに依存する。
+
+// 細胞のインターフェイスを作成する。
+// 細胞は代謝する。
+// エネルギーを持つ。
+class Cell {
+public:
+  void metabolize(double glucose, double oxygen);
+private:
+  double energy_;
+};
 
 // 正常細胞のクラスを作成する。
 // 移動する。細胞スケープにおいて、同じ位置に存在できる。
