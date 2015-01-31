@@ -1,1 +1,1 @@
-splot "test.txt" w l
+splot "cell.txt" w l

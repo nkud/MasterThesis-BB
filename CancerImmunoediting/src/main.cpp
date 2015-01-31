@@ -11,6 +11,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <cstdlib>
 
 // 汎用マクロ
 #define FOR(i, n)           for(int (i)=0; (i)<(n); (i)++) // i: 0 ~ (n-1)
@@ -35,12 +36,25 @@
 const int WIDTH = 50;
 const int HEIGHT = 50;
 // 最大計算期間を設定する。
-const int STEP = 100;
+const int STEP = 10;
 
 // 細胞数を設定する。
-const int CELL_SIZE = 100;
+const int CELL_SIZE = 1000;
 
 // クラスを定義していく。
+
+// 乱数生成用のクラスを作成する。
+class Random {
+public:
+  static Random& Instance() { static Random singleton; return singleton; }
+  int randomInt() { return rand(); }
+  int uniformInt(int min, int max) {
+    int ret = randomInt()%( max - min + 1 ) + min;
+    return ret;
+  }
+private:
+  Random() { srand((unsigned)time(NULL)); }
+};
 
 // 細胞土地のインターフェイスを作成する。
 // 幅と高さを持つ。
@@ -60,7 +74,10 @@ class __Location {
   int y() const { return y_; }
   void setX(int x) { x_ = x; }
   void setY(int y) { y_ = y; }
-  void randomSet() { setX(0); setY(0); }
+  void randomSet() {
+    setX(Random::Instance().uniformInt(0, WIDTH-1)); 
+    setY(Random::Instance().uniformInt(0, HEIGHT-1));
+  }
  private:
   int x_, y_;
 };
@@ -82,7 +99,7 @@ class __Mobile : public __Location {
 // 細胞のインターフェイスを作成する。
 // 細胞は代謝する。
 // エネルギーを持つ。
-class Cell {
+class Cell : public __Mobile {
 public:
   void metabolize(double glucose, double oxygen);
 private:
@@ -92,7 +109,7 @@ private:
 // 正常細胞のクラスを作成する。
 // 移動する。細胞スケープにおいて、同じ位置に存在できる。
 // 移動はしない。分裂はする。？？
-class NormalCell : public __Location {
+class NormalCell : public Cell {
  public:
  private:
 };
@@ -160,14 +177,27 @@ int main() {
 
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
-  VECTOR(NormalCell *) normal_cells;
+  VECTOR(Cell *) cells;
   FOR(i, CELL_SIZE) {
-    NormalCell *nm = new NormalCell();
+    Cell *nm = new Cell();
     nm->randomSet();
-    normal_cells.push_back( nm );
+    cells.push_back( nm );
   }
+
+  // 細胞の分布を出力する
   std::ofstream cell_map_ofs("cell.txt");
-  FOR(i, CELL_SIZE) {
+  int cell_map[HEIGHT][WIDTH] = {0};
+  EACH(cell, cells) {
+    cell_map[(*cell)->y()][(*cell)->x()]++;
+  }
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      cell_map_ofs << i << SEPARATOR;
+      cell_map_ofs << j << SEPARATOR;
+      cell_map_ofs << cell_map[i][j];
+      cell_map_ofs << std::endl;
+    }
+    cell_map_ofs << std::endl;
   }
 
   // 現在のグルコースの分布を出力する。
@@ -184,6 +214,7 @@ int main() {
 
   // 計算を実行する
   while( stepKeeper.loop() ) {
+    ECHO(Random::Instance().randomInt());
   }
 
   return 0;
