@@ -13,23 +13,52 @@
 #include <vector>
 #include <cstdlib>
 
+///////////////////////////////////////////////////////////
+// ターミナル画面制御用
+#define ESC             "\033["
+/*----------------------------------------------------------------------------
+ *  強調表示
+ *----------------------------------------------------------------------------*/
+#define STANDARD        ESC"0m"
+#define BOLD            ESC"1m"
+#define UNDERLINE       ESC"4m"
+#define REVERSE         ESC"7m"
+/*----------------------------------------------------------------------------
+ *  文字色
+ *----------------------------------------------------------------------------*/
+#define BLACK           ESC"30m"
+#define RED             ESC"31m"
+#define GREEN           ESC"32m"
+#define YELLOW          ESC"33m"
+#define BLUE            ESC"34m"
+#define MAGENTA         ESC"35m"
+#define CYAN            ESC"36m"
+#define WHITE           ESC"37m"
+/*-----------------------------------------------------------------------------
+ *  クリア
+ *-----------------------------------------------------------------------------*/
+#define CLEAR_RIGHT     ESC"0K"
+#define CLR_BG          ESC"49m"
+#define CLR_ST          ESC"39m"
+///////////////////////////////////////////////////////////
 // 汎用マクロ
-#define FOR(i, n)           for(int (i)=0; (i)<(n); (i)++) // i: 0 ~ (n-1)
-#define REP(i, min, max)    for(int (i)=(min); (i)<=(max); (i)++)
+#define FOR(i, n)               for(int (i)=0; (i)<(n); (i)++) // i: 0 ~ (n-1)
+#define REP(i, min, max)        for(int (i)=(min); (i)<=(max); (i)++)
 
-// #define ECHO(x)             do { std::cout<< CLEAR_RIGHT << "----> "<<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<""<<std::endl; }while(0);
-#define ECHO(x)             do { std::cout << "---> "<<x<<""<<std::endl; }while(0);
-// #define POINT               do { static int point = 0; std::cerr<<BOLD<<RED<<"[ POINT ] "<<CLR_ST<<STANDARD<<"(L"<<__LINE__<<")"<<" "<<__FILE__<<" - "<<point++<<std::endl; }while(0);
+#define ECHO(x)                 do { std::cout<< CLEAR_RIGHT << "----> "<<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<""<<std::endl; }while(0);
+// #define ECHO(x)                 do { std::cout << "---> "<<x<<""<<std::endl; }while(0);
+#define POINT                   do { static int point = 0; std::cerr<<BOLD<<RED<<"[ POINT ] "<<CLR_ST<<STANDARD<<"(L"<<__LINE__<<")"<<" "<<__FILE__<<" - "<<point++<<std::endl; }while(0);
 
-#define VECTOR(type)        std::vector< type >
-#define ITERATOR(type)      std::vector< type >::iterator
-#define EACH(i,c)           for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
+#define VECTOR(type)            std::vector< type >
+#define ITERATOR(type)          std::vector< type >::iterator
+#define EACH(i,c)               for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
 
 #define SAFE_DELETE(p)          delete p; p = NULL;
 #define SAFE_DELETE_ARRAY(p)    delete[] p; p = NULL;
 
-#define SEPARATOR " "
+#define SEPARATOR               " "
 
+///////////////////////////////////////////////////////////
 // 定数パラメータの定義する。
 
 // ランドスケープの幅と高さを設定する。
@@ -41,6 +70,7 @@ const int STEP = 10;
 // 細胞数を設定する。
 const int CELL_SIZE = 1000;
 
+///////////////////////////////////////////////////////////
 // クラスを定義していく。
 
 // 乱数生成用のクラスを作成する。
@@ -99,7 +129,7 @@ class __Mobile : public __Location {
 // 細胞のインターフェイスを作成する。
 // 細胞は代謝する。
 // エネルギーを持つ。
-class Cell : public __Mobile {
+class __Cell : public __Mobile {
 public:
   void metabolize(double glucose, double oxygen);
 private:
@@ -109,7 +139,7 @@ private:
 // 正常細胞のクラスを作成する。
 // 移動する。細胞スケープにおいて、同じ位置に存在できる。
 // 移動はしない。分裂はする。？？
-class NormalCell : public Cell {
+class NormalCell : public __Cell {
  public:
  private:
 };
@@ -165,6 +195,18 @@ class StepKeeper {
   int max_step_;
 };
 
+// 出力用の関数を作成する。
+
+// ステップ数と一緒、そのときの値を出力する関数
+template < typename T >
+void output_value_with_term( const char *fname, T value ) {
+  int step = StepKeeper::Instance().step();
+  std::ofstream ofs(fname, std::ios_base::out | std::ios_base::app);
+  ofs << step << SEPARATOR;
+  ofs << value << std::endl;
+};
+
+///////////////////////////////////////////////////////////
 // メインルーチン
 int main() {
   ECHO("Cancer Immunoediting Model");
@@ -177,9 +219,9 @@ int main() {
 
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
-  VECTOR(Cell *) cells;
+  VECTOR(__Cell *) cells;
   FOR(i, CELL_SIZE) {
-    Cell *nm = new Cell();
+    __Cell *nm = new __Cell();
     nm->randomSet();
     cells.push_back( nm );
   }
@@ -214,7 +256,6 @@ int main() {
 
   // 計算を実行する
   while( stepKeeper.loop() ) {
-    ECHO(Random::Instance().randomInt());
   }
 
   return 0;
