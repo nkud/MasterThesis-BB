@@ -35,7 +35,7 @@
 const int WIDTH = 20;
 const int HEIGHT = 20;
 // 最大計算期間を設定する。
-const int TERM = 100;
+const int STEP = 100;
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100;
@@ -120,27 +120,31 @@ class OxygenScape : public __SugerScape {
 // 時間を更新するクラスを作成する。
 // どこからアクセスしても同じ時間になるために、
 // シングルトンパターンを利用する。
-class Term {
+class StepKeeper {
  public:
-  static Term& Instance() { static Term singleton; return singleton; }
-  void incrementTerm() { term_++; }
-  int term() const { return term_; }
-  int maxTerm() const { return max_term_; }
-  void setMaxTerm( int maxterm ) { max_term_ = maxterm; }
+  static StepKeeper& Instance() { static StepKeeper singleton; return singleton; }
+  void proceed() { step_++; }
+  int step() const { return step_; }
+  int maxStep() const { return max_step_; }
+  void setMaxStep( int maxstep ) { max_step_ = maxstep; }
   bool loop() {
-    incrementTerm();
-    if( term() <= maxTerm() ) return true;
+    proceed();
+    if( step() <= maxStep() ) return true;
     else return false;
   }
  private:
-  Term();
-  int term_;
-  int max_term_;
+  StepKeeper() : step_(0), max_step_(0) { }
+  int step_;
+  int max_step_;
 };
 
 // メインルーチン
 int main() {
   ECHO("Cancer Immunoediting Model");
+
+  // 期間クラスのインスタンスを生成する
+  StepKeeper &stepKeeper = StepKeeper::Instance();
+  stepKeeper.setMaxStep( STEP );
 
   GlucoseScape *gs = new GlucoseScape();
 
@@ -166,6 +170,10 @@ int main() {
       glucose_map_ofs << std::endl;
     }
     glucose_map_ofs << std::endl;
+  }
+
+  // 計算を実行する
+  while( stepKeeper.loop() ) {
   }
 
   return 0;
