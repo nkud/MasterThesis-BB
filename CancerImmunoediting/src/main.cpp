@@ -118,9 +118,20 @@ class OxygenScape : public __SugerScape {
 // シングルトンパターンを利用する。
 class Term {
  public:
+  static Term& Instance() { static Term singleton; return singleton; }
+  void incrementTerm() { term_++; }
   int term() const { return term_; }
+  int maxTerm() const { return max_term_; }
+  void setMaxTerm( int maxterm ) { max_term_ = maxterm; }
+  bool loop() {
+    incrementTerm();
+    if( term() <= maxTerm() ) return true;
+    else return false;
+  }
  private:
+  Term();
   int term_;
+  int max_term_;
 };
 
 // メインルーチン
@@ -128,6 +139,7 @@ int main() {
   ECHO("Cancer Immunoediting Model");
 
   GlucoseScape *gs = new GlucoseScape();
+
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
   VECTOR(NormalCell *) normal_cells;
@@ -136,12 +148,11 @@ int main() {
     nm->randomSet();
     normal_cells.push_back( nm );
   }
-  std::ofstream glucose_map_ofs("cell.txt");
+  std::ofstream cell_map_ofs("cell.txt");
   FOR(i, CELL_SIZE) {
   }
 
   // 現在のグルコースの分布を出力する。
-  //stringstream ss;
   std::ofstream glucose_map_ofs("test.txt");
   FOR(i, HEIGHT) {
     FOR(j, WIDTH) {
