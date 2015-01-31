@@ -242,7 +242,7 @@ int main() {
 
   // 細胞の分布を出力する
   std::ofstream cell_map_ofs("cell.txt");
-  int cell_map[HEIGHT][WIDTH] = {0};
+  int cell_map[HEIGHT][WIDTH] = {};
   EACH(it_cell, cells) {
     __Cell& cell = **it_cell;
     cell_map[cell.y()][cell.x()]++;

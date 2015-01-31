@@ -1,5 +1,6 @@
 CC = g++ -Wall -g -O0
 MKDIR = mkdir -p
+RM    = rm -rfv
 
 bin_dir = bin
 EXE_NAME = main.exe
@@ -15,3 +16,6 @@ run:
 	@cd $(bin_dir); ./$(EXE_NAME)
 
 all: $(TARGET) run
+
+clean:
+	@$(RM) $(bin_dir)
