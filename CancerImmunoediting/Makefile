@@ -2,7 +2,8 @@ CC = g++ -Wall -g -O0
 MKDIR = mkdir -p
 
 bin_dir = bin
-TARGET = $(bin_dir)/main.exe
+EXE_NAME = main.exe
+TARGET = $(bin_dir)/$(EXE_NAME)
 
 .PHONY: run all
 
@@ -11,6 +12,6 @@ $(TARGET): src/main.cpp
 	@$(CC) $^ -o $@ $(CPPFLAGS)
 
 run:
-	@./$(TARGET)
+	@cd $(bin_dir); ./$(EXE_NAME)
 
 all: $(TARGET) run
