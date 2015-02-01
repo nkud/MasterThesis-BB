@@ -89,6 +89,9 @@ public:
     int ret = randomInt()%( max - min + 1 ) + min;
     return ret;
   }
+  bool randomBool() {
+    
+  }
 private:
   Random() { srand((unsigned)time(NULL)); }
 };
@@ -125,6 +128,8 @@ class __Mobile : public __Location {
   void move() { }
   void move(int tox, int toy);
   void move( __Landscape& landscape ) {
+    int width = landscape.width();
+    int height = landscape.height();
 
   }
   int movementDistance() const { return movement_distance_; }
@@ -221,7 +226,7 @@ void output_value_with_term( const char *fname, T value ) {
 };
 
 ///////////////////////////////////////////////////////////
-// メインルーチン
+// エントリーポイント
 int main() {
   ECHO("Cancer Immunoediting Model");
 
@@ -229,6 +234,7 @@ int main() {
   StepKeeper &stepKeeper = StepKeeper::Instance();
   stepKeeper.setMaxStep( STEP );
 
+  // グルコーススケープのインスタンスを作成する。  
   GlucoseScape *gs = new GlucoseScape();
 
   // 細胞を初期化していく。
@@ -269,7 +275,7 @@ int main() {
     glucose_map_ofs << std::endl;
   }
 
-  // 計算を実行する
+  // 計算を実行する ---------------------------------------
   while( stepKeeper.loop() ) {
     // 細胞が移動する。
     EACH( it_cell, cells ) {
@@ -277,6 +283,7 @@ int main() {
       cell.move();
     }
   }
+  // ------------------------------------------------------
 
   return 0;
 }
