@@ -49,9 +49,9 @@
                                 <<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<"" \
                                 <<std::endl; }while(0);
 #define DEBUG(x)                do { std::cerr<<BOLD<<"[ DEBUG ] " \
-                                <<CLR_ST<<STANDARD<<#x<<": "<<BOLD<<(x) \
+                                <<CLR_ST<<STANDARD<<#x<<" <-- "<<BOLD<<(x) \
                                 <<STANDARD<<" (L"<<__LINE__<<")" \
-                                <<" "<<__FILE__<<std::endl; }while(0);
+                                <<""<<__FILE__<<std::endl; }while(0);
 #define POINT                   do { static int point = 0; std::cerr \
                                 <<BOLD<<RED<<"[ POINT ] "<<CLR_ST \
                                 <<STANDARD<<"(L"<<__LINE__<<")" \
@@ -256,6 +256,31 @@ void output_value_with_term( const char *fname, T value ) {
   ofs << value << std::endl;
 };
 
+/*
+ * 細胞クラスの分布を出力する関数
+ */
+void output_cell_map( VECTOR(__Cell *)& cells ) {
+  // ファイル名
+  std::stringstream file_name;
+  file_name << StepKeeper::Instance().step();
+  file_name << "_cell.txt";
+  std::ofstream cell_map_ofs(file_name.str());
+  int location_map[HEIGHT][WIDTH] = {};
+  EACH(it_cell, cells) {
+    __Cell& cell = **it_cell;
+    location_map[cell.y()][cell.x()]++;
+  }
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      cell_map_ofs << i << SEPARATOR;
+      cell_map_ofs << j << SEPARATOR;
+      cell_map_ofs << location_map[i][j];
+      cell_map_ofs << std::endl;
+    }
+    cell_map_ofs << std::endl;
+  }
+}
+
 ///////////////////////////////////////////////////////////
 // エントリーポイント
 int main() {
@@ -285,26 +310,11 @@ int main() {
       __Cell& cell = **it_cell;
       cell.move( *landscape );
     }
-    DEBUG( cells[0]->x() );
+
+    // 細胞の分布を出力する
+    output_cell_map( cells );
   }
   // ------------------------------------------------------
-
-  // 細胞の分布を出力する
-  std::ofstream cell_map_ofs("cell.txt");
-  int cell_map[HEIGHT][WIDTH] = {};
-  EACH(it_cell, cells) {
-    __Cell& cell = **it_cell;
-    cell_map[cell.y()][cell.x()]++;
-  }
-  FOR(i, HEIGHT) {
-    FOR(j, WIDTH) {
-      cell_map_ofs << i << SEPARATOR;
-      cell_map_ofs << j << SEPARATOR;
-      cell_map_ofs << cell_map[i][j];
-      cell_map_ofs << std::endl;
-    }
-    cell_map_ofs << std::endl;
-  }
 
   // 現在のグルコースの分布を出力する。
   std::ofstream glucose_map_ofs("test.txt");
