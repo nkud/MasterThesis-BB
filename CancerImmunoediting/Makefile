@@ -10,7 +10,7 @@ bin_dir = bin
 EXE_NAME = CancerImmunoeditingModel.exe
 TARGET = $(bin_dir)/$(EXE_NAME)
 
-.PHONY: run all
+.PHONY: run all clean stat pack
 
 $(TARGET): src/main.cpp
 	@$(MKDIR) $(bin_dir)
@@ -23,3 +23,7 @@ all: $(TARGET) run
 
 clean:
 	@$(RM) $(bin_dir)
+
+stat:
+
+pack:

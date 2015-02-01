@@ -327,6 +327,5 @@ int main() {
     glucose_map_ofs << std::endl;
   }
 
-
   return 0;
 }
