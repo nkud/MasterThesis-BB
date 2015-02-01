@@ -48,6 +48,10 @@
 #define ECHO(x)                 do { std::cout<< CLEAR_RIGHT << "----> " \
                                 <<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<"" \
                                 <<std::endl; }while(0);
+#define DEBUG(x)                do { std::cerr<<BOLD<<"[ DEBUG ] " \
+                                <<CLR_ST<<STANDARD<<#x<<": "<<BOLD<<(x) \
+                                <<STANDARD<<" (L"<<__LINE__<<")" \
+                                <<" "<<__FILE__<<std::endl; }while(0);
 #define POINT                   do { static int point = 0; std::cerr \
                                 <<BOLD<<RED<<"[ POINT ] "<<CLR_ST \
                                 <<STANDARD<<"(L"<<__LINE__<<")" \
@@ -85,13 +89,20 @@ class Random {
 public:
   static Random& Instance() { static Random singleton; return singleton; }
   int randomInt() { return rand(); }
+  double randomDouble() { return ((double)rand()+1.0)/((double)RAND_MAX+2.0); }
   int uniformInt(int min, int max) {
     int ret = randomInt()%( max - min + 1 ) + min;
     return ret;
   }
-  bool randomBool() {
-    
+  double uniformDouble( double min, double max ) {
+    return uniformInt(min, max-1) + randomDouble();
   }
+  bool probability( double prob ) {
+    if( prob > uniformDouble( 0, 100 ) ) { return true; }
+    else { return false; }
+  }
+  bool randomBool() { return probability(50) ? true : false; }
+  int randomSign() { return probability(50) ? -1 : 1; }
 private:
   Random() { srand((unsigned)time(NULL)); }
 };
@@ -100,20 +111,34 @@ private:
 // 幅と高さを持つ。
 class __Landscape {
  public:
+   __Landscape() : width_(WIDTH), height_(HEIGHT) { }
   int width() const { return width_; }
   int height() const { return height_; }
+
+  // ランドスケープ上に存在する点かどうかを評価する。
+  bool isExistingPoint(int x, int y) {
+    if( x < 0 ) return false;
+    if( y < 0 ) return false;
+    if( x > WIDTH-1 ) return false;
+    if( y > HEIGHT-1 ) return false;
+    return true;
+  }
  private:
   int width_, height_;
 };
 
-// モデル上に存在するためには、座標が必要になるので、
-// 座標を持つエージェントのためのインターフェイスを作成する。
+/*
+ * モデル上に存在するためには、座標が必要になるので、
+ * 座標を持つエージェントのためのインターフェイスを作成する。
+ */
 class __Location {
  public:
   int x() const { return x_; }
   int y() const { return y_; }
   void setX(int x) { x_ = x; }
   void setY(int y) { y_ = y; }
+
+  // スケープ上にランダムに配置する。
   void randomSet() {
     setX(Random::Instance().uniformInt(0, WIDTH-1)); 
     setY(Random::Instance().uniformInt(0, HEIGHT-1));
@@ -127,10 +152,16 @@ class __Mobile : public __Location {
  public:
   void move() { }
   void move(int tox, int toy);
+  // ランドスケープ上を移動させる。
+  // 壁あり。
   void move( __Landscape& landscape ) {
-    int width = landscape.width();
-    int height = landscape.height();
-
+    Random& random = Random::Instance();
+    int to_x = x(); int to_y = y();
+    if( random.randomBool() ) { to_x += random.randomSign(); }
+    if( random.randomBool() ) { to_y += random.randomSign(); }
+    if( landscape.isExistingPoint( to_x, to_y ) ) {
+      setX( to_x ); setY( to_y );
+    }
   }
   int movementDistance() const { return movement_distance_; }
   private:
@@ -236,7 +267,8 @@ int main() {
 
   // グルコーススケープのインスタンスを作成する。  
   GlucoseScape *gs = new GlucoseScape();
-
+  
+  __Landscape *landscape = new __Landscape();
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
   VECTOR(__Cell *) cells;
@@ -245,6 +277,17 @@ int main() {
     nm->randomSet();
     cells.push_back( nm );
   }
+
+  // 計算を実行する ---------------------------------------
+  while( stepKeeper.loop() ) {
+    // 細胞が移動する。
+    EACH( it_cell, cells ) {
+      __Cell& cell = **it_cell;
+      cell.move( *landscape );
+    }
+    DEBUG( cells[0]->x() );
+  }
+  // ------------------------------------------------------
 
   // 細胞の分布を出力する
   std::ofstream cell_map_ofs("cell.txt");
@@ -275,15 +318,6 @@ int main() {
     glucose_map_ofs << std::endl;
   }
 
-  // 計算を実行する ---------------------------------------
-  while( stepKeeper.loop() ) {
-    // 細胞が移動する。
-    EACH( it_cell, cells ) {
-      __Cell& cell = **it_cell;
-      cell.move();
-    }
-  }
-  // ------------------------------------------------------
 
   return 0;
 }
