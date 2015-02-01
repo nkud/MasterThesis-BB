@@ -71,14 +71,14 @@
 // 定数パラメータの定義する。
 
 // ランドスケープの幅と高さを設定する。
-const int WIDTH = 10;
-const int HEIGHT = 10;
+const int WIDTH = 30;
+const int HEIGHT = 30;
 
 // 最大計算期間を設定する。
 const int STEP = 100;
 
 // 細胞数を設定する。
-const int CELL_SIZE = 10;
+const int CELL_SIZE = 100;
 
 ///////////////////////////////////////////////////////////
 // クラスを定義していく。

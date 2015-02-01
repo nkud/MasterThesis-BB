@@ -5,6 +5,7 @@
 CC = g++ -Wall -g -O0
 MKDIR = mkdir -p
 RM    = rm -rfv
+PLOT = gnuplot
 
 bin_dir = bin
 EXE_NAME = CancerImmunoeditingModel.exe
@@ -19,12 +20,12 @@ $(TARGET): src/main.cpp
 run:
 	@cd $(bin_dir); ./$(EXE_NAME)
 
-all: $(TARGET) run
-
 clean:
 	@$(RM) $(bin_dir)
 
 stat:
-	gnuplot animation.plt
+	@$(PLOT) animation.plt
 
 pack:
+
+all: $(TARGET) run stat
