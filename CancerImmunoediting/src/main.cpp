@@ -75,7 +75,7 @@ const int WIDTH = 50;
 const int HEIGHT = 50;
 
 // 最大計算期間を設定する。
-const int STEP = 10;
+const int STEP = 100;
 
 // 細胞数を設定する。
 const int CELL_SIZE = 1000;
