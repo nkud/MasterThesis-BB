@@ -261,10 +261,9 @@ void output_value_with_term( const char *fname, T value ) {
  */
 void output_cell_map( VECTOR(__Cell *)& cells ) {
   // ファイル名
-  std::stringstream file_name;
-  file_name << StepKeeper::Instance().step();
-  file_name << "_cell.txt";
-  std::ofstream cell_map_ofs(file_name.str());
+  char file_name[256];
+  sprintf(file_name, "%d-cell.txt", StepKeeper::Instance().step());
+  std::ofstream cell_map_ofs(file_name);
   int location_map[HEIGHT][WIDTH] = {};
   EACH(it_cell, cells) {
     __Cell& cell = **it_cell;
