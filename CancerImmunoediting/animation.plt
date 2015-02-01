@@ -3,5 +3,5 @@ set output "animation.gif";
 set style line 1 lw 2;
 set key below right;
 set key textcolor lt 0;
-n=10;
+n=1;
 load "frame.plt";

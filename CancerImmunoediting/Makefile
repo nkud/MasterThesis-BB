@@ -25,5 +25,6 @@ clean:
 	@$(RM) $(bin_dir)
 
 stat:
+	gnuplot animation.plt
 
 pack:
