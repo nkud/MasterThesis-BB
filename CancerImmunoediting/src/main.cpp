@@ -236,7 +236,7 @@ class NormalCell : public __Cell {
 // シングルトンパターンを利用する。
 class StepKeeper {
  public:
-  static StepKeeper& Instance() { 
+  static StepKeeper& Instance() {
     static StepKeeper singleton; return singleton;
     }
   void proceed() { step_++; }
@@ -297,9 +297,9 @@ int main() {
   StepKeeper &stepKeeper = StepKeeper::Instance();
   stepKeeper.setMaxStep( STEP );
 
-  // グルコーススケープのインスタンスを作成する。  
+  // グルコーススケープのインスタンスを作成する。
   GlucoseScape *gs = new GlucoseScape();
-  
+
   __Landscape *landscape = new __Landscape();
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
