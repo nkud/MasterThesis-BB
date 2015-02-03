@@ -127,71 +127,6 @@ class __Landscape {
   int width_, height_;
 };
 
-/*
- * モデル上に存在するためには、座標が必要になるので、
- * 座標を持つエージェントのためのインターフェイスを作成する。
- */
-class __Location {
- public:
-  int x() const { return x_; }
-  int y() const { return y_; }
-  void setX(int x) { x_ = x; }
-  void setY(int y) { y_ = y; }
-
-  // スケープ上にランダムに配置する。
-  void randomSet() {
-    setX(Random::Instance().uniformInt(0, WIDTH-1)); 
-    setY(Random::Instance().uniformInt(0, HEIGHT-1));
-  }
- private:
-  int x_, y_;
-};
-
-// 移動するエージェントのインターフェイスを作成する。
-class __Mobile : public __Location {
- public:
-  void move() { }
-  void move(int tox, int toy);
-  // ランドスケープ上を移動させる。
-  // 壁あり。
-  void move( __Landscape& landscape ) {
-    Random& random = Random::Instance();
-    int to_x = x(); int to_y = y();
-    if( random.randomBool() ) { to_x += random.randomSign(); }
-    if( random.randomBool() ) { to_y += random.randomSign(); }
-    if( landscape.isExistingPoint( to_x, to_y ) ) {
-      setX( to_x ); setY( to_y );
-    }
-  }
-  int movementDistance() const { return movement_distance_; }
-  private:
-    int movement_distance_;
-};
-
-// 酸化的リン酸化を利用してエネルギーを産生するクラスを作成する。
-// グルコースと酸素に依存する。
-
-// 嫌気的解糖系を利用してエネルギーを産生するクラスを作成する。
-// グルコースのみに依存する。
-
-// 細胞のインターフェイスを作成する。
-// 細胞は代謝する。
-// エネルギーを持つ。
-class __Cell : public __Mobile {
-public:
-  void metabolize(double glucose, double oxygen);
-private:
-  double energy_;
-};
-
-// 正常細胞のクラスを作成する。
-// 移動する。細胞スケープにおいて、同じ位置に存在できる。
-// 移動はしない。分裂はする。？？
-class NormalCell : public __Cell {
- public:
- private:
-};
-
 // シュガースケープのクラスを作成する。
 // シュガーを生産できる。
 class __SugerScape : public __Landscape {
@@ -219,6 +154,82 @@ class GlucoseScape : public __SugerScape {
 class OxygenScape : public __SugerScape {
  public:
   int oxygen(int x, int y) const;
+ private:
+};
+
+/*
+ * モデル上に存在するためには、座標が必要になるので、
+ * 座標を持つエージェントのためのインターフェイスを作成する。
+ */
+class __Location {
+ public:
+  int x() const { return x_; }
+  int y() const { return y_; }
+  void setX(int x) { x_ = x; }
+  void setY(int y) { y_ = y; }
+
+  // スケープ上にランダムに配置する。
+  void randomSet() {
+    setX(Random::Instance().uniformInt(0, WIDTH-1)); 
+    setY(Random::Instance().uniformInt(0, HEIGHT-1));
+  }
+ private:
+  int x_, y_;
+};
+
+// 移動するエージェントのインターフェイスを作成する。
+class __Mobile : public __Location {
+ public:
+  void move() { }
+  void move(int tox, int toy);
+  // ランドスケープ上を移動させる。
+  // 壁あり。
+  virtual void move( __Landscape& landscape ) {
+    Random& random = Random::Instance();
+    int to_x = x(); int to_y = y();
+    if( random.randomBool() ) { to_x += random.randomSign(); }
+    if( random.randomBool() ) { to_y += random.randomSign(); }
+    if( landscape.isExistingPoint( to_x, to_y ) ) {
+      setX( to_x ); setY( to_y );
+    }
+  }
+  int movementDistance() const { return movement_distance_; }
+  private:
+    int movement_distance_;
+};
+
+// 酸化的リン酸化を利用してエネルギーを産生するクラスを作成する。
+// グルコースと酸素に依存する。
+
+// 嫌気的解糖系を利用してエネルギーを産生するクラスを作成する。
+// グルコースのみに依存する。
+
+// 細胞のインターフェイスを作成する。
+// 細胞は代謝する。
+// エネルギーを持つ。
+class __Cell : public __Mobile {
+  public:
+  void metabolize(__SugerScape& landscape) {
+  }
+
+  virtual void move( __Landscape& landscape ) {
+    Random& random = Random::Instance();
+    int to_x = x(); int to_y = y();
+    if( random.randomBool() ) { to_x += random.randomSign(); }
+    if( random.randomBool() ) { to_y += random.randomSign(); }
+    if( landscape.isExistingPoint( to_x, to_y ) ) {
+      setX( to_x ); setY( to_y );
+    }
+  }
+private:
+  double energy_;
+};
+
+// 正常細胞のクラスを作成する。
+// 移動する。細胞スケープにおいて、同じ位置に存在できる。
+// 移動はしない。分裂はする。？？
+class NormalCell : public __Cell {
+ public:
  private:
 };
 
