@@ -1,0 +1,70 @@
+#+TITLE: Title
+#+AUTHOR: Naoki Ueda
+#+OPTIONS: \n:nil H:2 toc:t author:nil email:nil timestamp:nil creator:nil num:nil
+#+LANGUAGE: ja
+#+LaTeX_CLASS: thesis
+#+STARTUP: contente
+#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:12px;}</style>
+#+HTML_HEAD: <style type="text/css">body {padding: 100px;}</style>
+#+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+#+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
+#+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+* 修士論文
+** 序論
+*** 背景説明
+- 免疫監視説とは、「癌細胞は頻繁に体内で生じているが、通常は、
+  臨床で診断可能になるほど増殖する前に排除される」という説である。
+  つまり腫瘍は、腫瘍細胞が免疫監視機構から逃避した時のみ発生することとなる。
+  免疫監視説を支持する証拠の１つとして、
+  免疫力の低下した患者では癌の発生頻度が増加することがあげられる。
+- 免疫によって、腫瘍細胞は排除されるが、
+  免疫原性の低い腫瘍細胞を増殖してしまう現象を説明した、
+  がん免疫エディティングという仮説がある。
+- このがん免疫エディティングには、３つのステージがある。
+- １つ目は、排除相である。
+- ２つ目は、平衡相である。
+- ３つ目は、逃避相である。
+- つまり、普段は排除されるが、がん細胞の増殖率がある閾値を超えると、
+  免疫機構では抑えきれなくなり、増殖してしまう。
+*** 問題を設定する
+- 免疫機構の何が、これら３つの相を生み出しているのかは、まだ定かではない。
+* COMMENT Note
+** Hallmarks of Cancer
+*** 血管新生の励起
+*** 細胞死への抵抗
+*** 発育抑制からの逃避
+*** 進化と転移の活性化
+** 嫌気的解糖
+- 無酸素状態時の解糖系の経路のこと。グルコースからピルビン酸まで分解し、
+  その後電子伝達系などが停止している場合には、
+  ピルビン酸から更にアルコールや乳酸などに分解を行う。
+  その主たる目的は嫌気状態でもATPの生産を行うこと、
+  また再び解糖系を稼動させるためにNADHの酸化を行うことにある。
+- がん細胞はエネルギー産生を、嫌気性解糖に依存しているので、
+  正常細胞の何十倍もの多くの glucose を必要とする。
+* 構成
+** 序論
+*** 背景説明
+- 他分野である可能性が高い。
+*** 先行研究紹介
+*** 問題点を指摘する
+*** 問題を設定する
+*** 設定した問題性の重要性を議論する
+*** 問題を解くために使う方法
+- 既存なら参考文献を挙げる
+- 新規なら説明をする
+*** 得られた結果を説明する
+*** 得られた結果の価値を検討する
+*** 本論文の構成を述べる
+* COMMENT プロット
+** Authors　著者
+** Title　題名
+** Keyword list　キーワード
+** Abstract　抄録
+** Introduction　序文
+** Methods　方法
+** Results　結果
+** Discussion　考察
+** Acknowledgement　社寺
+** Reference　参考文献
+** Supplementary material　補足資料
