@@ -46,17 +46,17 @@
 #define REP(i, min, max)        for(int (i)=(min); (i)<=(max); (i)++)
 
 #define ECHO(x)                 do { std::cout<< CLEAR_RIGHT << "----> " \
-                                <<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<"" \
-                                <<std::endl; }while(0);
+  <<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<"" \
+  <<std::endl; }while(0);
 #define DEBUG(x)                do { std::cerr<<BOLD<<"[ DEBUG ] " \
-                                <<CLR_ST<<STANDARD<<#x<<" <-- "<<BOLD<<(x) \
-                                <<STANDARD<<" (L"<<__LINE__<<")" \
-                                <<""<<__FILE__<<std::endl; }while(0);
+  <<CLR_ST<<STANDARD<<#x<<" <-- "<<BOLD<<(x) \
+  <<STANDARD<<" (L"<<__LINE__<<")" \
+  <<""<<__FILE__<<std::endl; }while(0);
 #define POINT                   do { static int point = 0; std::cerr \
-                                <<BOLD<<RED<<"[ POINT ] "<<CLR_ST \
-                                <<STANDARD<<"(L"<<__LINE__<<")" \
-                                <<" "<<__FILE__<<" - "<<point++ \
-                                <<std::endl; }while(0);
+  <<BOLD<<RED<<"[ POINT ] "<<CLR_ST \
+  <<STANDARD<<"(L"<<__LINE__<<")" \
+  <<" "<<__FILE__<<" - "<<point++ \
+  <<std::endl; }while(0);
 
 #define VECTOR(type)            std::vector< type >
 #define ITERATOR(type)          std::vector< type >::iterator
@@ -73,6 +73,8 @@
 const int WIDTH = 30;
 const int HEIGHT = 30;
 
+const int INITIAL_CELL_ENERGY = 10;
+
 // 最大計算期間を設定する。
 const int STEP = 100;
 
@@ -84,75 +86,75 @@ const int CELL_SIZE = 100;
 // 乱数生成用のクラスを作成する。
 // シングルトンパターンを使用する。
 class Random {
-public:
-  static Random& Instance() { static Random singleton; return singleton; }
-  int randomInt() { return rand(); }
-  double randomDouble() { return ((double)rand()+1.0)/((double)RAND_MAX+2.0); }
-  int uniformInt(int min, int max) {
-    int ret = randomInt()%( max - min + 1 ) + min;
-    return ret;
-  }
-  double uniformDouble( double min, double max ) {
-    return uniformInt(min, max-1) + randomDouble();
-  }
-  bool probability( double prob ) {
-    if( prob > uniformDouble( 0, 100 ) ) { return true; }
-    else { return false; }
-  }
-  bool randomBool() { return probability(50) ? true : false; }
-  int randomSign() { return probability(50) ? -1 : 1; }
-private:
-  Random() { srand((unsigned)time(NULL)); }
+  public:
+    static Random& Instance() { static Random singleton; return singleton; }
+    int randomInt() { return rand(); }
+    double randomDouble() { return ((double)rand()+1.0)/((double)RAND_MAX+2.0); }
+    int uniformInt(int min, int max) {
+      int ret = randomInt()%( max - min + 1 ) + min;
+      return ret;
+    }
+    double uniformDouble( double min, double max ) {
+      return uniformInt(min, max-1) + randomDouble();
+    }
+    bool probability( double prob ) {
+      if( prob > uniformDouble( 0, 100 ) ) { return true; }
+      else { return false; }
+    }
+    bool randomBool() { return probability(50) ? true : false; }
+    int randomSign() { return probability(50) ? -1 : 1; }
+  private:
+    Random() { srand((unsigned)time(NULL)); }
 };
 
 // 細胞土地のインターフェイスを作成する。
 // 幅と高さを持つ。
 class __Landscape {
- public:
-   __Landscape() : width_(WIDTH), height_(HEIGHT) { }
-  int width() const { return width_; }
-  int height() const { return height_; }
+  public:
+    __Landscape() : width_(WIDTH), height_(HEIGHT) { }
+    int width() const { return width_; }
+    int height() const { return height_; }
 
-  // ランドスケープ上に存在する点かどうかを評価する。
-  bool isExistingPoint(int x, int y) {
-    if( x < 0 ) return false;
-    if( y < 0 ) return false;
-    if( x > WIDTH-1 ) return false;
-    if( y > HEIGHT-1 ) return false;
-    return true;
-  }
- private:
-  int width_, height_;
+    // ランドスケープ上に存在する点かどうかを評価する。
+    bool isExistingPoint(int x, int y) {
+      if( x < 0 ) return false;
+      if( y < 0 ) return false;
+      if( x > WIDTH-1 ) return false;
+      if( y > HEIGHT-1 ) return false;
+      return true;
+    }
+  private:
+    int width_, height_;
 };
 
 // シュガースケープのクラスを作成する。
 // シュガーを生産できる。
 class __SugerScape : public __Landscape {
- public:
-  void generate();
- private:
+  public:
+    void generate();
+  private:
 };
 
 // グルコースのクラスを作成する。
 class GlucoseScape : public __SugerScape {
- public:
-  GlucoseScape() {
-    FOR(i, HEIGHT) {
-      FOR(j, WIDTH) {
-        glucose_map_[i][j] = i+j;
+  public:
+    GlucoseScape() {
+      FOR(i, HEIGHT) {
+        FOR(j, WIDTH) {
+          glucose_map_[i][j] = i+j;
+        }
       }
     }
-  }
-  int glucose(int x, int y) const { return glucose_map_[x][y]; }
- private:
-  int glucose_map_[HEIGHT][WIDTH];
+    int glucose(int x, int y) const { return glucose_map_[x][y]; }
+  private:
+    int glucose_map_[HEIGHT][WIDTH];
 };
 
 // 酸素のクラスを作成する。
 class OxygenScape : public __SugerScape {
- public:
-  int oxygen(int x, int y) const;
- private:
+  public:
+    int oxygen(int x, int y) const;
+  private:
 };
 
 /*
@@ -160,38 +162,38 @@ class OxygenScape : public __SugerScape {
  * 座標を持つエージェントのためのインターフェイスを作成する。
  */
 class __Location {
- public:
-  int x() const { return x_; }
-  int y() const { return y_; }
-  void setX(int x) { x_ = x; }
-  void setY(int y) { y_ = y; }
+  public:
+    int x() const { return x_; }
+    int y() const { return y_; }
+    void setX(int x) { x_ = x; }
+    void setY(int y) { y_ = y; }
 
-  // スケープ上にランダムに配置する。
-  void randomSet() {
-    setX(Random::Instance().uniformInt(0, WIDTH-1)); 
-    setY(Random::Instance().uniformInt(0, HEIGHT-1));
-  }
- private:
-  int x_, y_;
+    // スケープ上にランダムに配置する。
+    void randomSet() {
+      setX(Random::Instance().uniformInt(0, WIDTH-1)); 
+      setY(Random::Instance().uniformInt(0, HEIGHT-1));
+    }
+  private:
+    int x_, y_;
 };
 
 // 移動するエージェントのインターフェイスを作成する。
 class __Mobile : public __Location {
- public:
-  void move() { }
-  void move(int tox, int toy);
-  // ランドスケープ上を移動させる。
-  // 壁あり。
-  virtual void move( __Landscape& landscape ) {
-    Random& random = Random::Instance();
-    int to_x = x(); int to_y = y();
-    if( random.randomBool() ) { to_x += random.randomSign(); }
-    if( random.randomBool() ) { to_y += random.randomSign(); }
-    if( landscape.isExistingPoint( to_x, to_y ) ) {
-      setX( to_x ); setY( to_y );
+  public:
+    void move() { }
+    void move(int tox, int toy);
+    // ランドスケープ上を移動させる。
+    // 壁あり。
+    virtual void move( __Landscape& landscape ) {
+      Random& random = Random::Instance();
+      int to_x = x(); int to_y = y();
+      if( random.randomBool() ) { to_x += random.randomSign(); }
+      if( random.randomBool() ) { to_y += random.randomSign(); }
+      if( landscape.isExistingPoint( to_x, to_y ) ) {
+        setX( to_x ); setY( to_y );
+      }
     }
-  }
-  int movementDistance() const { return movement_distance_; }
+    int movementDistance() const { return movement_distance_; }
   private:
     int movement_distance_;
 };
@@ -207,67 +209,77 @@ class __Mobile : public __Location {
 // エネルギーを持つ。
 class __Cell : public __Mobile {
   public:
-  void metabolize(__SugerScape& landscape) {
-  }
+    __Cell() : energy_(INITIAL_CELL_ENERGY) { }
 
-  virtual void move( __Landscape& landscape ) {
-    Random& random = Random::Instance();
-    int to_x = x(); int to_y = y();
-    if( random.randomBool() ) { to_x += random.randomSign(); }
-    if( random.randomBool() ) { to_y += random.randomSign(); }
-    if( landscape.isExistingPoint( to_x, to_y ) ) {
-      setX( to_x ); setY( to_y );
+    double energy() const { return energy_; }
+
+    // 代謝する。
+    void metabolize(__SugerScape& landscape) {
     }
-  }
-private:
-  double energy_;
+
+    // スケープ上を移動する。
+    virtual void move( __Landscape& landscape ) {
+      Random& random = Random::Instance();
+      int from_x = x(); int from_y = y();
+      int to_x = from_x; int to_y = from_y;
+      if( random.randomBool() ) { to_x += random.randomSign(); }
+      if( random.randomBool() ) { to_y += random.randomSign(); }
+
+      // もし移動先が正しくスケープ上であれば、移動する。
+      // 移動した場合、コストを消費する。
+      if( landscape.isExistingPoint( to_x, to_y ) ) {
+        setX( to_x ); setY( to_y );
+        int cost = abs(from_x-to_x) + abs(from_y-to_y);
+        energy_ -= cost;
+      }
+    }
+  private:
+    double energy_;
 };
 
 // 正常細胞のクラスを作成する。
 // 移動する。細胞スケープにおいて、同じ位置に存在できる。
 // 移動はしない。分裂はする。？？
 class NormalCell : public __Cell {
- public:
- private:
+  public:
+  private:
 };
 
 // 時間を更新するクラスを作成する。
 // どこからアクセスしても同じ時間になるために、
 // シングルトンパターンを利用する。
 class StepKeeper {
- public:
-  static StepKeeper& Instance() {
-    static StepKeeper singleton; return singleton;
+  public:
+    static StepKeeper& Instance() {
+      static StepKeeper singleton; return singleton;
     }
-  void proceed() { step_++; }
-  int step() const { return step_; }
-  int maxStep() const { return max_step_; }
-  void setMaxStep( int maxstep ) { max_step_ = maxstep; }
-  bool loop() {
-    proceed();
-    if( step() <= maxStep() ) return true;
-    else return false;
-  }
- private:
-  StepKeeper() : step_(0), max_step_(0) { }
-  int step_;
-  int max_step_;
+    void proceed() { step_++; }
+    int step() const { return step_; }
+    int maxStep() const { return max_step_; }
+    void setMaxStep( int maxstep ) { max_step_ = maxstep; }
+    bool loop() {
+      proceed();
+      if( step() <= maxStep() ) return true;
+      else return false;
+    }
+  private:
+    StepKeeper() : step_(0), max_step_(0) { }
+    int step_;
+    int max_step_;
 };
 
 // 出力用の関数を作成する。
 
 // ステップ数と一緒、そのときの値を出力する関数
 template < typename T >
-void output_value_with_term( const char *fname, T value ) {
+void output_value_with_step( const char *fname, T value ) {
   int step = StepKeeper::Instance().step();
   std::ofstream ofs(fname, std::ios_base::out | std::ios_base::app);
   ofs << step << SEPARATOR;
   ofs << value << std::endl;
 };
 
-/*
- * 細胞クラスの分布を出力する関数
- */
+// 細胞クラスの、スケープ上での２次元マップを出力する。
 void output_cell_map( VECTOR(__Cell *)& cells ) {
   // ファイル名
   char file_name[256];
@@ -287,6 +299,17 @@ void output_cell_map( VECTOR(__Cell *)& cells ) {
     }
     cell_map_ofs << std::endl;
   }
+}
+
+// 細胞クラスの平均エネルギーを出力する。
+void output_cell_energy_average( VECTOR(__Cell *)& cells ) {
+  int sum = 0;
+  EACH(it_cell, cells) {
+    __Cell& cell = **it_cell;
+    sum += cell.energy();
+  }
+  double average = (double)sum/cells.size();
+  output_value_with_step("cell-energy-average.txt", average);
 }
 
 // エントリーポイント
@@ -318,8 +341,11 @@ int main() {
       cell.move( *landscape );
     }
 
+    // ファイルに出力する。
     // 細胞の分布を出力する
     output_cell_map( cells );
+    // 細胞の平均エネルギーを出力する。
+    output_cell_energy_average( cells );
   }
   // ------------------------------------------------------
 

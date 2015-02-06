@@ -25,7 +25,8 @@ clean:
 
 stat:
 	@$(PLOT) animation.plt
+	@$(PLOT) auto.plt
 
 pack:
 
-all: $(TARGET) run stat
+all: clean $(TARGET) run stat
