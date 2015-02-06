@@ -10,3 +10,7 @@
 document.html
 
 *.html
+
+
+# emacs temporary file
+.#*
