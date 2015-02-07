@@ -1,17 +1,26 @@
+#
+# Cancer Immunoediting Model Makefile
+#
 # TODO
 # 実行時には、一旦tmpディレクトリに実行して、
 # binディレクトリは消さないようにすれば、
 # 誤って実行してしまった時にもデータは残る。
-CC = g++ -Wall -g -O0
-MKDIR = mkdir -p
-RM    = rm -rfv
-PLOT = gnuplot
 
+# command
+PRINT = echo
+CC    = g++ -Wall -g -O0
+MKDIR = mkdir -p
+COPY  = cp -r
+RM    = rm -rfv
+PLOT  = gnuplot
+
+# dictionary
 bin_dir = bin
 EXE_NAME = CancerImmunoeditingModel.exe
 TARGET = $(bin_dir)/$(EXE_NAME)
 
-.PHONY: run all clean stat pack
+
+.PHONY: run all clean stat pack open
 
 $(TARGET): src/main.cpp
 	@$(MKDIR) $(bin_dir)
@@ -29,4 +38,12 @@ stat:
 
 pack:
 
+open:
+	@$(COLORECHO)
+	@$(PRINT) '==> Open'
+	@$(CLRECHO)
+	@open stat/index.html
+
 all: clean $(TARGET) run stat
+
+-include colors.mk
