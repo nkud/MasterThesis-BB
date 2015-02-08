@@ -76,10 +76,10 @@ const int HEIGHT = 30;
 const int INITIAL_CELL_ENERGY = 10;
 
 // 最大計算期間を設定する。
-const int STEP = 1000;
+const int STEP = 500;
 
 // 細胞数を設定する。
-const int CELL_SIZE = 1;
+const int CELL_SIZE = 100;
 
 // クラスを定義していく。
 
@@ -146,6 +146,9 @@ class GlucoseScape : public __SugarScape {
       }
     }
     int glucose(int x, int y) const { return glucose_map_[x][y]; }
+    void setGlucose(int x, int y, int value) {
+      glucose_map_[x][y] = value;
+    }
   private:
     int glucose_map_[HEIGHT][WIDTH];
 };
@@ -214,8 +217,14 @@ class __Cell : public __Mobile {
     double energy() const { return energy_; }
 
     // 代謝する。
-    void metabolize( __SugarScape& landscape ) {
-      energy_++;
+    void metabolize( GlucoseScape& gs ) {
+      // 利用できるグルコースがなければ、スキップする。
+      int g = gs.glucose(x(), y());
+      int gathering = 2;
+      if( g >= gathering ) {
+        energy_ += gathering;
+        gs.setGlucose( x(), y(), g-gathering );
+      }
     }
 
     // スケープ上を移動する。
@@ -271,7 +280,7 @@ class StepKeeper {
 
 // 出力用の関数を作成する。
 
-// ステップ数と一緒、そのときの値を出力する関数
+// ステップ数と一緒に、そのときの値を出力する関数
 template < typename T >
 void output_value_with_step( const char *fname, T value ) {
   int step = StepKeeper::Instance().step();
@@ -313,6 +322,23 @@ void output_cell_energy_average( VECTOR(__Cell *)& cells ) {
   output_value_with_step("cell-energy-average.txt", average);
 }
 
+
+// 現在のグルコースの分布を出力する。
+void output_glucose_map( GlucoseScape& gs ) {
+  char file_name[256];
+  sprintf(file_name, "%d-glucose.txt", StepKeeper::Instance().step());
+  std::ofstream glucose_map_ofs(file_name);
+
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      glucose_map_ofs << i << SEPARATOR;
+      glucose_map_ofs << j << SEPARATOR;
+      glucose_map_ofs << gs.glucose(i, j);
+      glucose_map_ofs << std::endl;
+    }
+    glucose_map_ofs << std::endl;
+  }
+}
 // エントリーポイント
 int main() {
   ECHO("Cancer Immunoediting Model");
@@ -352,20 +378,11 @@ int main() {
     output_cell_map( cells );
     // 細胞の平均エネルギーを出力する。
     output_cell_energy_average( cells );
+    // グルコースマップを出力する。
+    output_glucose_map( *gs );
   }
   // ------------------------------------------------------
 
-  // 現在のグルコースの分布を出力する。
-  std::ofstream glucose_map_ofs("test.txt");
-  FOR(i, HEIGHT) {
-    FOR(j, WIDTH) {
-      glucose_map_ofs << i << SEPARATOR;
-      glucose_map_ofs << j << SEPARATOR;
-      glucose_map_ofs << gs->glucose(i, j);
-      glucose_map_ofs << std::endl;
-    }
-    glucose_map_ofs << std::endl;
-  }
 
   return 0;
 }

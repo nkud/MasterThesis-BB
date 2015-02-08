@@ -62,6 +62,7 @@ stat:
 	@cd $(stat_dir); $(PY) ../script/stat.py
 	-@cd $(stat_dir); $(PLOT) auto.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) glucose-animation.plt 1>/dev/null
 	@$(COLORECHO)
 	@$(PRINT) '==> Done'
 	@$(CLRECHO)

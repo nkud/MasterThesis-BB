@@ -13,6 +13,38 @@ for line in auto_plot_line:
     auto_plot_file.write(line)
 
 # animation.plt
+animation_plot_file = open('glucose-animation.plt', 'w')
+
+animation_plot_line = []
+
+animation_plot_line += 'set terminal gif animate optimize size 300,300 delay 5;'
+animation_plot_line += 'set output "glucose-animation.gif";'
+animation_plot_line += 'set style line 1 lw 2;'
+animation_plot_line += 'set key below right;'
+animation_plot_line += 'set key textcolor lt 0;'
+animation_plot_line += 'n=1;'
+animation_plot_line += 'load "glucose-frame.plt";'
+
+for line in animation_plot_line:
+    animation_plot_file.write(line)
+
+# frame.plt
+frame_plot_file = open('glucose-frame.plt', 'w')
+
+frame_plot_line = []
+frame_plot_line += 'title(n)=sprintf("t = %d", n);'
+frame_plot_line += 'file(n)=sprintf("../bin/%d-glucose.txt", n);'
+frame_plot_line += 'set title title(n);'
+# frame_plot_line += 'set view map;'
+# frame_plot_line += 'set cbrange[0:1];'
+frame_plot_line += 'splot file(n) w pm3d;'
+frame_plot_line += 'if(n<1000) n=n+1; reread;'
+
+for line in frame_plot_line:
+    frame_plot_file.write(line)
+
+
+# animation.plt
 animation_plot_file = open('animation.plt', 'w')
 
 animation_plot_line = []
@@ -61,6 +93,7 @@ html_line += '<title>result</title>'
 html_line += '<body>'
 html_line += '<h1>result</h1>'
 html_line += image_set_line('animation.gif')
+html_line += image_set_line('glucose-animation.gif')
 html_line += image_set_line('cell-energy-average.png')
 html_line += '</body></html>'
 
