@@ -73,6 +73,9 @@ open:
 	@$(PRINT) '==> Open'
 	@$(CLRECHO)
 	@open stat/index.html
+	@$(COLORECHO)
+	@$(PRINT) '==> Done'
+	@$(CLRECHO)
 
 all: clean $(TARGET) run stat open
 

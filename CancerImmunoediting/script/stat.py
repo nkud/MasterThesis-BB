@@ -1,3 +1,6 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
 # auto.plt
 auto_plot_file = open('auto.plt', 'w')
 
@@ -41,6 +44,15 @@ for line in frame_plot_line:
     frame_plot_file.write(line)
 
 # index.html
+def image_set_line(imagefname):
+    """ 画像を配置する文字列を返す """
+    line = ''
+    line += '<!-- IMAGE -->'
+    line += '<table class="graph"'
+    line += '\t<tr><td><img src="%s" /></td></tr>' % imagefname
+    line += '</table>'
+    return line
+
 html_file = open('index.html', 'w')
 
 html_line = []
@@ -48,6 +60,8 @@ html_line += '<html>'
 html_line += '<title>result</title>'
 html_line += '<body>'
 html_line += '<h1>result</h1>'
+html_line += image_set_line('animation.gif')
+html_line += image_set_line('cell-energy-average.png')
 html_line += '</body></html>'
 
 for line in html_line:
