@@ -129,14 +129,14 @@ class __Landscape {
 
 // シュガースケープのクラスを作成する。
 // シュガーを生産できる。
-class __SugerScape : public __Landscape {
+class __SugarScape : public __Landscape {
   public:
     void generate();
   private:
 };
 
 // グルコースのクラスを作成する。
-class GlucoseScape : public __SugerScape {
+class GlucoseScape : public __SugarScape {
   public:
     GlucoseScape() {
       FOR(i, HEIGHT) {
@@ -151,7 +151,7 @@ class GlucoseScape : public __SugerScape {
 };
 
 // 酸素のクラスを作成する。
-class OxygenScape : public __SugerScape {
+class OxygenScape : public __SugarScape {
   public:
     int oxygen(int x, int y) const;
   private:
@@ -214,7 +214,8 @@ class __Cell : public __Mobile {
     double energy() const { return energy_; }
 
     // 代謝する。
-    void metabolize(__SugerScape& landscape) {
+    void metabolize( __SugarScape& landscape ) {
+      energy_++;
     }
 
     // スケープ上を移動する。
@@ -338,7 +339,13 @@ int main() {
     // 細胞が移動する。
     EACH( it_cell, cells ) {
       __Cell& cell = **it_cell;
-      cell.move( *landscape );
+      cell.move( *gs );
+    }
+
+    // 細胞が代謝する。
+    EACH( it_cell, cells ) {
+      __Cell& cell = **it_cell;
+      cell.metabolize( *gs );
     }
 
     // ファイルに出力する。
