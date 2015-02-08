@@ -6,8 +6,14 @@ auto_plot_file = open('auto.plt', 'w')
 
 auto_plot_line = []
 auto_plot_line += 'set terminal png size 500,200;'
-auto_plot_line += 'set output "cell-energy-average.png";'
+
 auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
+auto_plot_line += 'set output "cell-energy-average.png";'
+auto_plot_line += 'replot;set output;'
+
+auto_plot_line += 'plot "../bin/cell-size.txt" w l;'
+auto_plot_line += 'set output "cell-size.png";'
+auto_plot_line += 'replot;set output;'
 
 for line in auto_plot_line:
     auto_plot_file.write(line)
@@ -38,7 +44,7 @@ frame_plot_line += 'set title title(n);'
 # frame_plot_line += 'set view map;'
 # frame_plot_line += 'set cbrange[0:1];'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<1000) n=n+1; reread;'
+frame_plot_line += 'if(n<500) n=n+1; reread;'
 
 for line in frame_plot_line:
     frame_plot_file.write(line)
@@ -70,7 +76,7 @@ frame_plot_line += 'set title title(n);'
 frame_plot_line += 'set view map;'
 frame_plot_line += 'set cbrange[0:1];'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<100) n=n+1; reread;'
+frame_plot_line += 'if(n<500) n=n+1; reread;'
 
 for line in frame_plot_line:
     frame_plot_file.write(line)
@@ -95,6 +101,7 @@ html_line += '<h1>result</h1>'
 html_line += image_set_line('animation.gif')
 html_line += image_set_line('glucose-animation.gif')
 html_line += image_set_line('cell-energy-average.png')
+html_line += image_set_line('cell-size.png')
 html_line += '</body></html>'
 
 for line in html_line:

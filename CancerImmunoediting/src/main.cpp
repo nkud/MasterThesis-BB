@@ -61,6 +61,7 @@
 #define VECTOR(type)            std::vector< type >
 #define ITERATOR(type)          std::vector< type >::iterator
 #define EACH(i,c)               for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); ++i)
+#define FOREACH(i,c)            for(typeof((c).begin()) i=(c).begin(); i!=(c).end(); )
 
 #define SAFE_DELETE(p)          delete p; p = NULL;
 #define SAFE_DELETE_ARRAY(p)    delete[] p; p = NULL;
@@ -322,7 +323,6 @@ void output_cell_energy_average( VECTOR(__Cell *)& cells ) {
   output_value_with_step("cell-energy-average.txt", average);
 }
 
-
 // 現在のグルコースの分布を出力する。
 void output_glucose_map( GlucoseScape& gs ) {
   char file_name[256];
@@ -373,6 +373,17 @@ int main() {
       cell.metabolize( *gs );
     }
 
+    // 死細胞を除去する。
+    FOREACH( it_cell, cells ) {
+      __Cell& cell = **it_cell;
+      if( cell.energy() <= 0 ) {
+        SAFE_DELETE( *it_cell );
+        cells.erase( it_cell );
+      } else {
+        it_cell++;
+      }
+    }
+
     // ファイルに出力する。
     // 細胞の分布を出力する
     output_cell_map( cells );
@@ -380,6 +391,7 @@ int main() {
     output_cell_energy_average( cells );
     // グルコースマップを出力する。
     output_glucose_map( *gs );
+    output_value_with_step("cell-size.txt", cells.size());
   }
   // ------------------------------------------------------
 
