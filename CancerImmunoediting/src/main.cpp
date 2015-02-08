@@ -324,7 +324,6 @@ int main() {
   // グルコーススケープのインスタンスを作成する。
   GlucoseScape *gs = new GlucoseScape();
 
-  __Landscape *landscape = new __Landscape();
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
   VECTOR(__Cell *) cells;
