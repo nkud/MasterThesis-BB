@@ -39,3 +39,16 @@ frame_plot_line += 'if(n<100) n=n+1; reread;'
 
 for line in frame_plot_line:
     frame_plot_file.write(line)
+
+# index.html
+html_file = open('index.html', 'w')
+
+html_line = []
+html_line += '<html>'
+html_line += '<title>result</title>'
+html_line += '<body>'
+html_line += '<h1>result</h1>'
+html_line += '</body></html>'
+
+for line in html_line:
+    html_file.write(line)

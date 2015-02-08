@@ -74,6 +74,6 @@ open:
 	@$(CLRECHO)
 	@open stat/index.html
 
-all: clean $(TARGET) run stat
+all: clean $(TARGET) run stat open
 
 -include colors.mk
