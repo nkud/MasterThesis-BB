@@ -2,13 +2,15 @@
 # Cancer Immunoediting Model Makefile
 #
 # TODO
-# 実行時には、一旦tmpディレクトリに実行して、
+# - 実行時には、一旦tmpディレクトリに実行して、
 # binディレクトリは消さないようにすれば、
 # 誤って実行してしまった時にもデータは残る。
+# - timestampを上手く機能させる。
 
 # command
 PRINT = echo
 CC    = g++ -Wall -g -O0
+PY    = /usr/local/bin/python
 MKDIR = mkdir -p
 COPY  = cp -r
 RM    = rm -rfv
@@ -16,25 +18,55 @@ PLOT  = gnuplot
 
 # dictionary
 bin_dir = bin
+stat_dir = stat
 EXE_NAME = CancerImmunoeditingModel.exe
 TARGET = $(bin_dir)/$(EXE_NAME)
+
+# utility
+timestamp	:= $(shell date '+< %y/%m/%d %H:%M:%S >')
 
 
 .PHONY: run all clean stat pack open
 
 $(TARGET): src/main.cpp
+	@$(COLORECHO)
+	@$(PRINT) -n '==> Creating $(notdir $@)...'
+	@$(CLRECHO)
 	@$(MKDIR) $(bin_dir)
 	@$(CC) $^ -o $@ $(CPPFLAGS)
+	@$(PRINT) 'ok'
 
 run:
+	@$(COLORECHO)
+	@$(PRINT) '==> Run $(EXE_NAME)'
+	@$(CLRECHO)
 	@cd $(bin_dir); ./$(EXE_NAME)
+	@$(COLORECHO)
+	@$(PRINT) '==> End $(timestamp)'
+	@$(CLRECHO)
 
 clean:
-	@$(RM) $(bin_dir)
+	@$(COLORECHO)
+	@$(PRINT) '==> Cleanning $(bin_clean_files)'
+	@$(CLRECHO)
+	@$(RM) $(bin_dir) $(stat_dir)
+	@$(COLORECHO)
+	@$(PRINT) '==> Done'
+	@$(CLRECHO)
 
 stat:
+	@$(COLORECHO) -I$(include_dir)
+	@$(PRINT) '==> Generating...'
+	@$(CLRECHO)
+	@$(MKDIR) $(stat_dir)
 	@$(PLOT) animation.plt
 	@$(PLOT) auto.plt
+	@cd $(stat_dir); $(PY) ../script/stat.py
+	@cd $(stat_dir); $(PLOT) auto.plt 1>/dev/null
+	@cd $(stat_dir); $(PLOT) animation.plt 1>/dev/null
+	@$(COLORECHO)
+	@$(PRINT) '==> Done'
+	@$(CLRECHO)
 
 pack:
 

@@ -46,7 +46,7 @@
 #define REP(i, min, max)        for(int (i)=(min); (i)<=(max); (i)++)
 
 #define ECHO(x)                 do { std::cout<< CLEAR_RIGHT << "----> " \
-  <<GREEN<<BOLD<<x<<STANDARD<<CLR_ST<<"" \
+  <<GREEN<<x<<STANDARD<<CLR_ST<<"" \
   <<std::endl; }while(0);
 #define DEBUG(x)                do { std::cerr<<BOLD<<"[ DEBUG ] " \
   <<CLR_ST<<STANDARD<<#x<<" <-- "<<BOLD<<(x) \
