@@ -76,10 +76,10 @@ const int HEIGHT = 30;
 const int INITIAL_CELL_ENERGY = 10;
 
 // 最大計算期間を設定する。
-const int STEP = 100;
+const int STEP = 1000;
 
 // 細胞数を設定する。
-const int CELL_SIZE = 100;
+const int CELL_SIZE = 1;
 
 // クラスを定義していく。
 

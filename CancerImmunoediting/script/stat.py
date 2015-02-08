@@ -5,7 +5,7 @@
 auto_plot_file = open('auto.plt', 'w')
 
 auto_plot_line = []
-auto_plot_line += 'set terminal png size 500,500;'
+auto_plot_line += 'set terminal png size 500,200;'
 auto_plot_line += 'set output "cell-energy-average.png";'
 auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
 
@@ -17,7 +17,7 @@ animation_plot_file = open('animation.plt', 'w')
 
 animation_plot_line = []
 
-animation_plot_line += 'set terminal gif animate optimize size 500,500 delay 5;'
+animation_plot_line += 'set terminal gif animate optimize size 300,300 delay 5;'
 animation_plot_line += 'set output "animation.gif";'
 animation_plot_line += 'set style line 1 lw 2;'
 animation_plot_line += 'set key below right;'
@@ -36,7 +36,7 @@ frame_plot_line += 'title(n)=sprintf("t = %d", n);'
 frame_plot_line += 'file(n)=sprintf("../bin/%d-cell.txt", n);'
 frame_plot_line += 'set title title(n);'
 frame_plot_line += 'set view map;'
-frame_plot_line += 'set cbrange[0:5];'
+frame_plot_line += 'set cbrange[0:1];'
 frame_plot_line += 'splot file(n) w pm3d;'
 frame_plot_line += 'if(n<100) n=n+1; reread;'
 
