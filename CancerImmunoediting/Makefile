@@ -10,7 +10,7 @@
 # command
 PRINT = echo
 CC    = g++ -Wall -g -O0
-PY    = /usr/local/bin/python
+PY    = python
 MKDIR = mkdir -p
 COPY  = cp -r
 RM    = rm -rfv

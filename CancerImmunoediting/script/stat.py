@@ -46,7 +46,7 @@ frame_plot_line += 'title(n)=sprintf("t = %d", n);'
 frame_plot_line += 'file(n)=sprintf("../bin/%d-glucose.txt", n);'
 frame_plot_line += 'set title title(n);'
 frame_plot_line += 'set view map;'
-frame_plot_line += 'set cbrange[0:100];'
+frame_plot_line += 'set cbrange[0:10];'
 frame_plot_line += 'splot file(n) w pm3d;'
 frame_plot_line += 'if(n<1000) n=n+1; reread;'
 # -----------------------------------------------
