@@ -156,7 +156,7 @@ class GlucoseScape : public __SugarScape {
         }
       }
     }
-    int glucose(int x, int y) const { return glucose_map_[x][y]; }
+    double glucose(int x, int y) const { return glucose_map_[x][y]; }
     void setGlucose(int x, int y, int value) {
       glucose_map_[x][y] = value;
     }
