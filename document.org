@@ -1,14 +1,56 @@
 #+TITLE: 修士研究
 #+AUTHOR: Naoki Ueda
-#+OPTIONS: \n:nil H:2 toc:t author:nil email:nil timestamp:nil creator:nil num:nil
+#+OPTIONS: \n:nil H:2 toc:t author:nil email:nil timestamp:t creator:nil num:nil
 #+LANGUAGE: ja
 #+LaTeX_CLASS: thesis
-#+STARTUP: contente
+#+STARTUP: content
 #+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:12px;}</style>
-#+HTML_HEAD: <style type="text/css">body {padding: 100px;}</style>
+#+HTML_HEAD: <style type="text/css">h2 {text-decoration:underline;margin-top:3em;}</style>
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+* モデル概略
+** オブジェクト説明
+- 各種細胞は、スケープ上を自由に移動する。
+#+BEGIN_SRC plantuml :file sample.svg :cmdline -charset UTF-8
+
+title Cancer Immunoediting Model
+scale 300 width
+
+class 正常細胞 {
+  -double エネルギー
+  +移動する()
+  +代謝する()
+}
+
+class 腫瘍細胞 {
+  -double エネルギー
+  +移動する()
+  +代謝する()
+}
+
+class グルコーススケープ {
+  -double グルコースマップ[HEIGHT][WIDTH]
+  +グルコースを再生する()
+}
+
+class 酸素スケープ {
+  -double 酸素マップ[HEIGHT][WIDTH]
+  +酸素を再生する()
+}
+
+#+END_SRC
+** モデルの流れ
+1. 細胞が移動する
+   1. 移動距離に応じて、所持エネルギーが減る
+2. 細胞が分裂する
+   - 細胞が閾値以上のエネルギーを所持していれば、同じ位置に新しい細胞を作成する
+3. 細胞が代謝する
+   1. グルコースを利用して、エネルギーを蓄える
+   2. その分、その細胞の位置にあるグルコース量は減る
+4. 細胞が死亡する
+   1. ある閾値以下のエネルギーしかもたない細胞は、死亡する
+5. グルコースが再生する
 * 修士論文
 ** 序論
 *** 背景説明
@@ -21,14 +63,33 @@
   免疫原性の低い腫瘍細胞を増殖してしまう現象を説明した、
   がん免疫エディティングという仮説がある。
 - このがん免疫エディティングには、３つのステージがある。
-- １つ目は、排除相である。
-- ２つ目は、平衡相である。
-- ３つ目は、逃避相である。
+- １つ目は、排除相である。２つ目は、平衡相である。３つ目は、逃避相である。
 - つまり、普段は排除されるが、がん細胞の増殖率がある閾値を超えると、
   免疫機構では抑えきれなくなり、増殖してしまう。
+*** 先行研究紹介
+*** 問題点を指摘する
 *** 問題を設定する
 - 免疫機構の何が、これら３つの相を生み出しているのかは、まだ定かではない。
 - がん免疫エディティングの
+*** 設定した問題点の重要性を議論する
+*** 問題をとくために使う方法
+*** HOLD 得られた結果を説明する
+*** HOLD 得られた結果の価値を検討する
+*** HOLD 本論文の構成を述べる
+* COMMENT 構成
+** 序論
+*** 背景説明
+- 他分野である可能性が高い。
+*** 先行研究紹介
+*** 問題点を指摘する
+*** 問題を設定する
+*** 設定した問題性の重要性を議論する
+*** 問題を解くために使う方法
+- 既存なら参考文献を挙げる
+- 新規なら説明をする
+*** 得られた結果を説明する
+*** 得られた結果の価値を検討する
+*** 本論文の構成を述べる
 * COMMENT Note
 ** Hallmarks of Cancer
 *** 血管新生の励起
@@ -43,20 +104,6 @@
   また再び解糖系を稼動させるためにNADHの酸化を行うことにある。
 - がん細胞はエネルギー産生を、嫌気性解糖に依存しているので、
   正常細胞の何十倍もの多くの glucose を必要とする。
-* 構成
-** 序論
-*** 背景説明
-- 他分野である可能性が高い。
-*** 先行研究紹介
-*** 問題点を指摘する
-*** 問題を設定する
-*** 設定した問題性の重要性を議論する
-*** 問題を解くために使う方法
-- 既存なら参考文献を挙げる
-- 新規なら説明をする
-*** 得られた結果を説明する
-*** 得られた結果の価値を検討する
-*** 本論文の構成を述べる
 * COMMENT プロット
 ** Authors　著者
 ** Title　題名
@@ -69,14 +116,26 @@
 ** Acknowledgement　社寺
 ** Reference　参考文献
 ** Supplementary material　補足資料
-* 構成
+* COMMENT 構成
 ** CancerImmunoediting
 *** 腫瘍モデル
-* TODO
+* TODO COMMENT
 ** 糖代謝のモデルを作成する
 ** サムネイル用の画像を作成する
 ** 状態の変わるデザインパターンを利用する
-* アイデア
+* COMMENT アイデア
 ** NowakのモデルをABM化する
 ** 統計モデルを作ってみる
-
+* COMMENT trash
+class 細胞 {
+-double energy_ : 細胞が所持するエネルギー
++double energy()
++void move( __Landscape& landscape ) : 移動する
++void metabolize( GlucoseScape& gs ) : 代謝する
+}
+class グルコーススケープ {
+-double glucose_map_[HEIGHT][WIDTH] : グルコースのマップ
++double glucose( int x, int y )
++setGlucose( int x, int y )
++void generate() : グルコースを再生する
+}
