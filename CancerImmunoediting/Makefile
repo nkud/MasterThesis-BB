@@ -26,7 +26,7 @@ TARGET = $(bin_dir)/$(EXE_NAME)
 timestamp	:= $(shell date '+< %y/%m/%d %H:%M:%S >')
 
 
-.PHONY: run all clean stat pack open
+.PHONY: run all clean stat pack open re
 
 $(TARGET): src/main.cpp
 	@$(COLORECHO)
@@ -77,6 +77,8 @@ open:
 	@$(COLORECHO)
 	@$(PRINT) '==> Done'
 	@$(CLRECHO)
+
+re: clean $(TARGET)
 
 all: clean $(TARGET) run stat open
 

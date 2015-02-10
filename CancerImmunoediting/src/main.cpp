@@ -77,7 +77,7 @@ const int HEIGHT = 30;
 const int INITIAL_CELL_ENERGY = 10;
 
 // 最大計算期間を設定する。
-const int STEP = 500;
+const int STEP = 1000;
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100;
@@ -106,6 +106,7 @@ class Random {
     int randomSign() { return probability(50) ? -1 : 1; }
   private:
     Random() { srand((unsigned)time(NULL)); }
+    ~Random() { }
 };
 
 // 細胞土地のインターフェイスを作成する。
@@ -113,6 +114,7 @@ class Random {
 class __Landscape {
   public:
     __Landscape() : width_(WIDTH), height_(HEIGHT) { }
+    ~__Landscape() { }
     int width() const { return width_; }
     int height() const { return height_; }
 
@@ -132,7 +134,7 @@ class __Landscape {
 // シュガーを生産できる。
 class __SugarScape : public __Landscape {
   public:
-    void generate();
+    virtual void generate() { }
   private:
 };
 
@@ -146,12 +148,20 @@ class GlucoseScape : public __SugarScape {
         }
       }
     }
+    virtual void generate() {
+      double g = 0.1;
+      FOR(i, WIDTH) {
+        FOR(j, HEIGHT) {
+          glucose_map_[i][j] += g;
+        }
+      }
+    }
     int glucose(int x, int y) const { return glucose_map_[x][y]; }
     void setGlucose(int x, int y, int value) {
       glucose_map_[x][y] = value;
     }
   private:
-    int glucose_map_[HEIGHT][WIDTH];
+    double glucose_map_[HEIGHT][WIDTH];
 };
 
 // 酸素のクラスを作成する。
@@ -167,6 +177,8 @@ class OxygenScape : public __SugarScape {
  */
 class __Location {
   public:
+    __Location() { }
+    ~__Location() { }
     int x() const { return x_; }
     int y() const { return y_; }
     void setX(int x) { x_ = x; }
@@ -184,6 +196,8 @@ class __Location {
 // 移動するエージェントのインターフェイスを作成する。
 class __Mobile : public __Location {
   public:
+    __Mobile() { }
+    ~__Mobile() { }
     void move() { }
     void move(int tox, int toy);
     // ランドスケープ上を移動させる。
@@ -214,6 +228,7 @@ class __Mobile : public __Location {
 class __Cell : public __Mobile {
   public:
     __Cell() : energy_(INITIAL_CELL_ENERGY) { }
+    ~__Cell() { }
 
     double energy() const { return energy_; }
 
@@ -384,6 +399,9 @@ int main() {
       }
     }
 
+    // グルコーススケープが再生する。
+    gs->generate();
+
     // ファイルに出力する。
     // 細胞の分布を出力する
     output_cell_map( cells );
@@ -394,7 +412,6 @@ int main() {
     output_value_with_step("cell-size.txt", cells.size());
   }
   // ------------------------------------------------------
-
 
   return 0;
 }
