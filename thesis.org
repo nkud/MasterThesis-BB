@@ -69,3 +69,14 @@
 ** Acknowledgement　社寺
 ** Reference　参考文献
 ** Supplementary material　補足資料
+* 構成
+** CancerImmunoediting
+*** 腫瘍モデル
+* TODO
+** 糖代謝のモデルを作成する
+** サムネイル用の画像を作成する
+** 状態の変わるデザインパターンを利用する
+* アイデア
+** NowakのモデルをABM化する
+** 統計モデルを作ってみる
+
