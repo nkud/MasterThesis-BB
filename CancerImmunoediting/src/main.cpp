@@ -77,7 +77,7 @@ const int HEIGHT = 30;
 const int INITIAL_CELL_ENERGY = 10;
 
 // 最大計算期間を設定する。
-const int STEP = 1000;
+const int STEP = 500;
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100;
@@ -183,6 +183,7 @@ class __Location {
     int y() const { return y_; }
     void setX(int x) { x_ = x; }
     void setY(int y) { y_ = y; }
+    void setLocation(int x, int y) { setX(x); setY(y); }
 
     // スケープ上にランダムに配置する。
     void randomSet() {
@@ -382,6 +383,24 @@ int main() {
       cell.move( *gs );
     }
 
+    /*
+     * 細胞分裂をする。
+     * 細胞が閾値以上のエネルギーを所持していれば、
+     * 同じ位置に新しい細胞を作成する。
+     */
+    VECTOR(__Cell *) new_cells;
+    EACH( it_cell, cells ) {
+      __Cell& cell = **it_cell;
+      if( cell.energy() > 0 ) {
+        __Cell *newc = new __Cell();
+        int newx = cell.x(); int newy = cell.y();
+        newc->setLocation( newx, newy );
+        new_cells.push_back( newc );
+      }
+    }
+    cells.insert(cells.end(), new_cells.begin(), new_cells.end());
+    
+
     // 細胞が代謝する。
     EACH( it_cell, cells ) {
       __Cell& cell = **it_cell;
@@ -391,7 +410,7 @@ int main() {
     // 死細胞を除去する。
     FOREACH( it_cell, cells ) {
       __Cell& cell = **it_cell;
-      if( cell.energy() <= 0 ) {
+      if( cell.energy() <= 10 ) {
         SAFE_DELETE( *it_cell );
         cells.erase( it_cell );
       } else {
