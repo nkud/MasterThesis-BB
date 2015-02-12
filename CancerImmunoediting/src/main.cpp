@@ -68,7 +68,9 @@
 
 #define SEPARATOR               " "
 
-// 定数パラメータの定義する。
+/*
+ * 定数パラメータを定義する。
+ */
 
 // ランドスケープの幅と高さを設定する。
 const int WIDTH  = 30;
@@ -229,41 +231,34 @@ class __Mobile : public __Location {
 // 細胞は代謝する。
 // エネルギーを持つ。
 class __Cell : public __Mobile {
-  public:
-    __Cell() : energy_(INITIAL_CELL_ENERGY) { }
-    ~__Cell() { }
+ public:
+  __Cell() : energy_(INITIAL_CELL_ENERGY) { }
+  virtual ~__Cell() { }
+  
+  double energy() const { return energy_; }
+  void setEnergy( double energy ) { energy_ = energy; }
+  
+  // 代謝する。
+   void metabolize( GlucoseScape& gs );
+  
+  // スケープ上を移動する。
+  virtual void move( __Landscape& landscape ) {
+    Random& random = Random::Instance();
+    int from_x = x(); int from_y = y();
+    int to_x = from_x; int to_y = from_y;
+    if( random.randomBool() ) { to_x += random.randomSign(); }
+    if( random.randomBool() ) { to_y += random.randomSign(); }
 
-    double energy() const { return energy_; }
-
-    // 代謝する。
-    void metabolize( GlucoseScape& gs ) {
-      // 利用できるグルコースがなければ、スキップする。
-      int g = gs.glucose(x(), y());
-      int gathering = 2;
-      if( g >= gathering ) {
-        energy_ += gathering;
-        gs.setGlucose( x(), y(), g-gathering );
-      }
+    // もし移動先が正しくスケープ上であれば、移動する。
+    // 移動した場合、コストを消費する。
+    if( landscape.isExistingPoint( to_x, to_y ) ) {
+      setX( to_x ); setY( to_y );
+      int cost = abs(from_x-to_x) + abs(from_y-to_y);
+      energy_ -= cost;
     }
-
-    // スケープ上を移動する。
-    virtual void move( __Landscape& landscape ) {
-      Random& random = Random::Instance();
-      int from_x = x(); int from_y = y();
-      int to_x = from_x; int to_y = from_y;
-      if( random.randomBool() ) { to_x += random.randomSign(); }
-      if( random.randomBool() ) { to_y += random.randomSign(); }
-
-      // もし移動先が正しくスケープ上であれば、移動する。
-      // 移動した場合、コストを消費する。
-      if( landscape.isExistingPoint( to_x, to_y ) ) {
-        setX( to_x ); setY( to_y );
-        int cost = abs(from_x-to_x) + abs(from_y-to_y);
-        energy_ -= cost;
-      }
-    }
-  private:
-    double energy_;
+  }
+ private:
+  double energy_;
 };
 
 // 正常細胞のクラスを作成する。
@@ -271,6 +266,31 @@ class __Cell : public __Mobile {
 // 移動はしない。分裂はする。？？
 class NormalCell : public __Cell {
   public:
+  void metabolize( GlucoseScape& gs ) {
+    int g = gs.glucose(x(), y());
+    int gathering = 2;
+    if( g >= gathering ) {
+      setEnergy( energy() + gathering );
+      gs.setGlucose( x(), y(), g-gathering );
+    }
+  }
+
+  // スケープ上を移動する。
+  virtual void move( __Landscape& landscape ) {
+    Random& random = Random::Instance();
+    int from_x = x(); int from_y = y();
+    int to_x = from_x; int to_y = from_y;
+    if( random.randomBool() ) { to_x += random.randomSign(); }
+    if( random.randomBool() ) { to_y += random.randomSign(); }
+
+    // もし移動先が正しくスケープ上であれば、移動する。
+    // 移動した場合、コストを消費する。
+    if( landscape.isExistingPoint( to_x, to_y ) ) {
+      setX( to_x ); setY( to_y );
+      int cost = abs(from_x-to_x) + abs(from_y-to_y);
+      setEnergy( energy() - cost );
+    }
+  }
   private:
 };
 
@@ -321,10 +341,10 @@ void output_value_with_step( const char *fname, T value ) {
 };
 
 // 細胞クラスの、スケープ上での２次元マップを出力する。
-void output_cell_map( VECTOR(__Cell *)& cells );
+void output_cell_map( VECTOR(NormalCell *)& cells );
 
 // 細胞クラスの平均エネルギーを出力する。
-void output_cell_energy_average( VECTOR(__Cell *)& cells );
+void output_cell_energy_average( VECTOR(NormalCell *)& cells );
 
 // 現在のグルコースの分布を出力する。
 void output_glucose_map( GlucoseScape& gs );
@@ -342,9 +362,9 @@ int main() {
 
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
-  VECTOR(__Cell *) cells;
+  VECTOR(NormalCell *) cells;
   FOR(i, CELL_SIZE) {
-    __Cell *nm = new __Cell();
+    NormalCell *nm = new NormalCell();
     nm->randomSet();
     cells.push_back( nm );
   }
@@ -353,7 +373,7 @@ int main() {
   while( stepKeeper.loop() ) {
     // 細胞が移動する。
     EACH( it_cell, cells ) {
-      __Cell& cell = **it_cell;
+      NormalCell& cell = **it_cell;
       cell.move( *gs );
     }
 
@@ -362,11 +382,11 @@ int main() {
      * 細胞が閾値以上のエネルギーを所持していれば、
      * 同じ位置に新しい細胞を作成する。
      */
-    VECTOR(__Cell *) new_cells;
+    VECTOR(NormalCell *) new_cells;
     EACH( it_cell, cells ) {
-      __Cell& cell = **it_cell;
+      NormalCell& cell = **it_cell;
       if( cell.energy() > 0 ) {
-        __Cell *newc = new __Cell();
+        NormalCell *newc = new NormalCell();
         int newx = cell.x(); int newy = cell.y();
         newc->setLocation( newx, newy );
         new_cells.push_back( newc );
@@ -377,13 +397,13 @@ int main() {
 
     /* 細胞が代謝する */
     EACH( it_cell, cells ) {
-      __Cell& cell = **it_cell;
+      NormalCell& cell = **it_cell;
       cell.metabolize( *gs );
     }
 
     /* 死細胞を除去する */
     FOREACH( it_cell, cells ) {
-      __Cell& cell = **it_cell;
+      NormalCell& cell = **it_cell;
       if( cell.energy() <= 10 ) {
         SAFE_DELETE( *it_cell );
         cells.erase( it_cell );
@@ -409,14 +429,14 @@ int main() {
   return 0;
 }
 
-void output_cell_map( VECTOR(__Cell *)& cells ) {
+void output_cell_map( VECTOR(NormalCell *)& cells ) {
   // ファイル名
   char file_name[256];
   sprintf(file_name, "%d-cell.txt", StepKeeper::Instance().step());
   std::ofstream cell_map_ofs(file_name);
   int location_map[HEIGHT][WIDTH] = {};
   EACH(it_cell, cells) {
-    __Cell& cell = **it_cell;
+    NormalCell& cell = **it_cell;
     location_map[cell.y()][cell.x()]++;
   }
   FOR(i, HEIGHT) {
@@ -430,10 +450,10 @@ void output_cell_map( VECTOR(__Cell *)& cells ) {
   }
 }
 
-void output_cell_energy_average( VECTOR(__Cell *)& cells ) {
+void output_cell_energy_average( VECTOR(NormalCell *)& cells ) {
   int sum = 0;
   EACH(it_cell, cells) {
-    __Cell& cell = **it_cell;
+    NormalCell& cell = **it_cell;
     sum += cell.energy();
   }
   double average = (double)sum/cells.size();
