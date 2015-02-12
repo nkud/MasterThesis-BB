@@ -200,7 +200,7 @@ class __Location {
 class __Mobile : public __Location {
   public:
     __Mobile() { }
-    ~__Mobile() { }
+    virtual ~__Mobile() { }
     void move() { }
     void move(int tox, int toy);
     // ランドスケープ上を移動させる。
@@ -274,28 +274,40 @@ class NormalCell : public __Cell {
   private:
 };
 
-// 時間を更新するクラスを作成する。
-// どこからアクセスしても同じ時間になるために、
-// シングルトンパターンを利用する。
+/*
+ * 時間を更新するクラスを作成する。
+ * どこからアクセスしても同じ時間になるために、
+ * シングルトンパターンを利用する。
+ */
 class StepKeeper {
   public:
-    static StepKeeper& Instance() {
-      static StepKeeper singleton; return singleton;
-    }
+    static StepKeeper& Instance();
+
+    /* ステップを進める */
     void proceed() { step_++; }
     int step() const { return step_; }
     int maxStep() const { return max_step_; }
     void setMaxStep( int maxstep ) { max_step_ = maxstep; }
-    bool loop() {
-      proceed();
-      if( step() <= maxStep() ) return true;
-      else return false;
-    }
+
+    /* 最大ステップまでループする */
+    bool loop();
+
   private:
     StepKeeper() : step_(0), max_step_(0) { }
     int step_;
     int max_step_;
 };
+
+StepKeeper& StepKeeper::Instance() {
+  static StepKeeper singleton;
+  return singleton;
+}
+
+bool StepKeeper::loop() {
+  proceed();
+  if( step() <= maxStep() ) return true;
+  else return false;
+}
 
 // 出力用の関数を作成する。
 
@@ -309,54 +321,14 @@ void output_value_with_step( const char *fname, T value ) {
 };
 
 // 細胞クラスの、スケープ上での２次元マップを出力する。
-void output_cell_map( VECTOR(__Cell *)& cells ) {
-  // ファイル名
-  char file_name[256];
-  sprintf(file_name, "%d-cell.txt", StepKeeper::Instance().step());
-  std::ofstream cell_map_ofs(file_name);
-  int location_map[HEIGHT][WIDTH] = {};
-  EACH(it_cell, cells) {
-    __Cell& cell = **it_cell;
-    location_map[cell.y()][cell.x()]++;
-  }
-  FOR(i, HEIGHT) {
-    FOR(j, WIDTH) {
-      cell_map_ofs << i << SEPARATOR;
-      cell_map_ofs << j << SEPARATOR;
-      cell_map_ofs << location_map[i][j];
-      cell_map_ofs << std::endl;
-    }
-    cell_map_ofs << std::endl;
-  }
-}
+void output_cell_map( VECTOR(__Cell *)& cells );
 
 // 細胞クラスの平均エネルギーを出力する。
-void output_cell_energy_average( VECTOR(__Cell *)& cells ) {
-  int sum = 0;
-  EACH(it_cell, cells) {
-    __Cell& cell = **it_cell;
-    sum += cell.energy();
-  }
-  double average = (double)sum/cells.size();
-  output_value_with_step("cell-energy-average.txt", average);
-}
+void output_cell_energy_average( VECTOR(__Cell *)& cells );
 
 // 現在のグルコースの分布を出力する。
-void output_glucose_map( GlucoseScape& gs ) {
-  char file_name[256];
-  sprintf(file_name, "%d-glucose.txt", StepKeeper::Instance().step());
-  std::ofstream glucose_map_ofs(file_name);
+void output_glucose_map( GlucoseScape& gs );
 
-  FOR(i, HEIGHT) {
-    FOR(j, WIDTH) {
-      glucose_map_ofs << i << SEPARATOR;
-      glucose_map_ofs << j << SEPARATOR;
-      glucose_map_ofs << gs.glucose(i, j);
-      glucose_map_ofs << std::endl;
-    }
-    glucose_map_ofs << std::endl;
-  }
-}
 // エントリーポイント
 int main() {
   ECHO("Cancer Immunoediting Model");
@@ -403,13 +375,13 @@ int main() {
     cells.insert(cells.end(), new_cells.begin(), new_cells.end());
     
 
-    // 細胞が代謝する。
+    /* 細胞が代謝する */
     EACH( it_cell, cells ) {
       __Cell& cell = **it_cell;
       cell.metabolize( *gs );
     }
 
-    // 死細胞を除去する。
+    /* 死細胞を除去する */
     FOREACH( it_cell, cells ) {
       __Cell& cell = **it_cell;
       if( cell.energy() <= 10 ) {
@@ -423,7 +395,7 @@ int main() {
     // グルコーススケープが再生する。
     gs->generate();
 
-    // ファイルに出力する。
+    /* ファイルに出力する */
     // 細胞の分布を出力する
     output_cell_map( cells );
     // 細胞の平均エネルギーを出力する。
@@ -435,4 +407,51 @@ int main() {
   // ------------------------------------------------------
 
   return 0;
+}
+
+void output_cell_map( VECTOR(__Cell *)& cells ) {
+  // ファイル名
+  char file_name[256];
+  sprintf(file_name, "%d-cell.txt", StepKeeper::Instance().step());
+  std::ofstream cell_map_ofs(file_name);
+  int location_map[HEIGHT][WIDTH] = {};
+  EACH(it_cell, cells) {
+    __Cell& cell = **it_cell;
+    location_map[cell.y()][cell.x()]++;
+  }
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      cell_map_ofs << i << SEPARATOR;
+      cell_map_ofs << j << SEPARATOR;
+      cell_map_ofs << location_map[i][j];
+      cell_map_ofs << std::endl;
+    }
+    cell_map_ofs << std::endl;
+  }
+}
+
+void output_cell_energy_average( VECTOR(__Cell *)& cells ) {
+  int sum = 0;
+  EACH(it_cell, cells) {
+    __Cell& cell = **it_cell;
+    sum += cell.energy();
+  }
+  double average = (double)sum/cells.size();
+  output_value_with_step("cell-energy-average.txt", average);
+}
+
+void output_glucose_map( GlucoseScape& gs ) {
+  char file_name[256];
+  sprintf(file_name, "%d-glucose.txt", StepKeeper::Instance().step());
+  std::ofstream glucose_map_ofs(file_name);
+
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      glucose_map_ofs << i << SEPARATOR;
+      glucose_map_ofs << j << SEPARATOR;
+      glucose_map_ofs << gs.glucose(i, j);
+      glucose_map_ofs << std::endl;
+    }
+    glucose_map_ofs << std::endl;
+  }
 }

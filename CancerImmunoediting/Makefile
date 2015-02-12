@@ -13,7 +13,7 @@ CC    = g++ -Wall -g -O0
 PY    = python
 MKDIR = mkdir -p
 COPY  = cp -r
-RM    = rm -rfv
+RM    = rm -rf
 PLOT  = gnuplot
 
 # dictionary
@@ -30,11 +30,13 @@ timestamp	:= $(shell date '+< %y/%m/%d %H:%M:%S >')
 
 $(TARGET): src/main.cpp
 	@$(COLORECHO)
-	@$(PRINT) -n '==> Creating $(notdir $@)...'
+	@$(PRINT) '==> Creating $(notdir $@)...'
 	@$(CLRECHO)
 	@$(MKDIR) $(bin_dir)
 	@$(CC) $^ -o $@ $(CPPFLAGS)
-	@$(PRINT) 'ok'
+	@$(COLORECHO)
+	@$(PRINT) '==> Done'
+	@$(CLRECHO)
 
 run:
 	@$(COLORECHO)
