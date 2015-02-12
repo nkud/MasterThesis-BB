@@ -1,6 +1,8 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
+MAX_STEP = 1000
+
 # auto.plt
 auto_plot_file = open('auto.plt', 'w')
 
@@ -8,10 +10,12 @@ auto_plot_line = []
 # -----------------------------------------------
 auto_plot_line += 'set terminal png size 500,200;'
 
+# 平均細胞エネルギー
 auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
 auto_plot_line += 'set output "cell-energy-average.png";'
 auto_plot_line += 'replot;set output;'
 
+# 総細胞数
 auto_plot_line += 'plot "../bin/cell-size.txt" w l;'
 auto_plot_line += 'set output "cell-size.png";'
 auto_plot_line += 'replot;set output;'
@@ -48,7 +52,7 @@ frame_plot_line += 'set title title(n);'
 frame_plot_line += 'set view map;'
 frame_plot_line += 'set cbrange[0:10];'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<1000) n=n+1; reread;'
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
 # -----------------------------------------------
 
 for line in frame_plot_line:
@@ -83,7 +87,7 @@ frame_plot_line += 'set title title(n);'
 frame_plot_line += 'set view map;'
 frame_plot_line += 'set cbrange[0:1];'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<1000) n=n+1; reread;'
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
 # -----------------------------------------------
 
 for line in frame_plot_line:
@@ -94,11 +98,18 @@ def image_set_line(imagefname):
     """ 画像を配置する文字列を返す """
     line = ''
     line += '<!-- IMAGE -->'
-    line += '<hr />'
     line += '<table class="graph"'
     line += '\t<tr><td><img src="%s" /></td></tr>' % imagefname
     line += '</table>'
     return line
+
+def image_with_title_set_line(imagefname, title):
+    """ 画像とタイトルを配置する文字列を返す """
+    line = ''
+    line += '<h2>%s</h2>\n' % title
+    line += image_set_line(imagefname)
+    return line
+
 
 html_file = open('index.html', 'w')
 
@@ -109,9 +120,12 @@ html_line += '<title>result</title>'
 html_line += '<body>'
 html_line += '<h1>result</h1>'
 html_line += image_set_line('animation.gif')
+html_line += '<hr />'
 html_line += image_set_line('glucose-animation.gif')
-html_line += image_set_line('cell-energy-average.png')
-html_line += image_set_line('cell-size.png')
+html_line += '<hr />'
+html_line += image_with_title_set_line('cell-energy-average.png', '平均細胞エネルギー')
+html_line += '<hr />'
+html_line += image_with_title_set_line('cell-size.png', '総細胞数')
 html_line += '</body></html>'
 # -----------------------------------------------
 

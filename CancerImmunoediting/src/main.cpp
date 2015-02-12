@@ -78,11 +78,18 @@ const int HEIGHT = 30;
 
 const int INITIAL_CELL_ENERGY = 10;
 
+/* グルコースの再生量 /1step */
+const double GLUCOSE_GENERATE = 0.1;
+
 // 最大計算期間を設定する。
-const int STEP = 500;
+const int STEP = 1000;
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100;
+
+const double CELL_METABOLIZE_GLUCOSE = 2;
+
+const double CELL_DEATH_THRESHOLD_ENERGY = 10;
 
 // クラスを定義していく。
 
@@ -148,15 +155,14 @@ class GlucoseScape : public __SugarScape {
     GlucoseScape() {
       FOR(i, HEIGHT) {
         FOR(j, WIDTH) {
-          glucose_map_[i][j] = i+j;
+          glucose_map_[i][j] = 5;
         }
       }
     }
     virtual void generate() {
-      double g = 0.1;
       FOR(i, WIDTH) {
         FOR(j, HEIGHT) {
-          glucose_map_[i][j] += g;
+          glucose_map_[i][j] += GLUCOSE_GENERATE;
         }
       }
     }
@@ -268,7 +274,7 @@ class NormalCell : public __Cell {
   public:
   void metabolize( GlucoseScape& gs ) {
     int g = gs.glucose(x(), y());
-    int gathering = 2;
+    int gathering = CELL_METABOLIZE_GLUCOSE;
     if( g >= gathering ) {
       setEnergy( energy() + gathering );
       gs.setGlucose( x(), y(), g-gathering );
@@ -311,6 +317,11 @@ class StepKeeper {
 
     /* 最大ステップまでループする */
     bool loop();
+
+    bool isInterval( int interval ) {
+      if(step()%interval == 0) return true;
+      else return false;
+    }
 
   private:
     StepKeeper() : step_(0), max_step_(0) { }
@@ -404,7 +415,7 @@ int main() {
     /* 死細胞を除去する */
     FOREACH( it_cell, cells ) {
       NormalCell& cell = **it_cell;
-      if( cell.energy() <= 10 ) {
+      if( cell.energy() <= CELL_DEATH_THRESHOLD_ENERGY ) {
         SAFE_DELETE( *it_cell );
         cells.erase( it_cell );
       } else {

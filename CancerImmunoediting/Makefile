@@ -56,18 +56,27 @@ clean:
 	@$(PRINT) '==> Done'
 	@$(CLRECHO)
 
-stat:
-	@$(COLORECHO) -I$(include_dir)
-	@$(PRINT) '==> Generating...'
+plot:
+	@$(COLORECHO)
+	@$(PRINT) '==> Plotting...'
 	@$(CLRECHO)
-	@$(MKDIR) $(stat_dir)
-	@cd $(stat_dir); $(PY) ../script/stat.py
 	-@cd $(stat_dir); $(PLOT) auto.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) glucose-animation.plt 1>/dev/null
 	@$(COLORECHO)
 	@$(PRINT) '==> Done'
 	@$(CLRECHO)
+
+script: stat/index.html
+	@$(COLORECHO)
+	@$(PRINT) '==> Scripting...'
+	@$(CLRECHO)
+	@cd $(stat_dir); $(PY) ../script/stat.py
+	@$(COLORECHO)
+	@$(PRINT) '==> Done'
+	@$(CLRECHO)
+
+stat: script plot
 
 pack:
 
