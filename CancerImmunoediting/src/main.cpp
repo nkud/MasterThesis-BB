@@ -71,7 +71,7 @@
 // 定数パラメータの定義する。
 
 // ランドスケープの幅と高さを設定する。
-const int WIDTH = 30;
+const int WIDTH  = 30;
 const int HEIGHT = 30;
 
 const int INITIAL_CELL_ENERGY = 10;
@@ -84,8 +84,10 @@ const int CELL_SIZE = 100;
 
 // クラスを定義していく。
 
-// 乱数生成用のクラスを作成する。
-// シングルトンパターンを使用する。
+/*
+ * 乱数生成用のクラスを作成する。
+ * シングルトンパターンを使用する。
+ */
 class Random {
   public:
     static Random& Instance() { static Random singleton; return singleton; }
