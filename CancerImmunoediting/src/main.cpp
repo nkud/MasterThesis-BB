@@ -342,7 +342,9 @@ bool StepKeeper::loop() {
 
 // 出力用の関数を作成する。
 
-// ステップ数と一緒に、そのときの値を出力する関数
+/*
+ * ステップ数と一緒に、そのときの値を出力する関数
+ */
 template < typename T >
 void output_value_with_step( const char *fname, T value ) {
   int step = StepKeeper::Instance().step();
@@ -350,6 +352,33 @@ void output_value_with_step( const char *fname, T value ) {
   ofs << step << SEPARATOR;
   ofs << value << std::endl;
 };
+
+/*
+ * ステップ数と一緒に、その時の値を出力する関数
+ */
+template < typename T >
+void output_map_with_value( const char *fname,  VECTOR(T *)& location ) {
+  // ファイル名
+  char file_name[256];
+  sprintf(file_name, "%d-%s.txt", StepKeeper::Instance().step(), fname);
+  std::ofstream cell_map_ofs(file_name);
+
+  int location_map[HEIGHT][WIDTH] = {};
+  EACH(locate, location) {
+    T& cell = **locate;
+    location_map[cell.y()][cell.x()]++;
+  }
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      cell_map_ofs << i << SEPARATOR;
+      cell_map_ofs << j << SEPARATOR;
+      cell_map_ofs << location_map[i][j];
+      cell_map_ofs << std::endl;
+    }
+    cell_map_ofs << std::endl;
+  }
+}
+
 // 細胞クラスの、スケープ上での２次元マップを出力する。
 void output_cell_map( VECTOR(NormalCell *)& cells );
 
@@ -448,7 +477,8 @@ int main() {
 
     /* ファイルに出力する */
     // 細胞の分布を出力する
-    output_cell_map( cells );
+    //output_cell_map( cells );
+    output_map_with_value( "cell", cells );
     // 細胞の平均エネルギーを出力する。
     output_cell_energy_average( cells );
     // グルコースマップを出力する。
