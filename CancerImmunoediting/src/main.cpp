@@ -90,7 +90,7 @@ const int CELL_SIZE = 100;
 const double CELL_METABOLIZE_GLUCOSE = 2;
 
 const double CELL_DEATH_THRESHOLD_ENERGY = 0;
-const double CELL_DIVISION_THRESHOLD_ENERGY = 0;
+const double CELL_DIVISION_THRESHOLD_ENERGY = 15;
 
 // クラスを定義していく。
 
