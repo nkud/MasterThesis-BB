@@ -7,10 +7,10 @@
 *.log
 *.out
 *.toc
+*.svg
 document.html
 
 *.html
-
 
 # emacs temporary file
 .#*

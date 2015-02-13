@@ -89,7 +89,8 @@ const int CELL_SIZE = 100;
 
 const double CELL_METABOLIZE_GLUCOSE = 2;
 
-const double CELL_DEATH_THRESHOLD_ENERGY = 10;
+const double CELL_DEATH_THRESHOLD_ENERGY = 0;
+const double CELL_DIVISION_THRESHOLD_ENERGY = 0;
 
 // クラスを定義していく。
 
@@ -432,7 +433,7 @@ int main() {
     {
       NormalCell& origincell = **it_cell;
       double origin_energy = origincell.energy();
-      if( origin_energy > 0 )
+      if( origin_energy > CELL_DIVISION_THRESHOLD_ENERGY )
       {
         NormalCell *newcell = new NormalCell();
 
@@ -441,8 +442,8 @@ int main() {
         newcell->setLocation( newx, newy );
 
         // 半分にエネルギーを分ける。
-        //newcell->setEnergy( origin_energy / 2 );
-        //origincell.setEnergy( origin_energy / 2 );
+        newcell->setEnergy( origin_energy / 2 );
+        origincell.setEnergy( origin_energy / 2 );
 
         new_cells.push_back( newcell );
       }
@@ -490,26 +491,26 @@ int main() {
   return 0;
 }
 
-void output_cell_map( VECTOR(NormalCell *)& cells ) {
-  // ファイル名
-  char file_name[256];
-  sprintf(file_name, "%d-cell.txt", StepKeeper::Instance().step());
-  std::ofstream cell_map_ofs(file_name);
-  int location_map[HEIGHT][WIDTH] = {};
-  EACH(it_cell, cells) {
-    NormalCell& cell = **it_cell;
-    location_map[cell.y()][cell.x()]++;
-  }
-  FOR(i, HEIGHT) {
-    FOR(j, WIDTH) {
-      cell_map_ofs << i << SEPARATOR;
-      cell_map_ofs << j << SEPARATOR;
-      cell_map_ofs << location_map[i][j];
-      cell_map_ofs << std::endl;
-    }
-    cell_map_ofs << std::endl;
-  }
-}
+//void output_cell_map( VECTOR(NormalCell *)& cells ) {
+  //// ファイル名
+  //char file_name[256];
+  //sprintf(file_name, "%d-cell.txt", StepKeeper::Instance().step());
+  //std::ofstream cell_map_ofs(file_name);
+  //int location_map[HEIGHT][WIDTH] = {};
+  //EACH(it_cell, cells) {
+    //NormalCell& cell = **it_cell;
+    //location_map[cell.y()][cell.x()]++;
+  //}
+  //FOR(i, HEIGHT) {
+    //FOR(j, WIDTH) {
+      //cell_map_ofs << i << SEPARATOR;
+      //cell_map_ofs << j << SEPARATOR;
+      //cell_map_ofs << location_map[i][j];
+      //cell_map_ofs << std::endl;
+    //}
+    //cell_map_ofs << std::endl;
+  //}
+//}
 
 void output_cell_energy_average( VECTOR(NormalCell *)& cells ) {
   int sum = 0;
