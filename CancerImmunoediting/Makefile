@@ -26,7 +26,7 @@ TARGET = $(bin_dir)/$(EXE_NAME)
 timestamp	:= $(shell date '+< %y/%m/%d %H:%M:%S >')
 
 
-.PHONY: run all clean stat pack open re
+.PHONY: run all clean stat pack open re script plot
 
 $(TARGET): src/main.cpp
 	@$(COLORECHO)
@@ -60,6 +60,7 @@ plot:
 	@$(COLORECHO)
 	@$(PRINT) '==> Plotting...'
 	@$(CLRECHO)
+	@$(MKDIR) $(stat_dir)
 	-@cd $(stat_dir); $(PLOT) auto.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) glucose-animation.plt 1>/dev/null
@@ -67,10 +68,11 @@ plot:
 	@$(PRINT) '==> Done'
 	@$(CLRECHO)
 
-script: stat/index.html
+script:
 	@$(COLORECHO)
 	@$(PRINT) '==> Scripting...'
 	@$(CLRECHO)
+	@$(MKDIR) $(stat_dir)
 	@cd $(stat_dir); $(PY) ../script/stat.py
 	@$(COLORECHO)
 	@$(PRINT) '==> Done'

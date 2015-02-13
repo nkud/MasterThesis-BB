@@ -350,7 +350,6 @@ void output_value_with_step( const char *fname, T value ) {
   ofs << step << SEPARATOR;
   ofs << value << std::endl;
 };
-
 // 細胞クラスの、スケープ上での２次元マップを出力する。
 void output_cell_map( VECTOR(NormalCell *)& cells );
 
@@ -381,46 +380,67 @@ int main() {
   }
 
   // 計算を実行する ---------------------------------------
-  while( stepKeeper.loop() ) {
-    // 細胞が移動する。
-    EACH( it_cell, cells ) {
+  while( stepKeeper.loop() )
+  {
+    /*
+     * 細胞を移動させる。
+     */
+    EACH( it_cell, cells )
+    {
       NormalCell& cell = **it_cell;
       cell.move( *gs );
     }
 
     /*
      * 細胞分裂をする。
+     *
      * 細胞が閾値以上のエネルギーを所持していれば、
      * 同じ位置に新しい細胞を作成する。
+     * エネルギーは、半分分け与える。
      */
     VECTOR(NormalCell *) new_cells;
-    EACH( it_cell, cells ) {
-      NormalCell& cell = **it_cell;
-      if( cell.energy() > 0 ) {
-        NormalCell *newc = new NormalCell();
-        int newx = cell.x(); int newy = cell.y();
-        newc->setLocation( newx, newy );
-        new_cells.push_back( newc );
+    EACH( it_cell, cells )
+    {
+      NormalCell& origincell = **it_cell;
+      double origin_energy = origincell.energy();
+      if( origin_energy > 0 )
+      {
+        NormalCell *newcell = new NormalCell();
+
+        // 同じ位置に分裂する。
+        int newx = origincell.x(); int newy = origincell.y();
+        newcell->setLocation( newx, newy );
+
+        // 半分にエネルギーを分ける。
+        //newcell->setEnergy( origin_energy / 2 );
+        //origincell.setEnergy( origin_energy / 2 );
+
+        new_cells.push_back( newcell );
       }
     }
     cells.insert(cells.end(), new_cells.begin(), new_cells.end());
     
 
-    /* 細胞が代謝する */
-    EACH( it_cell, cells ) {
+    /*
+     * 細胞が代謝する
+     */
+    EACH( it_cell, cells )
+    {
       NormalCell& cell = **it_cell;
       cell.metabolize( *gs );
     }
 
-    /* 死細胞を除去する */
-    FOREACH( it_cell, cells ) {
+    /*
+     * 死細胞を除去する。
+     */
+    FOREACH( it_cell, cells )
+    {
       NormalCell& cell = **it_cell;
-      if( cell.energy() <= CELL_DEATH_THRESHOLD_ENERGY ) {
+      if( cell.energy() <= CELL_DEATH_THRESHOLD_ENERGY )
+      {
         SAFE_DELETE( *it_cell );
         cells.erase( it_cell );
-      } else {
-        it_cell++;
-      }
+      } else { it_cell++; }
     }
 
     // グルコーススケープが再生する。
