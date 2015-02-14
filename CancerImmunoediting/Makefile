@@ -22,11 +22,17 @@ stat_dir = stat
 EXE_NAME = CancerImmunoeditingModel.exe
 TARGET = $(bin_dir)/$(EXE_NAME)
 
+
+master_dir         = master
+now			= $(shell date +%y%m%d-%H%M%S)
+R = notitle
+result_dir		= result-$(now)-$(R)
+
 # utility
 timestamp	:= $(shell date '+< %y/%m/%d %H:%M:%S >')
 
 
-.PHONY: run all clean stat pack open re script plot
+.PHONY: run all clean stat pack open re script plot info
 
 $(TARGET): src/main.cpp
 	@$(COLORECHO)
@@ -81,6 +87,27 @@ script:
 stat: script plot
 
 pack:
+	@$(COLORECHO)
+	@$(PRINT) '==> Packing...'
+	@$(CLRECHO).
+	@$(MKDIR) $(master_dir)
+	@$(MKDIR) $(master_dir)/$(result_dir)
+	@$(MKDIR) $(master_dir)/$(result_dir)/$(program_dir)
+	@$(COPY) src script $(master_dir)/$(result_dir)/$(program_dir)/
+	@$(COPY) bin stat $(master_dir)/$(result_dir)/
+	@$(PRINT) '$(master_dir)/$(result_dir)'
+	@ls -al '$(master_dir)/$(result_dir)'
+	@$(COLORECHO)
+	@$(PRINT) '==> Done'
+	@$(CLRECHO)
+
+info:
+	@$(COLORECHO)
+	@$(PRINT) '==> Information'
+	@$(CLRECHO)
+	@$(COLORECHO)
+	@$(PRINT) '^^^^^^^^^^^^^^^'
+	@$(CLRECHO)
 
 open:
 	@$(COLORECHO)
