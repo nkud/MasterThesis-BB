@@ -2,6 +2,8 @@ bin/
 stat/
 master/
 
+html/
+
 *.swp
 
 # image

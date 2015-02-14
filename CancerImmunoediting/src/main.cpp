@@ -128,20 +128,24 @@ class __Landscape {
   public:
     __Landscape() : width_(WIDTH), height_(HEIGHT) { }
     ~__Landscape() { }
+    
     int width() const { return width_; }
     int height() const { return height_; }
 
     // ランドスケープ上に存在する点かどうかを評価する。
-    bool isExistingPoint(int x, int y) {
-      if( x < 0 ) return false;
-      if( y < 0 ) return false;
-      if( x > WIDTH-1 ) return false;
-      if( y > HEIGHT-1 ) return false;
-      return true;
-    }
+    bool isExistingPoint( int x, int y );
+
   private:
     int width_, height_;
 };
+
+bool __Landscape::isExistingPoint(int x, int y) {
+  if( x < 0 ) return false;
+  if( y < 0 ) return false;
+  if( x > WIDTH-1 ) return false;
+  if( y > HEIGHT-1 ) return false;
+  return true;
+}
 
 // シュガースケープのクラスを作成する。
 // シュガーを生産できる。
@@ -415,8 +419,9 @@ int main() {
   StepKeeper &stepKeeper = StepKeeper::Instance();
   stepKeeper.setMaxStep( STEP );
 
-  // グルコーススケープのインスタンスを作成する。
+  // グルコース、酸素マップのインスタンスを作成する。
   GlucoseScape *gs = new GlucoseScape();
+  OxygenScape *os = new OxygenScape();
 
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
