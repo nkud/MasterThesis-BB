@@ -78,8 +78,9 @@ const int HEIGHT = 30;
 
 const int INITIAL_CELL_ENERGY = 10;
 
-/* グルコースの再生量 /1step */
+/* グルコース, 酸素の再生量 /1step */
 const double GLUCOSE_GENERATE = 0.1;
+const double OXYGEN_GENERATE = 0.1;
 
 // 最大計算期間を設定する。
 const int STEP = 1000;
@@ -168,18 +169,34 @@ class GlucoseScape : public __SugarScape {
       }
     }
     double glucose(int x, int y) const { return glucose_map_[x][y]; }
-    void setGlucose(int x, int y, int value) {
-      glucose_map_[x][y] = value;
-    }
+    void setGlucose(int x, int y, double value) { glucose_map_[x][y] = value; }
   private:
     double glucose_map_[HEIGHT][WIDTH];
 };
 
-// 酸素のクラスを作成する。
+/*
+ * 酸素のクラスを作成する。
+ */
 class OxygenScape : public __SugarScape {
   public:
-    int oxygen(int x, int y) const;
+    OxygenScape() {
+      FOR(i, HEIGHT) {
+        FOR(j, WIDTH) {
+          oxygen_map_[i][j] = 5;
+        }
+      }
+    }
+    double oxygen(int x, int y) const { return oxygen_map_[x][y]; }
+    void setOxygen(int x, int y, double value) { oxygen_map_[x][y] = value; }
+    virtual void generate() {
+      FOR(i, WIDTH) {
+        FOR(j, HEIGHT) {
+          oxygen_map_[i][j] += OXYGEN_GENERATE;
+        }
+      }
+    }
   private:
+    double oxygen_map_[HEIGHT][WIDTH];
 };
 
 /*
