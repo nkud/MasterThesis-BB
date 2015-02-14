@@ -1,6 +1,6 @@
 #+TITLE: 修士研究
 #+AUTHOR: Naoki Ueda
-#+OPTIONS: \n:nil H:2 toc:t author:nil email:nil timestamp:t creator:nil num:nil
+#+OPTIONS: \n:nil H:1 toc:t author:nil email:nil timestamp:t creator:nil num:nil
 #+LANGUAGE: ja
 #+LaTeX_CLASS: thesis
 #+STARTUP: content
@@ -42,14 +42,14 @@ class 酸素スケープ {
 #+END_SRC
 ** モデルの流れ
 1. 細胞が移動する
-   1. 移動距離に応じて、所持エネルギーが減る
+   - 移動距離に応じて、所持エネルギーが減る
 2. 細胞が分裂する
    - 細胞が閾値以上のエネルギーを所持していれば、同じ位置に新しい細胞を作成する
 3. 細胞が代謝する
-   1. グルコースを利用して、エネルギーを蓄える
-   2. その分、その細胞の位置にあるグルコース量は減る
+   - グルコースを利用して、エネルギーを蓄える
+   - その分、その細胞の位置にあるグルコース量は減る
 4. 細胞が死亡する
-   1. ある閾値以下のエネルギーしかもたない細胞は、死亡する
+   - ある閾値以下のエネルギーしかもたない細胞は、死亡する
 5. グルコースが再生する
 * 修士論文
 ** 序論
@@ -120,6 +120,7 @@ class 酸素スケープ {
 ** CancerImmunoediting
 *** 腫瘍モデル
 * TODO COMMENT
+** 酸素の導入
 ** 糖代謝のモデルを作成する
 ** サムネイル用の画像を作成する
 ** 状態の変わるデザインパターンを利用する
