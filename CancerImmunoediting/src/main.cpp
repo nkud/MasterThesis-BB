@@ -323,6 +323,8 @@ class NormalCell : public __Cell {
 };
 
 /*
+ * StepKeeper Class
+ *
  * 時間を更新するクラスを作成する。
  * どこからアクセスしても同じ時間になるために、
  * シングルトンパターンを利用する。
@@ -331,36 +333,24 @@ class StepKeeper {
   public:
     static StepKeeper& Instance();
 
-    /* ステップを進める */
-    void proceed() { step_++; }
     int step() const { return step_; }
     int maxStep() const { return max_step_; }
     void setMaxStep( int maxstep ) { max_step_ = maxstep; }
 
+    /* ステップを進める */
+    void proceed() { step_++; }
+
     /* 最大ステップまでループする */
     bool loop();
 
-    bool isInterval( int interval ) {
-      if(step()%interval == 0) return true;
-      else return false;
-    }
+    /* 指定した間隔で真を返す。 */
+    bool isInterval( int interval );
 
   private:
     StepKeeper() : step_(0), max_step_(0) { }
     int step_;
     int max_step_;
 };
-
-StepKeeper& StepKeeper::Instance() {
-  static StepKeeper singleton;
-  return singleton;
-}
-
-bool StepKeeper::loop() {
-  proceed();
-  if( step() <= maxStep() ) return true;
-  else return false;
-}
 
 // 出力用の関数を作成する。
 
@@ -408,8 +398,9 @@ void output_cell_map( VECTOR(NormalCell *)& cells );
 // 細胞クラスの平均エネルギーを出力する。
 void output_cell_energy_average( VECTOR(NormalCell *)& cells );
 
-// 現在のグルコースの分布を出力する。
+// 現在のシュガースケープの分布を出力する。
 void output_glucose_map( GlucoseScape& gs );
+void output_oxygen_map( OxygenScape& os );
 
 // エントリーポイント
 int main() {
@@ -498,6 +489,7 @@ int main() {
 
     // グルコーススケープが再生する。
     gs->generate();
+    os->generate();
 
     /* ファイルに出力する */
     // 細胞の分布を出力する
@@ -505,14 +497,24 @@ int main() {
     output_map_with_value( "cell", cells );
     // 細胞の平均エネルギーを出力する。
     output_cell_energy_average( cells );
-    // グルコースマップを出力する。
-    output_glucose_map( *gs );
+
+    if( stepKeeper.isInterval(1)) {
+      // グルコースマップを出力する。
+      output_glucose_map( *gs );
+      output_oxygen_map( *os );
+    }
+
+    /* 細胞数を出力する */
     output_value_with_step("cell-size.txt", cells.size());
   }
   // ------------------------------------------------------
 
   return 0;
 }
+
+/*
+ * Function
+ */
 
 //void output_cell_map( VECTOR(NormalCell *)& cells ) {
   //// ファイル名
@@ -545,6 +547,7 @@ void output_cell_energy_average( VECTOR(NormalCell *)& cells ) {
   output_value_with_step("cell-energy-average.txt", average);
 }
 
+
 void output_glucose_map( GlucoseScape& gs ) {
   char file_name[256];
   sprintf(file_name, "%d-glucose.txt", StepKeeper::Instance().step());
@@ -559,4 +562,37 @@ void output_glucose_map( GlucoseScape& gs ) {
     }
     glucose_map_ofs << std::endl;
   }
+}
+
+void output_oxygen_map( OxygenScape& os ) {
+  char file_name[256];
+  sprintf(file_name, "%d-oxygen.txt", StepKeeper::Instance().step());
+  std::ofstream oxygen_map_ofs(file_name);
+
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      oxygen_map_ofs << i << SEPARATOR;
+      oxygen_map_ofs << j << SEPARATOR;
+      oxygen_map_ofs << os.oxygen(i, j);
+      oxygen_map_ofs << std::endl;
+    }
+    oxygen_map_ofs << std::endl;
+  }
+}
+/*
+ * StepKeeper Class
+ */
+StepKeeper& StepKeeper::Instance() {
+  static StepKeeper singleton;
+  return singleton;
+}
+
+bool StepKeeper::loop() {
+  proceed();
+  if( step() <= maxStep() ) return true;
+  else return false;
+}    
+bool StepKeeper::isInterval( int interval ) {
+  if(step()%interval == 0) return true;
+  else return false;
 }

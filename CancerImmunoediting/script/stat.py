@@ -42,7 +42,7 @@ animation_plot_file = open('glucose-animation.plt', 'w')
 
 animation_plot_line = []
 # -----------------------------------------------
-animation_plot_line += 'set terminal gif animate optimize size 300,300 delay 5;'
+animation_plot_line += 'set terminal gif animate optimize size 200,200 delay 5;'
 animation_plot_line += 'set output "glucose-animation.gif";'
 animation_plot_line += 'set style line 1 lw 2;'
 animation_plot_line += 'set key below right;'
@@ -77,7 +77,7 @@ animation_plot_file = open('animation.plt', 'w')
 
 animation_plot_line = []
 # -----------------------------------------------
-animation_plot_line += 'set terminal gif animate optimize size 300,300 delay 5;'
+animation_plot_line += 'set terminal gif animate optimize size 200,200 delay 5;'
 animation_plot_line += 'set output "animation.gif";'
 animation_plot_line += 'set style line 1 lw 2;'
 animation_plot_line += 'set key below right;'
