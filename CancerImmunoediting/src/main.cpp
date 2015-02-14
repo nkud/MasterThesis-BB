@@ -358,25 +358,26 @@ void output_value_with_step( const char *fname, T value ) {
  * ステップ数と一緒に、その時の値を出力する関数
  */
 template < typename T >
-void output_map_with_value( const char *fname,  VECTOR(T *)& location ) {
+void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
   // ファイル名
   char file_name[256];
   sprintf(file_name, "%d-%s.txt", StepKeeper::Instance().step(), fname);
-  std::ofstream cell_map_ofs(file_name);
+  std::ofstream agent_map_ofs(file_name);
 
-  int location_map[HEIGHT][WIDTH] = {};
-  EACH(locate, location) {
-    T& cell = **locate;
-    location_map[cell.y()][cell.x()]++;
+  // マップの全てのいちを0で初期化する。
+  int agent_map[HEIGHT][WIDTH] = {};
+  EACH(it_agent, agents) {
+    T& agent = **it_agent;
+    agent_map[agent.y()][agent.x()]++;
   }
   FOR(i, HEIGHT) {
     FOR(j, WIDTH) {
-      cell_map_ofs << i << SEPARATOR;
-      cell_map_ofs << j << SEPARATOR;
-      cell_map_ofs << location_map[i][j];
-      cell_map_ofs << std::endl;
+      agent_map_ofs << i << SEPARATOR;
+      agent_map_ofs << j << SEPARATOR;
+      agent_map_ofs << agent_map[i][j];
+      agent_map_ofs << std::endl;
     }
-    cell_map_ofs << std::endl;
+    agent_map_ofs << std::endl;
   }
 }
 
