@@ -1,7 +1,16 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
+# constant value ################################
+
+# 最大ステップ数
 MAX_STEP = 1000
+
+#################################################
+
+#
+# 通常のグラフスクリプトを生成する。
+#
 
 # auto.plt
 auto_plot_file = open('auto.plt', 'w')
@@ -23,6 +32,10 @@ auto_plot_line += 'replot;set output;'
 
 for line in auto_plot_line:
     auto_plot_file.write(line)
+
+#
+# アニメーション用のプロットスクリプトを生成する。
+#
 
 # animation.plt
 animation_plot_file = open('glucose-animation.plt', 'w')
@@ -93,7 +106,11 @@ frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
 for line in frame_plot_line:
     frame_plot_file.write(line)
 
-# index.html ####################################
+#
+# index.html
+#
+# 結果出力用のHTMLファイルを生成する。
+#
 def image_set_line(imagefname):
     """ 画像を配置する文字列を返す """
     line = ''

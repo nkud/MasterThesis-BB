@@ -50,7 +50,7 @@ run:
 	@$(CLRECHO)
 	@cd $(bin_dir); ./$(EXE_NAME)
 	@$(COLORECHO)
-	@$(PRINT) '==> End $(timestamp)'
+	@$(PRINT) '==> End $(timestamp) $(now)'
 	@$(CLRECHO)
 
 clean:
