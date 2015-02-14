@@ -73,25 +73,25 @@
  */
 
 // ランドスケープの幅と高さを設定する。
-const int WIDTH  = 30;
-const int HEIGHT = 30;
+const int WIDTH  = 30; //: 幅
+const int HEIGHT = 30; //: 高さ
 
-const int INITIAL_CELL_ENERGY = 10;
+const int INITIAL_CELL_ENERGY = 10; //:
 
 /* グルコース, 酸素の再生量 /1step */
-const double GLUCOSE_GENERATE = 0.1;
-const double OXYGEN_GENERATE = 0.1;
+const double GLUCOSE_GENERATE = 0.1; //:
+const double OXYGEN_GENERATE = 0.1; //:
 
 // 最大計算期間を設定する。
-const int STEP = 1000;
+const int STEP = 1000; //:
 
 // 細胞数を設定する。
-const int CELL_SIZE = 100;
+const int CELL_SIZE = 100; //:
 
-const double CELL_METABOLIZE_GLUCOSE = 2;
+const double CELL_METABOLIZE_GLUCOSE = 2; //:
 
-const double CELL_DEATH_THRESHOLD_ENERGY = 0;
-const double CELL_DIVISION_THRESHOLD_ENERGY = 15;
+const double CELL_DEATH_THRESHOLD_ENERGY = 0; //:
+const double CELL_DIVISION_THRESHOLD_ENERGY = 15; //:
 
 // クラスを定義していく。
 
