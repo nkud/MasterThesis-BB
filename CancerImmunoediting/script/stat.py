@@ -43,7 +43,7 @@ auto_plot_file = open('auto.plt', 'w')
 
 auto_plot_line = []
 # -----------------------------------------------
-auto_plot_line += 'set terminal png size 800,150;'
+auto_plot_line += 'set terminal png size 1000,150;'
 
 # 平均細胞エネルギー
 auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'

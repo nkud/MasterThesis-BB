@@ -94,6 +94,8 @@ const ENERGY INITIAL_CELL_ENERGY = 10; //: 初期細胞エネルギー
 /* グルコース, 酸素の再生量 /1step */
 const MATERIAL GLUCOSE_GENERATE = 0.1; //: グルコース再生量
 const MATERIAL OXYGEN_GENERATE = 0.1; //: 酸素再生量
+const MATERIAL MAX_GLUCOSE = 50; //: 最大グルコース量
+const MATERIAL MAX_OXYGEN = 50; //: 最大酸素量
 
 // 最大計算期間を設定する。
 const int STEP = 2000; //: 最大ステップ数
@@ -101,12 +103,12 @@ const int STEP = 2000; //: 最大ステップ数
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
 
-const MATERIAL CELL_METABOLIZE_GLUCOSE = 5; //:  細胞代謝時グルコース使用量
+const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 12; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 5; //: 細胞分裂エネルギー閾値
 
-const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 0.1; //: 細胞突然変異確率
 
 /*
  * クラスを定義していく。
@@ -187,7 +189,9 @@ class GlucoseScape : public __SugarScape {
     virtual void generate() {
       FOR(i, HEIGHT) {
         FOR(j, WIDTH) {
-          glucose_map_[i][j] += GLUCOSE_GENERATE;
+          if(glucose(j, i) <= MAX_GLUCOSE - GLUCOSE_GENERATE) { 
+            glucose_map_[i][j] += GLUCOSE_GENERATE;
+          }
         }
       }
     }
@@ -216,7 +220,9 @@ class OxygenScape : public __SugarScape {
     virtual void generate() {
       FOR(i, HEIGHT) {
         FOR(j, WIDTH) {
-          oxygen_map_[i][j] += OXYGEN_GENERATE;
+          if(oxygen(j, i) <= MAX_OXYGEN - OXYGEN_GENERATE) {
+            oxygen_map_[i][j] += OXYGEN_GENERATE;
+          }
         }
       }
     }
@@ -707,7 +713,8 @@ bool StepKeeper::isInterval( int interval ) {
  * Cell
  */
 Cell::Cell() {
-  energy_ = INITIAL_CELL_ENERGY;
+  // energy_ = Random::Instance().uniformInt(0, INITIAL_CELL_ENERGY);
+  setEnergy( INITIAL_CELL_ENERGY );
   state_ = &( NormalCellState::Instance() );
 }
 
