@@ -149,23 +149,6 @@ class __Landscape {
     int width_, height_;
 };
 
-bool __Landscape::isExistingPoint(int x, int y) {
-  if( x < 0 ) return false;
-  if( y < 0 ) return false;
-  if( x > WIDTH-1 ) return false;
-  if( y > HEIGHT-1 ) return false;
-  return true;
-}
-
-// シュガースケープのクラスを作成する。
-// シュガーを生産できる。
-class __SugarScape : public __Landscape {
-  public:
-    virtual void generate() { }
-    virtual void material() { } /// TODO
-  private:
-};
-
 /**
  * @brief グルコースのクラス
  */
@@ -611,8 +594,30 @@ void output_oxygen_map( OxygenScape& os ) {
     oxygen_map_ofs << std::endl;
   }
 }
+
 /*
- * StepKeeper Class
+ * Landscape
+ */
+
+bool __Landscape::isExistingPoint(int x, int y) {
+  if( x < 0 ) return false;
+  if( y < 0 ) return false;
+  if( x > WIDTH-1 ) return false;
+  if( y > HEIGHT-1 ) return false;
+  return true;
+}
+
+// シュガースケープのクラスを作成する。
+// シュガーを生産できる。
+class __SugarScape : public __Landscape {
+  public:
+    virtual void generate() { }
+    virtual void material() { } /// TODO
+  private:
+};
+
+/*
+ * StepKeeper
  */
 StepKeeper& StepKeeper::Instance() {
   static StepKeeper singleton;
@@ -630,7 +635,7 @@ bool StepKeeper::isInterval( int interval ) {
 }
 
 /*
- * Cell Class
+ * Cell
  */
 Cell::Cell() {
   energy_ = INITIAL_CELL_ENERGY;
