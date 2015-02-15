@@ -86,7 +86,7 @@ const MATERIAL GLUCOSE_GENERATE = 0.1; //:
 const MATERIAL OXYGEN_GENERATE = 0.1; //:
 
 // 最大計算期間を設定する。
-const int STEP = 1000; //:
+const int STEP = 2000; //:
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //:
