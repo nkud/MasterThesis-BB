@@ -200,7 +200,7 @@ html_line += '<title>result</title>'
 
 # CSS
 html_line += '<style type="text/css">'
-html_line += 'h1{color:white; background:black;}'
+# html_line += 'h1{color:white; background:black;}'
 html_line += 'body{font-family:"verdana", "consolas", "courier";}'
 html_line += '</style>'
 

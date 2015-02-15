@@ -61,8 +61,8 @@
   <<CLR_ST<<STANDARD<<#x<<" <-- "<<BOLD<<(x) \
   <<STANDARD<<" (L"<<__LINE__<<")" \
   <<""<<__FILE__<<std::endl; }while(0);
-#define POINT                   do { static int point = 0; std::cerr \
-  <<BOLD<<RED<<"[ POINT ] "<<CLR_ST \
+#define PIN                     do { static int point = 0; std::cerr \
+  <<BOLD<<RED<<"[ PIN ] "<<CLR_ST \
   <<STANDARD<<"(L"<<__LINE__<<")" \
   <<" "<<__FILE__<<" - "<<point++ \
   <<std::endl; }while(0);
@@ -104,6 +104,8 @@ const MATERIAL CELL_METABOLIZE_GLUCOSE = 2; //:  細胞代謝時グルコース�
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
 const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 15; //: 細胞分裂エネルギー閾値
+
+const double CELL_MUTATION_RATE = 0.1; //: 細胞突然変異確率
 
 /*
  * クラスを定義していく。
@@ -258,7 +260,6 @@ class __Mobile : public __Location {
     // ランドスケープ上を移動させる。
     // 壁あり。
 
-
     /**
      * 移動する。
      * 
@@ -286,6 +287,7 @@ class __Mobile : public __Location {
 
 class __CellState;
 class NormalCellState;
+class CancerCellState;
 
 /**
  * @brief 細胞クラス
@@ -305,6 +307,9 @@ class Cell : public __Mobile {
   
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
+
+  __CellState& cellState() { return *state_; }
+  void changeState();
   
   /** スケープ上を移動する */
   virtual double move( __Landscape& landscape ) {
@@ -312,6 +317,12 @@ class Cell : public __Mobile {
     consumeEnergy( distance );
     return distance;
   }
+
+  /**
+   * 指定した確率で突然変異する。
+   * @param prob 突然変異確率
+   */
+  void mutate( double prob );
  private:
   ENERGY energy_;
   __CellState *state_;
@@ -332,6 +343,8 @@ class __CellState {
 public:
   // virtual __CellState& Instance() = 0;
   virtual void metabolize( Cell& cell, GlucoseScape& gs, OxygenScape& os ) = 0;
+  virtual bool isNormalCell() = 0;
+  virtual bool isCancerCell() = 0;
 private:
 };
 
@@ -364,6 +377,9 @@ public:
       os.setOxygen( cell.x(), cell.y(), o-gathering );
     }
   }
+
+  virtual bool isNormalCell() { return true; }
+  virtual bool isCancerCell() { return isNormalCell() ? true : false; }
 private:
   NormalCellState() { }
 };
@@ -375,7 +391,29 @@ private:
  */
 class CancerCellState : public __CellState {
 public:
-  virtual void metabolize( Cell& cell, GlucoseScape& gs, OxygenScape& os );
+  static CancerCellState& Instance() {
+    static CancerCellState singleton;
+    return singleton;
+  }
+
+  /**
+   * グルコースのみを利用してエネルギーを産生する。
+   * 
+   * @param cell 細胞
+   * @param gs グルコーススケープ
+   * @param os 酸素スケープ
+   */
+  virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
+    MATERIAL g = gs.glucose(cell.x(), cell.y());
+    MATERIAL gathering = CELL_METABOLIZE_GLUCOSE;
+    if( g >= gathering ) {
+      cell.gatherEnergy( gathering );
+      gs.setGlucose( cell.x(), cell.y(), g-gathering );
+    }
+  }
+
+  virtual bool isNormalCell() { return false; }
+  virtual bool isCancerCell() { return isNormalCell() ? false : true; }
 private:
 };
 /**
@@ -543,10 +581,19 @@ int main() {
       } else { it_cell++; }
     }
 
+    /*
+     * 突然変異する
+     */
+    EACH( it_cell, cells ) {
+      Cell& cell = **it_cell;
+      cell.mutate(CELL_MUTATION_RATE);
+    }
+
     // グルコーススケープが再生する。
     gs->generate();
     os->generate();
 
+    // -----------------------------------------------------------------------
     /* ファイルに出力する */
     // 細胞の分布を出力する
     //output_cell_map( cells );
@@ -653,6 +700,21 @@ Cell::Cell() {
   state_ = &( NormalCellState::Instance() );
 }
 
+void Cell::changeState() {
+  state_ = &( CancerCellState::Instance() ); 
+}
+
 void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
   state_->metabolize( *this, gs, os );
+}
+
+void Cell::mutate( double prob ) {
+  if(Random::Instance().probability(prob)) {
+    /*
+     * 正常細胞なら、がん細胞に変異する。
+     */
+    if( state_->isNormalCell() ) {
+      changeState();
+    }
+  }
 }
