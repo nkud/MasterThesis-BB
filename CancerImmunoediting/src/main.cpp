@@ -289,9 +289,13 @@ class __Cell : public __Mobile {
   double energy_;
 };
 
-// 正常細胞のクラスを作成する。
-// 移動する。細胞スケープにおいて、同じ位置に存在できる。
-// 移動はしない。分裂はする。？？
+/**
+ * @class NormalCell
+ *
+ * 正常細胞のクラスを作成する。
+ * 移動する。細胞スケープにおいて、同じ位置に存在できる。
+ * 移動はしない。分裂はする。？？
+ */
 class NormalCell : public __Cell {
   public:
   void metabolize( GlucoseScape& gs ) {
