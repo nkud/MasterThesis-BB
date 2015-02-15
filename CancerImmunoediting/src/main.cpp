@@ -1,12 +1,13 @@
-//
-// - 正常細胞とがん細胞の、糖代謝の違いを表現するモデル
-//
-// - エネルギーの酸性には、酸化的リン酸化と嫌気的解糖系の２種類ある。
-// - がん細胞では、酸化的リン酸化の利用が低下し、
-//   嫌気的解糖系の利用が増加する。（ワールブルク効果）
-//
-// Author Naoki Ueda
-//
+/**
+ * 正常細胞とがん細胞との、糖代謝の違いを表現するモデル。
+ *
+ * 細胞、グルコーススケープ、酸素スケープ
+ *
+ * TODO:
+ *   - T細胞
+ *
+ * @author Naoki Ueda
+ */
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -134,7 +135,6 @@ class __Landscape {
 
     // ランドスケープ上に存在する点かどうかを評価する。
     bool isExistingPoint( int x, int y );
-
   private:
     int width_, height_;
 };
@@ -152,6 +152,7 @@ bool __Landscape::isExistingPoint(int x, int y) {
 class __SugarScape : public __Landscape {
   public:
     virtual void generate() { }
+    virtual void material() { } /// TODO
   private:
 };
 
@@ -226,7 +227,9 @@ class __Location {
     int x_, y_;
 };
 
-// 移動するエージェントのインターフェイスを作成する。
+/**
+ * @brief 移動体のインターフェイス
+ */
 class __Mobile : public __Location {
   public:
     __Mobile() { }
@@ -235,14 +238,27 @@ class __Mobile : public __Location {
     void move(int tox, int toy);
     // ランドスケープ上を移動させる。
     // 壁あり。
-    virtual void move( __Landscape& landscape ) {
+
+
+    /**
+     * 移動する。
+     * 
+     * @param landscape スケープ
+     * @return 移動した距離を、マンハッタン距離で返す。
+     */
+    virtual double move( __Landscape& landscape ) {
       Random& random = Random::Instance();
-      int to_x = x(); int to_y = y();
+      double distance = 0;
+      int from_x = x(); int from_y = y();
+      int to_x = from_x; int to_y = from_y;
       if( random.randomBool() ) { to_x += random.randomSign(); }
       if( random.randomBool() ) { to_y += random.randomSign(); }
+
       if( landscape.isExistingPoint( to_x, to_y ) ) {
         setX( to_x ); setY( to_y );
+        distance = abs(from_x-to_x) + abs(from_y-to_y);
       }
+      return distance;
     }
     int movementDistance() const { return movement_distance_; }
   private:
@@ -255,78 +271,115 @@ class __Mobile : public __Location {
 // 嫌気的解糖系を利用してエネルギーを産生するクラスを作成する。
 // グルコースのみに依存する。
 
-// 細胞のインターフェイスを作成する。
-// 細胞は代謝する。
-// エネルギーを持つ。
-class __Cell : public __Mobile {
+/**
+ * @brief 細胞クラス
+ *
+ * 代謝する。
+ * エネルギーを持つ。
+ */
+class __CellState;
+class NormalCellState;
+class Cell : public __Mobile {
  public:
-  __Cell() : energy_(INITIAL_CELL_ENERGY) { }
-  virtual ~__Cell() { }
+  Cell();
+  virtual ~Cell() { }
   
   double energy() const { return energy_; }
   void setEnergy( double energy ) { energy_ = energy; }
+  void consumeEnergy( double consume ) { setEnergy( energy() - consume ); }
+  void gatherEnergy( double gather ) { setEnergy( energy() + gather ); }
   
-  // 代謝する。
-   void metabolize( GlucoseScape& gs );
+  /** 代謝する */
+  void metabolize( GlucoseScape& gs, OxygenScape& os );
   
-  // スケープ上を移動する。
-  virtual void move( __Landscape& landscape ) {
-    Random& random = Random::Instance();
-    int from_x = x(); int from_y = y();
-    int to_x = from_x; int to_y = from_y;
-    if( random.randomBool() ) { to_x += random.randomSign(); }
-    if( random.randomBool() ) { to_y += random.randomSign(); }
-
-    // もし移動先が正しくスケープ上であれば、移動する。
-    // 移動した場合、コストを消費する。
-    if( landscape.isExistingPoint( to_x, to_y ) ) {
-      setX( to_x ); setY( to_y );
-      int cost = abs(from_x-to_x) + abs(from_y-to_y);
-      energy_ -= cost;
-    }
+  /** スケープ上を移動する */
+  virtual double move( __Landscape& landscape ) {
+    double distance = __Mobile::move(landscape);
+    consumeEnergy( distance );
+    return distance;
   }
  private:
   double energy_;
+  __CellState *state_;
 };
 
 /**
- * @class NormalCell
+ * @brief 通常細胞クラス
  *
  * 正常細胞のクラスを作成する。
  * 移動する。細胞スケープにおいて、同じ位置に存在できる。
  * 移動はしない。分裂はする。？？
  */
-class NormalCell : public __Cell {
-  public:
-  void metabolize( GlucoseScape& gs ) {
-    int g = gs.glucose(x(), y());
-    int gathering = CELL_METABOLIZE_GLUCOSE;
-    if( g >= gathering ) {
-      setEnergy( energy() + gathering );
-      gs.setGlucose( x(), y(), g-gathering );
-    }
-  }
+// class NormalCell : public Cell {
+//   public:
+//   void metabolize( GlucoseScape& gs ) {
+//     int g = gs.glucose(x(), y());
+//     int gathering = CELL_METABOLIZE_GLUCOSE;
+//     if( g >= gathering ) {
+//       setEnergy( energy() + gathering );
+//       gs.setGlucose( x(), y(), g-gathering );
+//     }
+//   }
 
-  // スケープ上を移動する。
-  virtual void move( __Landscape& landscape ) {
-    Random& random = Random::Instance();
-    int from_x = x(); int from_y = y();
-    int to_x = from_x; int to_y = from_y;
-    if( random.randomBool() ) { to_x += random.randomSign(); }
-    if( random.randomBool() ) { to_y += random.randomSign(); }
+//   // スケープ上を移動する。
+//   virtual double move( __Landscape& landscape ) {
+//     double distance = __Mobile::move(landscape);
+//     consumeEnergy( distance );
+//   }
+//   private:
+// };
 
-    // もし移動先が正しくスケープ上であれば、移動する。
-    // 移動した場合、コストを消費する。
-    if( landscape.isExistingPoint( to_x, to_y ) ) {
-      setX( to_x ); setY( to_y );
-      int cost = abs(from_x-to_x) + abs(from_y-to_y);
-      setEnergy( energy() - cost );
-    }
-  }
-  private:
+/**
+ * @brief 細胞状態をあわらす抽象クラス
+ *
+ * Stateパターンを使用する。
+ * シングルトンパターン
+ */
+class __CellState {
+public:
+  // virtual __CellState& Instance() = 0;
+  virtual void metabolize( Cell& cell, GlucoseScape& gs, OxygenScape& os ) = 0;
+private:
 };
 
-/*
+/**
+ * @brief 正常細胞の状態を表すクラス
+ */
+class NormalCellState : public __CellState {
+public:
+  static NormalCellState& Instance() {
+    static NormalCellState singleton;
+    return singleton;
+  }
+
+  /**
+   * グルコースと酸素を利用してエネルギーを産生する。
+   * 
+   * @param cell 細胞
+   * @param gs グルコーススケープ
+   * @param os 酸素スケープ
+   */
+  virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
+    int g = gs.glucose(cell.x(), cell.y());
+    int gathering = CELL_METABOLIZE_GLUCOSE;
+    if( g >= gathering ) {
+      cell.gatherEnergy( gathering );
+      gs.setGlucose( cell.x(), cell.y(), g-gathering );
+    }
+  }
+private:
+  NormalCellState() { }
+};
+
+/**
+ * @brief がん細胞状態を表すクラス
+ */
+class CancerCellState : public __CellState {
+public:
+  virtual void metabolize( Cell& cell, GlucoseScape& gs, OxygenScape& os );
+private:
+};
+/**
  * StepKeeper Class
  *
  * 時間を更新するクラスを作成する。
@@ -397,10 +450,10 @@ void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
 }
 
 // 細胞クラスの、スケープ上での２次元マップを出力する。
-void output_cell_map( VECTOR(NormalCell *)& cells );
+void output_cell_map( VECTOR(Cell *)& cells );
 
 // 細胞クラスの平均エネルギーを出力する。
-void output_cell_energy_average( VECTOR(NormalCell *)& cells );
+void output_cell_energy_average( VECTOR(Cell *)& cells );
 
 // 現在のシュガースケープの分布を出力する。
 void output_glucose_map( GlucoseScape& gs );
@@ -420,9 +473,9 @@ int main() {
 
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
-  VECTOR(NormalCell *) cells;
+  VECTOR(Cell *) cells;
   FOR(i, CELL_SIZE) {
-    NormalCell *nm = new NormalCell();
+    Cell *nm = new Cell();
     nm->randomSet();
     cells.push_back( nm );
   }
@@ -435,7 +488,7 @@ int main() {
      */
     EACH( it_cell, cells )
     {
-      NormalCell& cell = **it_cell;
+      Cell& cell = **it_cell;
       cell.move( *gs );
     }
 
@@ -446,14 +499,14 @@ int main() {
      * 同じ位置に新しい細胞を作成する。
      * エネルギーは、半分分け与える。
      */
-    VECTOR(NormalCell *) new_cells;
+    VECTOR(Cell *) new_cells;
     EACH( it_cell, cells )
     {
-      NormalCell& origincell = **it_cell;
+      Cell& origincell = **it_cell;
       double origin_energy = origincell.energy();
       if( origin_energy > CELL_DIVISION_THRESHOLD_ENERGY )
       {
-        NormalCell *newcell = new NormalCell();
+        Cell *newcell = new Cell();
 
         // 同じ位置に分裂する。
         int newx = origincell.x(); int newy = origincell.y();
@@ -474,8 +527,8 @@ int main() {
      */
     EACH( it_cell, cells )
     {
-      NormalCell& cell = **it_cell;
-      cell.metabolize( *gs );
+      Cell& cell = **it_cell;
+      cell.metabolize( *gs, *os );
     }
 
     /*
@@ -483,7 +536,7 @@ int main() {
      */
     FOREACH( it_cell, cells )
     {
-      NormalCell& cell = **it_cell;
+      Cell& cell = **it_cell;
       if( cell.energy() <= CELL_DEATH_THRESHOLD_ENERGY )
       {
         SAFE_DELETE( *it_cell );
@@ -541,10 +594,10 @@ int main() {
   //}
 //}
 
-void output_cell_energy_average( VECTOR(NormalCell *)& cells ) {
+void output_cell_energy_average( VECTOR(Cell *)& cells ) {
   int sum = 0;
   EACH(it_cell, cells) {
-    NormalCell& cell = **it_cell;
+    Cell& cell = **it_cell;
     sum += cell.energy();
   }
   double average = (double)sum/cells.size();
@@ -599,4 +652,16 @@ bool StepKeeper::loop() {
 bool StepKeeper::isInterval( int interval ) {
   if(step()%interval == 0) return true;
   else return false;
+}
+
+/*
+ * Cell Class
+ */
+Cell::Cell() {
+  energy_ = INITIAL_CELL_ENERGY;
+  state_ = &( NormalCellState::Instance() );
+}
+
+void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
+  state_->metabolize( *this, gs, os );
 }
