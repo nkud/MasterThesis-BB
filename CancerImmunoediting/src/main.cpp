@@ -100,7 +100,7 @@ const int STEP = 10000; //: 最大ステップ数
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
 
-const MATERIAL CELL_METABOLIZE_GLUCOSE = 2; //:  細胞代謝時グルコース使用量
+const MATERIAL CELL_METABOLIZE_GLUCOSE = 5; //:  細胞代謝時グルコース使用量
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
 const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 15; //: 細胞分裂エネルギー閾値
@@ -371,7 +371,7 @@ public:
     MATERIAL g = gs.glucose(cell.x(), cell.y());
     MATERIAL o = os.oxygen(cell.x(), cell.y());
     MATERIAL gathering = CELL_METABOLIZE_GLUCOSE;
-    if( g >= gathering ) {
+    if( g >= gathering && o >= gathering ) {
       cell.gatherEnergy( gathering );
       gs.setGlucose( cell.x(), cell.y(), g-gathering );
       os.setOxygen( cell.x(), cell.y(), o-gathering );
