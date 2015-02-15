@@ -1,6 +1,8 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
+import datetime
+
 # constant value ################################
 
 # 最大ステップ数
@@ -61,6 +63,42 @@ for line in auto_plot_line:
 # アニメーション用のプロットスクリプトを生成する。
 #
 
+# 酸素マップアニメーション
+# animation.plt
+animation_plot_file = open('oxygen-animation.plt', 'w')
+
+animation_plot_line = []
+# -----------------------------------------------
+animation_plot_line += 'set terminal gif animate optimize size 200,200 delay 5;'
+animation_plot_line += 'set output "oxygen-animation.gif";'
+animation_plot_line += 'set style line 1 lw 2;'
+animation_plot_line += 'set key below right;'
+animation_plot_line += 'set key textcolor lt 0;'
+animation_plot_line += 'n=1;'
+animation_plot_line += 'load "oxygen-frame.plt";'
+# -----------------------------------------------
+
+for line in animation_plot_line:
+    animation_plot_file.write(line)
+
+# frame.plt
+frame_plot_file = open('oxygen-frame.plt', 'w')
+
+frame_plot_line = []
+# -----------------------------------------------
+frame_plot_line += 'title(n)=sprintf("t = %d", n);'
+frame_plot_line += 'file(n)=sprintf("../bin/%d-oxygen.txt", n);'
+frame_plot_line += 'set title title(n);'
+frame_plot_line += 'set view map;'
+frame_plot_line += 'set cbrange[0:10];'
+frame_plot_line += 'splot file(n) w pm3d;'
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
+# -----------------------------------------------
+
+for line in frame_plot_line:
+    frame_plot_file.write(line)
+
+# グルコースマップアニメーション
 # animation.plt
 animation_plot_file = open('glucose-animation.plt', 'w')
 
@@ -95,7 +133,7 @@ frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
 for line in frame_plot_line:
     frame_plot_file.write(line)
 
-
+# 細胞マップアニメーション
 # animation.plt
 animation_plot_file = open('animation.plt', 'w')
 
@@ -135,13 +173,14 @@ for line in frame_plot_line:
 #
 # 結果出力用のHTMLファイルを生成する。
 #
-def image_set_line(imagefname):
+def image_set_line(*images):
     """ 画像を配置する文字列を返す """
     line = ''
     line += '<!-- IMAGE -->'
-    line += '<table class="graph"'
-    line += '\t<tr><td><img src="%s" /></td></tr>' % imagefname
-    line += '</table>'
+    line += '<table class="graph"><tr>'
+    for image in images:
+        line += '\t<td><img src="%s" /></td>' % image
+    line += '</tr></table>'
     return line
 
 def image_with_title_set_line(imagefname, title):
@@ -158,17 +197,16 @@ html_line = []
 # -----------------------------------------------
 html_line += '<html>'
 html_line += '<title>result</title>'
+html_line += '<style type="text/css">h1{color:white; background:black;}</style>'
 html_line += '<body>'
-html_line += '<h1>result</h1>'
+html_line += '<h1>#result_%s</h1>' % datetime.datetime.now()
 
 html_line += '<h2>configure</h2>'
 for line in config_line:
     html_line += '%s<br />' % line
 html_line += '<hr />'
 
-html_line += image_set_line('animation.gif')
-html_line += '<hr />'
-html_line += image_set_line('glucose-animation.gif')
+html_line += image_set_line('animation.gif', 'glucose-animation.gif', 'oxygen-animation.gif')
 html_line += '<hr />'
 html_line += image_with_title_set_line('cell-energy-average.png', '平均細胞エネルギー')
 html_line += '<hr />'
