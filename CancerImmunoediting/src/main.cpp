@@ -72,16 +72,18 @@
 /*
  * 定数パラメータを定義する。
  */
+typedef double MATERIAL;
+typedef double ENERGY;
 
 // ランドスケープの幅と高さを設定する。
 const int WIDTH  = 30; //: 幅
 const int HEIGHT = 30; //: 高さ
 
-const int INITIAL_CELL_ENERGY = 10; //:
+const ENERGY INITIAL_CELL_ENERGY = 10; //:
 
 /* グルコース, 酸素の再生量 /1step */
-const double GLUCOSE_GENERATE = 0.1; //:
-const double OXYGEN_GENERATE = 0.1; //:
+const MATERIAL GLUCOSE_GENERATE = 0.1; //:
+const MATERIAL OXYGEN_GENERATE = 0.1; //:
 
 // 最大計算期間を設定する。
 const int STEP = 1000; //:
@@ -89,10 +91,10 @@ const int STEP = 1000; //:
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //:
 
-const double CELL_METABOLIZE_GLUCOSE = 2; //:
+const MATERIAL CELL_METABOLIZE_GLUCOSE = 2; //:
 
-const double CELL_DEATH_THRESHOLD_ENERGY = 0; //:
-const double CELL_DIVISION_THRESHOLD_ENERGY = 15; //:
+const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //:
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 15; //:
 
 /*
  * クラスを定義していく。
@@ -149,6 +151,15 @@ class __Landscape {
     int width_, height_;
 };
 
+// シュガースケープのクラスを作成する。
+// シュガーを生産できる。
+class __SugarScape : public __Landscape {
+  public:
+    virtual void generate() = 0;
+    virtual MATERIAL material(int x, int y) const = 0;
+  private:
+};
+
 /**
  * @brief グルコースのクラス
  */
@@ -168,10 +179,11 @@ class GlucoseScape : public __SugarScape {
         }
       }
     }
-    double glucose(int x, int y) const { return glucose_map_[x][y]; }
-    void setGlucose(int x, int y, double value) { glucose_map_[x][y] = value; }
+    MATERIAL glucose(int x, int y) const { return glucose_map_[x][y]; }
+    virtual MATERIAL material(int x, int y) const { return glucose(x, y); }
+    void setGlucose(int x, int y, MATERIAL value) { glucose_map_[x][y] = value; }
   private:
-    double glucose_map_[HEIGHT][WIDTH];
+    MATERIAL glucose_map_[HEIGHT][WIDTH];
 };
 
 /**
@@ -186,8 +198,9 @@ class OxygenScape : public __SugarScape {
         }
       }
     }
-    double oxygen(int x, int y) const { return oxygen_map_[x][y]; }
-    void setOxygen(int x, int y, double value) { oxygen_map_[x][y] = value; }
+    MATERIAL oxygen(int x, int y) const { return oxygen_map_[x][y]; }
+    virtual MATERIAL material(int x, int y) const { return oxygen(x, y); }
+    void setOxygen(int x, int y, MATERIAL value) { oxygen_map_[x][y] = value; }
     virtual void generate() {
       FOR(i, WIDTH) {
         FOR(j, HEIGHT) {
@@ -196,7 +209,7 @@ class OxygenScape : public __SugarScape {
       }
     }
   private:
-    double oxygen_map_[HEIGHT][WIDTH];
+    MATERIAL oxygen_map_[HEIGHT][WIDTH];
 };
 
 /**
@@ -262,23 +275,24 @@ class __Mobile : public __Location {
     int movement_distance_;
 };
 
+class __CellState;
+class NormalCellState;
+
 /**
  * @brief 細胞クラス
  *
  * 代謝する。
  * エネルギーを持つ。
  */
-class __CellState;
-class NormalCellState;
 class Cell : public __Mobile {
  public:
   Cell();
   virtual ~Cell() { }
   
-  double energy() const { return energy_; }
-  void setEnergy( double energy ) { energy_ = energy; }
-  void consumeEnergy( double consume ) { setEnergy( energy() - consume ); }
-  void gatherEnergy( double gather ) { setEnergy( energy() + gather ); }
+  ENERGY energy() const { return energy_; }
+  void setEnergy( ENERGY energy ) { energy_ = energy; }
+  void consumeEnergy( ENERGY consume ) { setEnergy( energy() - consume ); }
+  void gatherEnergy( ENERGY gather ) { setEnergy( energy() + gather ); }
   
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
@@ -290,7 +304,7 @@ class Cell : public __Mobile {
     return distance;
   }
  private:
-  double energy_;
+  ENERGY energy_;
   __CellState *state_;
 };
 
@@ -332,11 +346,13 @@ public:
    * @param os 酸素スケープ
    */
   virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
-    int g = gs.glucose(cell.x(), cell.y());
-    int gathering = CELL_METABOLIZE_GLUCOSE;
+    MATERIAL g = gs.glucose(cell.x(), cell.y());
+    MATERIAL o = os.oxygen(cell.x(), cell.y());
+    MATERIAL gathering = CELL_METABOLIZE_GLUCOSE;
     if( g >= gathering ) {
       cell.gatherEnergy( gathering );
       gs.setGlucose( cell.x(), cell.y(), g-gathering );
+      os.setOxygen( cell.x(), cell.y(), o-gathering );
     }
   }
 private:
@@ -479,12 +495,10 @@ int main() {
      * エネルギーは、半分分け与える。
      */
     VECTOR(Cell *) new_cells;
-    EACH( it_cell, cells )
-    {
+    EACH( it_cell, cells ) {
       Cell& origincell = **it_cell;
       double origin_energy = origincell.energy();
-      if( origin_energy > CELL_DIVISION_THRESHOLD_ENERGY )
-      {
+      if( origin_energy > CELL_DIVISION_THRESHOLD_ENERGY ) {
         Cell *newcell = new Cell();
 
         // 同じ位置に分裂する。
@@ -504,8 +518,7 @@ int main() {
     /*
      * 細胞が代謝する
      */
-    EACH( it_cell, cells )
-    {
+    EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
       cell.metabolize( *gs, *os );
     }
@@ -513,11 +526,9 @@ int main() {
     /*
      * 死細胞を除去する。
      */
-    FOREACH( it_cell, cells )
-    {
+    FOREACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      if( cell.energy() <= CELL_DEATH_THRESHOLD_ENERGY )
-      {
+      if( cell.energy() <= CELL_DEATH_THRESHOLD_ENERGY ) {
         SAFE_DELETE( *it_cell );
         cells.erase( it_cell );
       } else { it_cell++; }
@@ -606,15 +617,6 @@ bool __Landscape::isExistingPoint(int x, int y) {
   if( y > HEIGHT-1 ) return false;
   return true;
 }
-
-// シュガースケープのクラスを作成する。
-// シュガーを生産できる。
-class __SugarScape : public __Landscape {
-  public:
-    virtual void generate() { }
-    virtual void material() { } /// TODO
-  private:
-};
 
 /*
  * StepKeeper
