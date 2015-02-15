@@ -197,11 +197,17 @@ html_line = []
 # -----------------------------------------------
 html_line += '<html>'
 html_line += '<title>result</title>'
-html_line += '<style type="text/css">h1{color:white; background:black;}</style>'
-html_line += '<body>'
-html_line += '<h1>#result_%s</h1>' % datetime.datetime.now()
 
-html_line += '<h2>configure</h2>'
+# CSS
+html_line += '<style type="text/css">'
+html_line += 'h1{color:white; background:black;}'
+html_line += 'body{font-family:"verdana", "consolas", "courier";}'
+html_line += '</style>'
+
+html_line += '<body>'
+html_line += '<h1>#result-%s</h1>' % datetime.datetime.now()
+
+html_line += '<h2>parameter</h2>'
 for line in config_line:
     html_line += '%s<br />' % line
 html_line += '<hr />'
