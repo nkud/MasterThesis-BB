@@ -6,7 +6,31 @@
 # 最大ステップ数
 MAX_STEP = 100
 
+SOURCE_FNAME = '../src/main.cpp'
+
+# 設定パラメータを表す文字列
+CONST_STRING = '//:'
+
 #################################################
+
+#
+# 設定パラメータを取得する。
+#
+
+source_file = open(SOURCE_FNAME, 'r')
+config_line = []
+# ソースファイルから、定数パラメータを抜き出す
+for line in source_file:
+    if CONST_STRING in line:
+        line = line.split()
+
+        # パラメータの変数説明の有無で表示する箇所を変える
+        if len(line) > 6:
+            paramline = '%s = %s' % (line[6], line[4])
+        else:
+            paramline = '%s = %s' % (line[2], line[4])
+        print paramline
+        config_line.append(paramline)
 
 #
 # 通常のグラフスクリプトを生成する。
@@ -136,6 +160,12 @@ html_line += '<html>'
 html_line += '<title>result</title>'
 html_line += '<body>'
 html_line += '<h1>result</h1>'
+
+html_line += '<h2>configure</h2>'
+for line in config_line:
+    html_line += '%s<br />' % line
+html_line += '<hr />'
+
 html_line += image_set_line('animation.gif')
 html_line += '<hr />'
 html_line += image_set_line('glucose-animation.gif')

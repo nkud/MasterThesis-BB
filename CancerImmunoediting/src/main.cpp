@@ -79,22 +79,22 @@ typedef double ENERGY;
 const int WIDTH  = 30; //: 幅
 const int HEIGHT = 30; //: 高さ
 
-const ENERGY INITIAL_CELL_ENERGY = 10; //:
+const ENERGY INITIAL_CELL_ENERGY = 10; //: 初期細胞エネルギー
 
 /* グルコース, 酸素の再生量 /1step */
-const MATERIAL GLUCOSE_GENERATE = 0.1; //:
-const MATERIAL OXYGEN_GENERATE = 0.1; //:
+const MATERIAL GLUCOSE_GENERATE = 0.1; //: グルコース再生量
+const MATERIAL OXYGEN_GENERATE = 0.1; //: 酸素再生量
 
 // 最大計算期間を設定する。
-const int STEP = 2000; //:
+const int STEP = 2000; //: 最大ステップ数
 
 // 細胞数を設定する。
-const int CELL_SIZE = 100; //:
+const int CELL_SIZE = 100; //: 初期総細胞数
 
-const MATERIAL CELL_METABOLIZE_GLUCOSE = 2; //:
+const MATERIAL CELL_METABOLIZE_GLUCOSE = 2; //:  細胞代謝時グルコース使用量
 
-const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //:
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 15; //:
+const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 15; //: 細胞分裂エネルギー閾値
 
 /*
  * クラスを定義していく。
