@@ -5,7 +5,8 @@
  * 細胞、グルコーススケープ、酸素スケープ
  *
  * クラスにおけるコンストラクタは1つだけにする。ややこしいので。
- *
+ * 同様にオーバーロード少なめに
+ * 
  * TODO:
  *   - T細胞
  *
@@ -103,7 +104,7 @@ const int CELL_SIZE = 100; //: 初期総細胞数
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 5; //:  細胞代謝時グルコース使用量
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 12; //: 細胞分裂エネルギー閾値
 
 const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
@@ -184,15 +185,15 @@ class GlucoseScape : public __SugarScape {
       }
     }
     virtual void generate() {
-      FOR(i, WIDTH) {
-        FOR(j, HEIGHT) {
+      FOR(i, HEIGHT) {
+        FOR(j, WIDTH) {
           glucose_map_[i][j] += GLUCOSE_GENERATE;
         }
       }
     }
-    MATERIAL glucose(int x, int y) const { return glucose_map_[x][y]; }
+    MATERIAL glucose(int x, int y) const { return glucose_map_[y][x]; }
     virtual MATERIAL material(int x, int y) const { return glucose(x, y); }
-    void setGlucose(int x, int y, MATERIAL value) { glucose_map_[x][y] = value; }
+    void setGlucose(int x, int y, MATERIAL value) { glucose_map_[y][x] = value; }
   private:
     MATERIAL glucose_map_[HEIGHT][WIDTH];
 };
@@ -209,12 +210,12 @@ class OxygenScape : public __SugarScape {
         }
       }
     }
-    MATERIAL oxygen(int x, int y) const { return oxygen_map_[x][y]; }
+    MATERIAL oxygen(int x, int y) const { return oxygen_map_[y][x]; }
     virtual MATERIAL material(int x, int y) const { return oxygen(x, y); }
-    void setOxygen(int x, int y, MATERIAL value) { oxygen_map_[x][y] = value; }
+    void setOxygen(int x, int y, MATERIAL value) { oxygen_map_[y][x] = value; }
     virtual void generate() {
-      FOR(i, WIDTH) {
-        FOR(j, HEIGHT) {
+      FOR(i, HEIGHT) {
+        FOR(j, WIDTH) {
           oxygen_map_[i][j] += OXYGEN_GENERATE;
         }
       }
@@ -255,13 +256,12 @@ class __Mobile : public __Location {
   public:
     __Mobile() { }
     virtual ~__Mobile() { }
-    void move() { }
-    void move(int tox, int toy);
-    // ランドスケープ上を移動させる。
-    // 壁あり。
 
     /**
      * 移動する。
+     *
+     * ランドスケープ上を移動する。
+     * 壁あり。
      * 
      * @param landscape スケープ
      * @return 移動した距離を、マンハッタン距離で返す。
@@ -320,6 +320,7 @@ class Cell : public __Mobile {
 
   /**
    * 指定した確率で突然変異する。
+   * 
    * @param prob 突然変異確率
    */
   void mutate( double prob );
@@ -481,7 +482,7 @@ void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
     FOR(j, WIDTH) {
       agent_map_ofs << i << SEPARATOR;
       agent_map_ofs << j << SEPARATOR;
-      agent_map_ofs << agent_map[i][j];
+      agent_map_ofs << agent_map[j][i];
       agent_map_ofs << std::endl;
     }
     agent_map_ofs << std::endl;
