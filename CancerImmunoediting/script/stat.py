@@ -43,7 +43,7 @@ auto_plot_file = open('auto.plt', 'w')
 
 auto_plot_line = []
 # -----------------------------------------------
-auto_plot_line += 'set terminal png size 500,200;'
+auto_plot_line += 'set terminal png size 800,150;'
 
 # 平均細胞エネルギー
 auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
@@ -51,8 +51,17 @@ auto_plot_line += 'set output "cell-energy-average.png";'
 auto_plot_line += 'replot;set output;'
 
 # 総細胞数
-auto_plot_line += 'plot "../bin/cell-size.txt" w l;'
+auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
+auto_plot_line += 'set output "normalcell-size.png";'
+auto_plot_line += 'replot;set output;'
+
+auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
+auto_plot_line += 'replot "../bin/cancercell-size.txt" w l;'
 auto_plot_line += 'set output "cell-size.png";'
+auto_plot_line += 'replot;set output;'
+
+auto_plot_line += 'plot "../bin/cancercell-size.txt" w l;'
+auto_plot_line += 'set output "cancercell-size.png";'
 auto_plot_line += 'replot;set output;'
 # -----------------------------------------------
 
@@ -214,9 +223,13 @@ html_line += '<hr />'
 
 html_line += image_set_line('animation.gif', 'glucose-animation.gif', 'oxygen-animation.gif')
 html_line += '<hr />'
-html_line += image_with_title_set_line('cell-energy-average.png', '平均細胞エネルギー')
+html_line += '<h2>%s</h2>\n' % '平均細胞エネルギー'
+html_line += image_set_line('cell-energy-average.png')
 html_line += '<hr />'
-html_line += image_with_title_set_line('cell-size.png', '総細胞数')
+html_line += '<h2>%s</h2>\n' % '総細胞数'
+html_line += image_set_line('normalcell-size.png')
+html_line += image_set_line('cancercell-size.png')
+html_line += image_set_line('cell-size.png')
 html_line += '</body></html>'
 # -----------------------------------------------
 
