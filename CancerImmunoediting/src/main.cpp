@@ -94,10 +94,17 @@ const double CELL_METABOLIZE_GLUCOSE = 2; //:
 const double CELL_DEATH_THRESHOLD_ENERGY = 0; //:
 const double CELL_DIVISION_THRESHOLD_ENERGY = 15; //:
 
-// クラスを定義していく。
+/*
+ * クラスを定義していく。
+ */
 
 /*
  * 乱数生成用のクラスを作成する。
+ */
+
+/**
+ * @brief 乱数生成用のクラス
+ *
  * シングルトンパターンを使用する。
  */
 class Random {
@@ -123,8 +130,11 @@ class Random {
     ~Random() { }
 };
 
-// 細胞土地のインターフェイスを作成する。
-// 幅と高さを持つ。
+/**
+ * @brief ランドスケープのインターフェイス
+ *
+ * 幅と高さを持つ
+ */
 class __Landscape {
   public:
     __Landscape() : width_(WIDTH), height_(HEIGHT) { }
@@ -156,7 +166,9 @@ class __SugarScape : public __Landscape {
   private:
 };
 
-// グルコースのクラスを作成する。
+/**
+ * @brief グルコースのクラス
+ */
 class GlucoseScape : public __SugarScape {
   public:
     GlucoseScape() {
@@ -179,8 +191,8 @@ class GlucoseScape : public __SugarScape {
     double glucose_map_[HEIGHT][WIDTH];
 };
 
-/*
- * 酸素のクラスを作成する。
+/**
+ * @brief 酸素のクラスを作成する。
  */
 class OxygenScape : public __SugarScape {
   public:
@@ -204,7 +216,9 @@ class OxygenScape : public __SugarScape {
     double oxygen_map_[HEIGHT][WIDTH];
 };
 
-/*
+/**
+ * @brief 位置情報のクラス
+ * 
  * モデル上に存在するためには、座標が必要になるので、
  * 座標を持つエージェントのためのインターフェイスを作成する。
  */
@@ -219,7 +233,7 @@ class __Location {
     void setLocation(int x, int y) { setX(x); setY(y); }
 
     // スケープ上にランダムに配置する。
-    void randomSet() {
+    void randomSetLocation() {
       setX(Random::Instance().uniformInt(0, WIDTH-1)); 
       setY(Random::Instance().uniformInt(0, HEIGHT-1));
     }
@@ -265,12 +279,6 @@ class __Mobile : public __Location {
     int movement_distance_;
 };
 
-// 酸化的リン酸化を利用してエネルギーを産生するクラスを作成する。
-// グルコースと酸素に依存する。
-
-// 嫌気的解糖系を利用してエネルギーを産生するクラスを作成する。
-// グルコースのみに依存する。
-
 /**
  * @brief 細胞クラス
  *
@@ -303,37 +311,16 @@ class Cell : public __Mobile {
   __CellState *state_;
 };
 
-/**
- * @brief 通常細胞クラス
- *
- * 正常細胞のクラスを作成する。
- * 移動する。細胞スケープにおいて、同じ位置に存在できる。
- * 移動はしない。分裂はする。？？
+/*
+ * 細胞の状態をあらわすクラスを作成する。
+ * 正常細胞とがん細胞との、状態による違いをプログラムする。
  */
-// class NormalCell : public Cell {
-//   public:
-//   void metabolize( GlucoseScape& gs ) {
-//     int g = gs.glucose(x(), y());
-//     int gathering = CELL_METABOLIZE_GLUCOSE;
-//     if( g >= gathering ) {
-//       setEnergy( energy() + gathering );
-//       gs.setGlucose( x(), y(), g-gathering );
-//     }
-//   }
-
-//   // スケープ上を移動する。
-//   virtual double move( __Landscape& landscape ) {
-//     double distance = __Mobile::move(landscape);
-//     consumeEnergy( distance );
-//   }
-//   private:
-// };
 
 /**
  * @brief 細胞状態をあわらす抽象クラス
  *
  * Stateパターンを使用する。
- * シングルトンパターン
+ * シングルトンパターンを使用する。
  */
 class __CellState {
 public:
@@ -344,6 +331,8 @@ private:
 
 /**
  * @brief 正常細胞の状態を表すクラス
+ *
+ * 酸化的リン酸化を利用してエネルギーを産生する。
  */
 class NormalCellState : public __CellState {
 public:
@@ -373,6 +362,8 @@ private:
 
 /**
  * @brief がん細胞状態を表すクラス
+ *
+ * 嫌気的解糖系を利用してエネルギーを産生する。
  */
 class CancerCellState : public __CellState {
 public:
@@ -380,7 +371,7 @@ public:
 private:
 };
 /**
- * StepKeeper Class
+ * @brief ステップ管理するクラス
  *
  * 時間を更新するクラスを作成する。
  * どこからアクセスしても同じ時間になるために、
@@ -409,7 +400,9 @@ class StepKeeper {
     int max_step_;
 };
 
-// 出力用の関数を作成する。
+/*
+ * 出力用の関数を作成する。
+ */
 
 /*
  * ステップ数と一緒に、そのときの値を出力する関数
@@ -449,8 +442,11 @@ void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
   }
 }
 
-// 細胞クラスの、スケープ上での２次元マップを出力する。
-void output_cell_map( VECTOR(Cell *)& cells );
+/**
+ * 細胞クラスの、スケープ上での2次元マップを出力する。
+ * @param cells 細胞配列
+ */
+// void output_cell_map( VECTOR(Cell *)& cells );
 
 // 細胞クラスの平均エネルギーを出力する。
 void output_cell_energy_average( VECTOR(Cell *)& cells );
@@ -476,7 +472,7 @@ int main() {
   VECTOR(Cell *) cells;
   FOR(i, CELL_SIZE) {
     Cell *nm = new Cell();
-    nm->randomSet();
+    nm->randomSetLocation();
     cells.push_back( nm );
   }
 
@@ -572,27 +568,6 @@ int main() {
 /*
  * Function
  */
-
-//void output_cell_map( VECTOR(NormalCell *)& cells ) {
-  //// ファイル名
-  //char file_name[256];
-  //sprintf(file_name, "%d-cell.txt", StepKeeper::Instance().step());
-  //std::ofstream cell_map_ofs(file_name);
-  //int location_map[HEIGHT][WIDTH] = {};
-  //EACH(it_cell, cells) {
-    //NormalCell& cell = **it_cell;
-    //location_map[cell.y()][cell.x()]++;
-  //}
-  //FOR(i, HEIGHT) {
-    //FOR(j, WIDTH) {
-      //cell_map_ofs << i << SEPARATOR;
-      //cell_map_ofs << j << SEPARATOR;
-      //cell_map_ofs << location_map[i][j];
-      //cell_map_ofs << std::endl;
-    //}
-    //cell_map_ofs << std::endl;
-  //}
-//}
 
 void output_cell_energy_average( VECTOR(Cell *)& cells ) {
   int sum = 0;
