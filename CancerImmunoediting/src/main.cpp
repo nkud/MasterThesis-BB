@@ -95,7 +95,7 @@ const MATERIAL GLUCOSE_GENERATE = 0.1; //: グルコース再生量
 const MATERIAL OXYGEN_GENERATE = 0.1; //: 酸素再生量
 
 // 最大計算期間を設定する。
-const int STEP = 10000; //: 最大ステップ数
+const int STEP = 2000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -103,7 +103,7 @@ const int CELL_SIZE = 100; //: 初期総細胞数
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 5; //:  細胞代謝時グルコース使用量
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 15; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギー閾値
 
 const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
@@ -633,7 +633,9 @@ void output_cell_energy_average( VECTOR(Cell *)& cells ) {
     Cell& cell = **it_cell;
     sum += cell.energy();
   }
-  double average = (double)sum/cells.size();
+  double average = 0;
+  if( cells.size() > 0 ) average = (double)sum/cells.size();
+
   output_value_with_step("cell-energy-average.txt", average);
 }
 
