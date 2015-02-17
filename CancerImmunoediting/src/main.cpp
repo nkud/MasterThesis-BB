@@ -103,15 +103,18 @@ const int MAX_STEP = 5000; //: 最大ステップ数
 const int CELL_SIZE = 100; //: 初期総細胞数
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
+const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
+
+const ENERGY NORMAL_CELL_GAIN_ENERGY = 1;
+const ENERGY CANCER_CELL_GAIN_ENERGY = 2;
 
 /*
  * 細胞に関するパラメータ
  */
-
 const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 20; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 30; //: 細胞分裂エネルギー閾値
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
@@ -389,11 +392,12 @@ public:
   virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
     MATERIAL g = gs.glucose(cell.x(), cell.y());
     MATERIAL o = os.oxygen(cell.x(), cell.y());
-    MATERIAL gathering = CELL_METABOLIZE_GLUCOSE;
-    if( g >= gathering && o >= gathering ) {
-      cell.gatherEnergy( gathering );
-      gs.setGlucose( cell.x(), cell.y(), g-gathering );
-      os.setOxygen( cell.x(), cell.y(), o-gathering );
+    MATERIAL use_glucose = CELL_METABOLIZE_GLUCOSE;
+    MATERIAL use_oxygen = CELL_METABOLIZE_OXYGEN;
+    if( g >= use_glucose && o >= use_oxygen ) {
+      cell.gatherEnergy( NORMAL_CELL_GAIN_ENERGY );
+      gs.setGlucose( cell.x(), cell.y(), g - use_glucose );
+      os.setOxygen( cell.x(), cell.y(), o - use_oxygen );
     }
   }
 
@@ -424,10 +428,10 @@ public:
    */
   virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
     MATERIAL g = gs.glucose(cell.x(), cell.y());
-    MATERIAL gathering = CELL_METABOLIZE_GLUCOSE;
-    if( g >= gathering ) {
-      cell.gatherEnergy( gathering );
-      gs.setGlucose( cell.x(), cell.y(), g-gathering );
+    MATERIAL use_glucose = CELL_METABOLIZE_GLUCOSE;
+    if( g >= use_glucose ) {
+      cell.gatherEnergy( CANCER_CELL_GAIN_ENERGY );
+      gs.setGlucose( cell.x(), cell.y(), g-use_glucose );
     }
   }
 
