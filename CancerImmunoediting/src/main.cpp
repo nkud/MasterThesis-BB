@@ -9,6 +9,7 @@
  * 
  * TODO:
  *   - T細胞
+ *   - 細胞は、マテリアルが多い方向に進むか？
  *
  * @author Naoki Ueda
  * 
@@ -89,8 +90,6 @@ typedef double ENERGY;
 const int WIDTH  = 30; //: 幅
 const int HEIGHT = 30; //: 高さ
 
-const ENERGY INITIAL_CELL_ENERGY = 10; //: 初期細胞エネルギー
-
 /* グルコース, 酸素の再生量 /1step */
 const MATERIAL GLUCOSE_GENERATE = 0.1; //: グルコース再生量
 const MATERIAL OXYGEN_GENERATE = 0.1; //: 酸素再生量
@@ -98,15 +97,23 @@ const MATERIAL MAX_GLUCOSE = 100; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 100; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int STEP = 5000; //: 最大ステップ数
+const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 
+/*
+ * 細胞に関するパラメータ
+ */
+
+const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
+
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 30; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 20; //: 細胞分裂エネルギー閾値
+
+const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
 const double CELL_MUTATION_RATE = 0.1; //: 細胞突然変異確率
 
@@ -316,6 +323,10 @@ class Cell : public __Mobile {
 
   __CellState& cellState() { return *state_; }
   void changeState();
+
+  void incrementDivisionCount() { cell_division_count_++; }
+  int divisionCount() { return cell_division_count_; }
+  bool canDivision();
   
   /** スケープ上を移動する */
   virtual double move( __Landscape& landscape ) {
@@ -333,6 +344,7 @@ class Cell : public __Mobile {
  private:
   ENERGY energy_;
   __CellState *state_;
+  int cell_division_count_;
 };
 
 /*
@@ -386,7 +398,7 @@ public:
   }
 
   virtual bool isNormalCell() { return true; }
-  virtual bool isCancerCell() { return isNormalCell() ? true : false; }
+  virtual bool isCancerCell() { return false; }
 private:
   NormalCellState() { }
 };
@@ -420,9 +432,10 @@ public:
   }
 
   virtual bool isNormalCell() { return false; }
-  virtual bool isCancerCell() { return isNormalCell() ? false : true; }
+  virtual bool isCancerCell() { return true; }
 private:
 };
+
 /**
  * @brief ステップ管理するクラス
  *
@@ -461,39 +474,13 @@ class StepKeeper {
  * ステップ数と一緒に、そのときの値を出力する関数
  */
 template < typename T >
-void output_value_with_step( const char *fname, T value ) {
-  int step = StepKeeper::Instance().step();
-  std::ofstream ofs(fname, std::ios_base::out | std::ios_base::app);
-  ofs << step << SEPARATOR;
-  ofs << value << std::endl;
-};
+void output_value_with_step( const char *fname, T value );
 
 /*
- * ステップ数と一緒に、その時の値を出力する関数
+ * ステップ数と一緒に、その時のマップを出力する関数
  */
 template < typename T >
-void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
-  // ファイル名
-  char file_name[256];
-  sprintf(file_name, "%d-%s.txt", StepKeeper::Instance().step(), fname);
-  std::ofstream agent_map_ofs(file_name);
-
-  // マップの全てのいちを0で初期化する。
-  int agent_map[HEIGHT][WIDTH] = {};
-  EACH(it_agent, agents) {
-    T& agent = **it_agent;
-    agent_map[agent.y()][agent.x()]++;
-  }
-  FOR(i, HEIGHT) {
-    FOR(j, WIDTH) {
-      agent_map_ofs << i << SEPARATOR;
-      agent_map_ofs << j << SEPARATOR;
-      agent_map_ofs << agent_map[j][i];
-      agent_map_ofs << std::endl;
-    }
-    agent_map_ofs << std::endl;
-  }
-}
+void output_map_with_value( const char *fname, VECTOR(T *)& agents );
 
 /**
  * 細胞クラスの、スケープ上での2次元マップを出力する。
@@ -514,7 +501,7 @@ int main() {
 
   // 期間クラスのインスタンスを生成する
   StepKeeper &stepKeeper = StepKeeper::Instance();
-  stepKeeper.setMaxStep( STEP );
+  stepKeeper.setMaxStep( MAX_STEP );
 
   // グルコース、酸素マップのインスタンスを作成する。
   GlucoseScape *gs = new GlucoseScape();
@@ -551,6 +538,12 @@ int main() {
     VECTOR(Cell *) new_cells;
     EACH( it_cell, cells ) {
       Cell& origincell = **it_cell;
+
+      // 分裂不可能ならスキップする。
+      if( origincell.canDivision() == false ) {
+        continue;
+      }
+
       double origin_energy = origincell.energy();
       if( origin_energy > CELL_DIVISION_THRESHOLD_ENERGY ) {
         Cell *newcell = new Cell();
@@ -559,11 +552,17 @@ int main() {
         int newx = origincell.x(); int newy = origincell.y();
         newcell->setLocation( newx, newy );
 
+        // がん細胞からはがん細胞が分裂する。
+        if( origincell.cellState().isCancerCell() ) {
+          newcell->changeState();
+        }
+
         // 半分にエネルギーを分ける。
         newcell->setEnergy( origin_energy / 2 );
         origincell.setEnergy( origin_energy / 2 );
 
         new_cells.push_back( newcell );
+        origincell.incrementDivisionCount();
       }
     }
     cells.insert(cells.end(), new_cells.begin(), new_cells.end());
@@ -619,8 +618,9 @@ int main() {
     int cancersize = 0;
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      if( cell.cellState().isNormalCell() ) normalsize++;
-      else cancersize++;
+      if( cell.cellState().isNormalCell() ) { 
+        normalsize++;
+      } else cancersize++;
     }
     output_value_with_step("normalcell-size.txt", normalsize);
     output_value_with_step("cancercell-size.txt", cancersize);
@@ -633,6 +633,37 @@ int main() {
 /*
  * Function
  */
+template < typename T >
+void output_value_with_step( const char *fname, T value ) {
+  int step = StepKeeper::Instance().step();
+  std::ofstream ofs(fname, std::ios_base::out | std::ios_base::app);
+  ofs << step << SEPARATOR;
+  ofs << value << std::endl;
+};
+
+template < typename T >
+void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
+  // ファイル名
+  char file_name[256];
+  sprintf(file_name, "%d-%s.txt", StepKeeper::Instance().step(), fname);
+  std::ofstream agent_map_ofs(file_name);
+
+  // マップの全ての位置を0で初期化する。
+  int agent_map[HEIGHT][WIDTH] = {};
+  EACH(it_agent, agents) {
+    T& agent = **it_agent;
+    agent_map[agent.y()][agent.x()]++;
+  }
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      agent_map_ofs << i << SEPARATOR;
+      agent_map_ofs << j << SEPARATOR;
+      agent_map_ofs << agent_map[j][i];
+      agent_map_ofs << std::endl;
+    }
+    agent_map_ofs << std::endl;
+  }
+}
 
 void output_cell_energy_average( VECTOR(Cell *)& cells ) {
   int sum = 0;
@@ -716,6 +747,7 @@ Cell::Cell() {
   // energy_ = Random::Instance().uniformInt(0, INITIAL_CELL_ENERGY);
   setEnergy( INITIAL_CELL_ENERGY );
   state_ = &( NormalCellState::Instance() );
+  cell_division_count_ = 0;
 }
 
 void Cell::changeState() {
@@ -734,5 +766,21 @@ void Cell::mutate( double prob ) {
     if( state_->isNormalCell() ) {
       changeState();
     }
+  }
+}
+
+/**
+ * 分裂可能かを返す
+ * 
+ * @return 真偽値
+ */
+bool Cell::canDivision() {
+  // がん細胞なら無条件で分裂可能にする。
+  if( cellState().isCancerCell() ) return true;
+
+  if( divisionCount() < MAX_CELL_DIVISION_COUNT ) {
+    return true;
+  } else {
+    return false;
   }
 }
