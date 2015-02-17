@@ -94,11 +94,11 @@ const ENERGY INITIAL_CELL_ENERGY = 10; //: 初期細胞エネルギー
 /* グルコース, 酸素の再生量 /1step */
 const MATERIAL GLUCOSE_GENERATE = 0.1; //: グルコース再生量
 const MATERIAL OXYGEN_GENERATE = 0.1; //: 酸素再生量
-const MATERIAL MAX_GLUCOSE = 50; //: 最大グルコース量
-const MATERIAL MAX_OXYGEN = 50; //: 最大酸素量
+const MATERIAL MAX_GLUCOSE = 100; //: 最大グルコース量
+const MATERIAL MAX_OXYGEN = 100; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int STEP = 2000; //: 最大ステップ数
+const int STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -106,7 +106,7 @@ const int CELL_SIZE = 100; //: 初期総細胞数
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 5; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 30; //: 細胞分裂エネルギー閾値
 
 const double CELL_MUTATION_RATE = 0.1; //: 細胞突然変異確率
 
