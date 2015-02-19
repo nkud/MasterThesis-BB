@@ -1,18 +1,19 @@
 /**
- * 
+ *
  * 正常細胞とがん細胞との、糖代謝の違いを表現するモデル。
  *
  * 細胞、グルコーススケープ、酸素スケープ
  *
  * クラスにおけるコンストラクタは1つだけにする。ややこしいので。
  * 同様にオーバーロード少なめに
- * 
- * TODO:
+ *
+ * memo:
  *   - T細胞
  *   - 細胞は、マテリアルが多い方向に進むか？
+ *   - WIDTH, HEIGHTを内部から消す
  *
  * @author Naoki Ueda
- * 
+ *
  */
 #include <iostream>
 #include <sstream>
@@ -105,8 +106,8 @@ const int CELL_SIZE = 100; //: 初期総細胞数
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
 
-const ENERGY NORMAL_CELL_GAIN_ENERGY = 1;
-const ENERGY CANCER_CELL_GAIN_ENERGY = 2;
+const ENERGY NORMAL_CELL_GAIN_ENERGY = 1.5; //: 正常細胞代謝量
+const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 
 /*
  * 細胞に関するパラメータ
@@ -118,7 +119,7 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 30; //: 細胞分裂エネルギ�
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 0.1; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 /*
  * クラスを定義していく。
@@ -165,7 +166,7 @@ class __Landscape {
   public:
     __Landscape() : width_(WIDTH), height_(HEIGHT) { }
     ~__Landscape() { }
-    
+
     int width() const { return width_; }
     int height() const { return height_; }
 
@@ -199,7 +200,7 @@ class GlucoseScape : public __SugarScape {
     virtual void generate() {
       FOR(i, HEIGHT) {
         FOR(j, WIDTH) {
-          if(glucose(j, i) <= MAX_GLUCOSE - GLUCOSE_GENERATE) { 
+          if(glucose(j, i) <= MAX_GLUCOSE - GLUCOSE_GENERATE) {
             glucose_map_[i][j] += GLUCOSE_GENERATE;
           }
         }
@@ -242,7 +243,7 @@ class OxygenScape : public __SugarScape {
 
 /**
  * @brief 位置情報のクラス
- * 
+ *
  * モデル上に存在するためには、座標が必要になるので、
  * 座標を持つエージェントのためのインターフェイスを作成する。
  */
@@ -258,7 +259,7 @@ class __Location {
 
     // スケープ上にランダムに配置する。
     void randomSetLocation() {
-      setX(Random::Instance().uniformInt(0, WIDTH-1)); 
+      setX(Random::Instance().uniformInt(0, WIDTH-1));
       setY(Random::Instance().uniformInt(0, HEIGHT-1));
     }
   private:
@@ -278,7 +279,7 @@ class __Mobile : public __Location {
      *
      * ランドスケープ上を移動する。
      * 壁あり。
-     * 
+     *
      * @param landscape スケープ
      * @return 移動した距離を、マンハッタン距離で返す。
      */
@@ -315,12 +316,12 @@ class Cell : public __Mobile {
  public:
   Cell();
   virtual ~Cell() { }
-  
+
   ENERGY energy() const { return energy_; }
   void setEnergy( ENERGY energy ) { energy_ = energy; }
   void consumeEnergy( ENERGY consume ) { setEnergy( energy() - consume ); }
   void gatherEnergy( ENERGY gather ) { setEnergy( energy() + gather ); }
-  
+
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
 
@@ -330,7 +331,7 @@ class Cell : public __Mobile {
   void incrementDivisionCount() { cell_division_count_++; }
   int divisionCount() { return cell_division_count_; }
   bool canDivision();
-  
+
   /** スケープ上を移動する */
   virtual double move( __Landscape& landscape ) {
     double distance = __Mobile::move(landscape);
@@ -340,7 +341,7 @@ class Cell : public __Mobile {
 
   /**
    * 指定した確率で突然変異する。
-   * 
+   *
    * @param prob 突然変異確率
    */
   void mutate( double prob );
@@ -384,7 +385,7 @@ public:
 
   /**
    * グルコースと酸素を利用してエネルギーを産生する。
-   * 
+   *
    * @param cell 細胞
    * @param gs グルコーススケープ
    * @param os 酸素スケープ
@@ -421,7 +422,7 @@ public:
 
   /**
    * グルコースのみを利用してエネルギーを産生する。
-   * 
+   *
    * @param cell 細胞
    * @param gs グルコーススケープ
    * @param os 酸素スケープ
@@ -570,7 +571,7 @@ int main() {
       }
     }
     cells.insert(cells.end(), new_cells.begin(), new_cells.end());
-    
+
 
     /*
      * 細胞が代謝する
@@ -622,7 +623,7 @@ int main() {
     int cancersize = 0;
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      if( cell.cellState().isNormalCell() ) { 
+      if( cell.cellState().isNormalCell() ) {
         normalsize++;
       } else cancersize++;
     }
@@ -738,7 +739,7 @@ bool StepKeeper::loop() {
   proceed();
   if( step() <= maxStep() ) return true;
   else return false;
-}    
+}
 bool StepKeeper::isInterval( int interval ) {
   if(step()%interval == 0) return true;
   else return false;
@@ -755,7 +756,7 @@ Cell::Cell() {
 }
 
 void Cell::changeState() {
-  state_ = &( CancerCellState::Instance() ); 
+  state_ = &( CancerCellState::Instance() );
 }
 
 void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
@@ -775,7 +776,7 @@ void Cell::mutate( double prob ) {
 
 /**
  * 分裂可能かを返す
- * 
+ *
  * @return 真偽値
  */
 bool Cell::canDivision() {
