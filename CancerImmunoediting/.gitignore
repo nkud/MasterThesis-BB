@@ -5,6 +5,7 @@ master/
 html/
 
 *.swp
+*.tmp
 
 # image
 *.gif

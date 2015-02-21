@@ -320,7 +320,7 @@ class Cell : public __Mobile {
   ENERGY energy() const { return energy_; }
   void setEnergy( ENERGY energy ) { energy_ = energy; }
   void consumeEnergy( ENERGY consume ) { setEnergy( energy() - consume ); }
-  void gatherEnergy( ENERGY gather ) { setEnergy( energy() + gather ); }
+  void gainEnergy( ENERGY gather ) { setEnergy( energy() + gather ); }
 
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
@@ -396,7 +396,7 @@ public:
     MATERIAL use_glucose = CELL_METABOLIZE_GLUCOSE;
     MATERIAL use_oxygen = CELL_METABOLIZE_OXYGEN;
     if( g >= use_glucose && o >= use_oxygen ) {
-      cell.gatherEnergy( NORMAL_CELL_GAIN_ENERGY );
+      cell.gainEnergy( NORMAL_CELL_GAIN_ENERGY );
       gs.setGlucose( cell.x(), cell.y(), g - use_glucose );
       os.setOxygen( cell.x(), cell.y(), o - use_oxygen );
     }
@@ -431,7 +431,7 @@ public:
     MATERIAL g = gs.glucose(cell.x(), cell.y());
     MATERIAL use_glucose = CELL_METABOLIZE_GLUCOSE;
     if( g >= use_glucose ) {
-      cell.gatherEnergy( CANCER_CELL_GAIN_ENERGY );
+      cell.gainEnergy( CANCER_CELL_GAIN_ENERGY );
       gs.setGlucose( cell.x(), cell.y(), g-use_glucose );
     }
   }
