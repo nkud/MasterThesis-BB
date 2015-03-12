@@ -106,7 +106,7 @@ const int CELL_SIZE = 100; //: 初期総細胞数
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
 
-const ENERGY NORMAL_CELL_GAIN_ENERGY = 1.5; //: 正常細胞代謝量
+const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
 const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 
 /*
@@ -119,7 +119,7 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 30; //: 細胞分裂エネルギ�
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 0.9; //: 細胞突然変異確率
 
 /*
  * クラスを定義していく。
@@ -524,6 +524,9 @@ int main() {
   // 計算を実行する ---------------------------------------
   while( stepKeeper.loop() )
   {
+    if( stepKeeper.isInterval(100) ) {
+      DEBUG(stepKeeper.step());
+    }
     /*
      * 細胞を移動させる。
      */
