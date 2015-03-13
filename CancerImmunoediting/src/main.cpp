@@ -176,8 +176,11 @@ class __Landscape {
     int width_, height_;
 };
 
-// シュガースケープのクラスを作成する。
-// シュガーを生産できる。
+/**
+ * @brief シュガースケープのインターフェイス
+ *
+ * シュガーを生産できる。
+ */
 class __SugarScape : public __Landscape {
   public:
     virtual void generate() = 0;
@@ -191,6 +194,7 @@ class __SugarScape : public __Landscape {
 class GlucoseScape : public __SugarScape {
   public:
     GlucoseScape() {
+      // 全てのマップに初期グルコース量を配置する。
       FOR(i, HEIGHT) {
         FOR(j, WIDTH) {
           glucose_map_[i][j] = 5;
@@ -219,6 +223,7 @@ class GlucoseScape : public __SugarScape {
 class OxygenScape : public __SugarScape {
   public:
     OxygenScape() {
+      // 全てのマップに初期酸素量を配置する。
       FOR(i, HEIGHT) {
         FOR(j, WIDTH) {
           oxygen_map_[i][j] = 5;
