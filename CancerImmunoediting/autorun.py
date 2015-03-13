@@ -19,7 +19,7 @@ def autorun(function, n):
 
 data = []
 for i in range(100):
-    data += i*0.2
+    data.append(i*0.2)
 
 # Main routine
 if __name__ == '__main__':
