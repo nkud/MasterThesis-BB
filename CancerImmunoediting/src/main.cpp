@@ -119,7 +119,7 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 30; //: 細胞分裂エネルギ�
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 0.9; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 10; //: 細胞突然変異確率
 
 /*
  * クラスを定義していく。
