@@ -4,7 +4,8 @@
 #+LANGUAGE: ja
 #+LaTeX_CLASS: thesis
 #+STARTUP: content
-#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:12px;}</style>
+#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:13px;}</style>
+#+HTML_HEAD: <style type="text/css">body {padding: 0px 50px;}</style>
 #+HTML_HEAD: <style type="text/css">h2 {text-decoration:underline;margin-top:3em;}</style>
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
@@ -52,7 +53,7 @@ class 酸素スケープ {
 6. グルコース、酸素のマップが再生する
 ** 備考
 *** グルコース、酸素の分布は、現段階では空間一様になっている。
-* COMMENT 論文構成
+* 論文構成
 ** 序論
 *** 背景説明
 - 免疫監視説とは、「癌細胞は頻繁に体内で生じているが、通常は、
@@ -80,7 +81,7 @@ class 酸素スケープ {
 *** HOLD 得られた結果を説明する
 *** HOLD 得られた結果の価値を検討する
 *** HOLD 本論文の構成を述べる
-* COMMENT 構成
+* 構成
 ** 序論
 *** 背景説明
 - 他分野である可能性が高い。
