@@ -1,5 +1,7 @@
 import os
 
+print '...',
+
 ls = os.listdir('.')
 
 out = open('cancercell-size-master.txt', 'w')
@@ -14,3 +16,5 @@ for l in ls:
         out.write('%s,' % line[1])
         #if n > 300: break
     out.write('\n')
+
+raw_input('done')
