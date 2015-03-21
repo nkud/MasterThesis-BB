@@ -28,9 +28,9 @@ for line in source_file:
 
         # パラメータの変数説明の有無で表示する箇所を変える
         if len(line) > 6:
-            paramline = '%s = %s' % (line[6], line[4])
+            paramline = '%s = %s' % (line[6], line[4][:-1])
         else:
-            paramline = '%s = %s' % (line[2], line[4])
+            paramline = '%s = %s' % (line[2], line[4][:-1])
         print paramline
         config_line.append(paramline)
 
@@ -217,8 +217,11 @@ html_line += '<body>'
 html_line += '<h1>#result-%s</h1>' % datetime.datetime.now()
 
 html_line += '<h2>parameter</h2>'
+html_line += '<table>'
 for line in config_line:
-    html_line += '%s<br />' % line
+    line = line.split()
+    html_line += '<tr><td>%s</td><td>%s</td></tr>' % ( line[0], line[2] )
+html_line += '</table>'
 html_line += '<hr />'
 
 html_line += image_set_line('animation.gif', 'glucose-animation.gif', 'oxygen-animation.gif')

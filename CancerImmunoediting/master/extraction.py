@@ -1,13 +1,18 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 
-print '...',
+INPUT_DIR_WORD = 'result'
+
+print '--> extraction has started'
 
 ls = os.listdir('.')
 
 out = open('cancercell-size-master.txt', 'w')
 for l in ls:
     n = 0
-    if not 'result' in l: continue
+    if not INPUT_DIR_WORD in l: continue
     cancerfilepass = '%s/bin/cancercell-size.txt' % l
     file = open(cancerfilepass, 'r')
     for line in file:
@@ -17,4 +22,5 @@ for l in ls:
         #if n > 300: break
     out.write('\n')
 
-raw_input('done')
+print '--> %d directories' % n
+raw_input('--> done')
