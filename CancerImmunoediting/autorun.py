@@ -5,8 +5,8 @@ import os
 
 # 自動化する処理を作成する。
 def auto(n):
-    match = 'const double CELL_MUTATION_RATE ='
-    distr = '%s %f; //: 細胞突然変異確率' % (match, n)
+    match = 'const ENERGY CELL_DIVISION_THRESHOLD_ENERGY ='
+    distr = '%s %f; //: 細胞分裂エネルギー閾値' % (match, n)
     filepass = 'src/main.cpp'
     command='sed -i -e "/%s/c %s" %s' % (match, distr, filepass)
     os.system(command)
@@ -18,8 +18,8 @@ def autorun(function, n):
         function(i)
 
 data = []
-for i in range(100):
-    data.append(i*0.2)
+for i in range(350):
+    data.append(30+i*0.2)
 
 # Main routine
 if __name__ == '__main__':

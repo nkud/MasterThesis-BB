@@ -101,7 +101,7 @@ const MATERIAL MAX_OXYGEN = 100; //: 最大酸素量
 const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
-const int CELL_SIZE = 100; //: 初期総細胞数
+const int CELL_SIZE = 50; //: 初期総細胞数
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
@@ -115,11 +115,11 @@ const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 5; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 30; //: 細胞分裂エネルギー閾値
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 5; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 2; //: 細胞突然変異確率
 
 /*
  * クラスを定義していく。
