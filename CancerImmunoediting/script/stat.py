@@ -46,20 +46,25 @@ auto_plot_line = []
 auto_plot_line += 'set terminal png size 1000,150;'
 
 # 平均細胞エネルギー
+auto_plot_line += 'set xlabel "STEP";'
+auto_plot_line += 'set ylabel "ENERGY AVERAGE";'
 auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
 auto_plot_line += 'set output "cell-energy-average.png";'
 auto_plot_line += 'replot;set output;'
 
 # 総細胞数
+auto_plot_line += 'set ylabel "NORMAL CELL SIZE";'
 auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
 auto_plot_line += 'set output "normalcell-size.png";'
 auto_plot_line += 'replot;set output;'
 
+auto_plot_line += 'set ylabel "NORMAL & CANCER";'
 auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
 auto_plot_line += 'replot "../bin/cancercell-size.txt" w l;'
 auto_plot_line += 'set output "cell-size.png";'
 auto_plot_line += 'replot;set output;'
 
+auto_plot_line += 'set ylabel "CANCER CELL SIZE";'
 auto_plot_line += 'plot "../bin/cancercell-size.txt" w l;'
 auto_plot_line += 'set output "cancercell-size.png";'
 auto_plot_line += 'replot;set output;'
