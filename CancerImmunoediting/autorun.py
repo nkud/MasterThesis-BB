@@ -18,8 +18,8 @@ def autorun(function, n):
         function(i)
 
 data = []
-for i in range(350):
-    data.append(30+i*0.2)
+for i in range(200):
+    data.append((i+1)*0.5)
 
 # Main routine
 if __name__ == '__main__':

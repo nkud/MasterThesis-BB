@@ -115,7 +115,7 @@ const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 2; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 100.000000; //: 細胞分裂エネルギー閾値
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
