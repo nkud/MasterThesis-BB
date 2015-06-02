@@ -98,7 +98,7 @@ const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 5000; //: 最大ステップ数
+const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -350,10 +350,23 @@ class Cell : public __Mobile {
    * @param prob 突然変異確率
    */
   void mutate( double prob );
+
+  int immunogenicity() { return immunogenicity_; }
+
  private:
   ENERGY energy_;
   __CellState *state_;
   int cell_division_count_;
+
+  // 免疫原性率 0 ~ 100 %
+  int immunogenicity_;
+};
+
+class Tcell : public __Mobile {
+public:
+  Tcell();
+  virtual ~Tcell() { }
+private:
 };
 
 /*
@@ -761,6 +774,9 @@ Cell::Cell() {
   setEnergy( INITIAL_CELL_ENERGY );
   state_ = &( NormalCellState::Instance() );
   cell_division_count_ = 0;
+  immunogenicity_ = 0;
+  if( cellState().isNormalCell() ) immunogenicity_ = 0;
+  if( cellState().isCancerCell() ) immunogenicity_ = 50;
 }
 
 void Cell::changeState() {
