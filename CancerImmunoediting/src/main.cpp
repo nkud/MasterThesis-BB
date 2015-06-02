@@ -102,6 +102,8 @@ const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
+const int TCELL_SIZE = 100; //: T初期総細胞数
+
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
@@ -364,7 +366,7 @@ class Cell : public __Mobile {
 
 class Tcell : public __Mobile {
 public:
-  Tcell();
+  Tcell() { }
   virtual ~Tcell() { }
 private:
 };
@@ -537,6 +539,14 @@ int main() {
     Cell *nm = new Cell();
     nm->randomSetLocation();
     cells.push_back( nm );
+  }
+
+  // T細胞を初期化していく。
+  VECTOR(Tcell *) tcells;
+  FOR( i, TCELL_SIZE ) {
+    Tcell *tc = new Tcell();
+    tc->randomSetLocation();
+    tcells.push_back( tc );
   }
 
   // 計算を実行する ---------------------------------------
