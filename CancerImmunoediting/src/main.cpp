@@ -556,12 +556,17 @@ int main() {
       DEBUG(stepKeeper.step());
     }
     /*
-     * 細胞を移動させる。
+     * 細胞、T細胞を移動させる。
      */
     EACH( it_cell, cells )
     {
       Cell& cell = **it_cell;
       cell.move( *gs );
+    }
+    EACH( it_tcell, tcells )
+    {
+      Tcell& tcell = **it_tcell;
+      tcell.move( *gs );
     }
 
     /*
@@ -624,6 +629,14 @@ int main() {
     }
 
     /*
+     * 免疫で除去する
+     */
+    EACH( it_tcell, tcells )
+    {
+      Tcell& tcell = **it_tcell;
+    }
+
+    /*
      * 突然変異する
      */
     EACH( it_cell, cells ) {
@@ -640,6 +653,7 @@ int main() {
     // 細胞の分布を出力する
     //output_cell_map( cells );
     output_map_with_value( "cell", cells );
+    output_map_with_value( "tcell", tcells );
     // 細胞の平均エネルギーを出力する。
     output_cell_energy_average( cells );
 
