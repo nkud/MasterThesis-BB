@@ -11,7 +11,7 @@
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
 * モデル概略
-** オブジェクト説明
+** COMMENT オブジェクト説明
 - 各種細胞は、スケープ上を自由に移動する。
 #+BEGIN_SRC plantuml :file sample.svg :cmdline -charset UTF-8
 
@@ -145,3 +145,8 @@ class グルコーススケープ {
 +setGlucose( int x, int y )
 +void generate() : グルコースを再生する
 }
+* Seminar
+** <2015-06-10 水>
+- 見つけた論文について
+- 電子タグの論文を探す
+  - 電子タグの使われ方を調べる
