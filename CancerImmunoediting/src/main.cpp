@@ -86,6 +86,8 @@
  */
 typedef double MATERIAL;
 typedef double ENERGY;
+typedef std::string GENE;
+typedef int PROBABILITY;
 
 // ランドスケープの幅と高さを設定する。
 const int WIDTH  = 30; //: 幅
@@ -313,13 +315,41 @@ class __CellState;
 class NormalCellState;
 class CancerCellState;
 
+
+/**
+ * @brief 生命クラス
+ *
+ * 遺伝子を持つ。
+ */
+class __Life {
+public:
+  /** 遺伝子配列を返す */
+  GENE gene() { return gene_; }
+
+  /** 遺伝子の値を返す */
+  int geneValue();
+
+  /** 遺伝子配列を初期化する */
+  void initiateGene( int length );
+  void randomSetGene( int length );
+  void normalSetGene( int length ) {
+    gene_ = "";
+    FOR( i, length ) {
+      gene_ += '0';
+    }
+  }
+
+private:
+  GENE gene_;
+};
+
 /**
  * @brief 細胞クラス
  *
  * 代謝する。
  * エネルギーを持つ。
  */
-class Cell : public __Mobile {
+class Cell : public __Mobile, public __Life {
  public:
   Cell();
   virtual ~Cell() { }
@@ -807,6 +837,8 @@ Cell::Cell() {
   immunogenicity_ = 0;
   if( cellState().isNormalCell() ) immunogenicity_ = 0;
   if( cellState().isCancerCell() ) immunogenicity_ = 50;
+
+  normalSetGene();
 }
 
 void Cell::changeState() {
