@@ -355,6 +355,7 @@ public:
     }
   }
 
+  /** フリップする */
   void flip( int pos ) {
     pos = pos%CELL_GENE_LENGTH;
     if( gene_[pos] == '0' ) {
@@ -364,9 +365,15 @@ public:
     }
   }
   
+  /** 突然変異する */
   void mutate() {
     int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
     flip(pos);
+  }
+
+  bool match( __Life& life ) {
+    if( gene() == life.gene() ) { return true; }
+    else { return false; }
   }
 
 private:
