@@ -329,7 +329,15 @@ public:
   GENE gene() { return gene_; }
 
   /** 遺伝子の値を返す */
-  int geneValue();
+  int geneValue() {
+    int ret = 0;
+    FOR( i, CELL_GENE_LENGTH ) {
+      if( gene_[i] == '1' ) {
+        ret++;
+      }
+    }
+    return ret;
+  }
 
   /** 遺伝子配列を初期化する */
   void initiateGene( int length ) { 
@@ -337,13 +345,13 @@ public:
     FOR( i, length ) {
       gene_ += '0';
     }
-    ECHO(gene_);
   }
-  void randomSetGene( int length );
-  void normalSetGene( int length ) {
+  
+  /** 遺伝子配列をランダムに設定する */
+  void randomSetGene( int length ) {
     gene_ = "";
     FOR( i, length ) {
-      gene_ += '0';
+      gene_ += Random::Instance().probability(50) ? '0' : '1';
     }
   }
 
@@ -354,6 +362,11 @@ public:
     } else {
       gene_[pos] = '0';
     }
+  }
+  
+  void mutate() {
+    int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
+    flip(pos);
   }
 
 private:
@@ -589,7 +602,7 @@ int main() {
     // 配列に加える
     Cell *newcell = new Cell();
     newcell->randomSetLocation();
-    newcell->initiateGene( CELL_GENE_LENGTH );
+    // newcell->initiateGene( CELL_GENE_LENGTH );
     cells.push_back( newcell );
   }
 
@@ -598,7 +611,7 @@ int main() {
   FOR( i, TCELL_SIZE ) {
     Tcell *tc = new Tcell();
     tc->randomSetLocation();
-    tc->initiateGene( CELL_GENE_LENGTH );
+    tc->randomSetGene( CELL_GENE_LENGTH );
     tcells.push_back( tc );
   }
 
@@ -861,7 +874,7 @@ Cell::Cell() {
   if( cellState().isNormalCell() ) immunogenicity_ = 0;
   if( cellState().isCancerCell() ) immunogenicity_ = 50;
 
-  normalSetGene( CELL_GENE_LENGTH );
+  initiateGene( CELL_GENE_LENGTH );
 }
 
 void Cell::changeState() {
