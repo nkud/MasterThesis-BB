@@ -100,7 +100,7 @@ const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 1000; //: 最大ステップ数
+const int MAX_STEP = 500; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -124,6 +124,8 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 100.000000; //: 細胞分裂エネ
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
 const double CELL_MUTATION_RATE = 5; //: 細胞突然変異確率
+
+const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
 /*
  * クラスを定義していく。
@@ -330,7 +332,13 @@ public:
   int geneValue();
 
   /** 遺伝子配列を初期化する */
-  void initiateGene( int length );
+  void initiateGene( int length ) { 
+    gene_ = "";
+    FOR( i, length ) {
+      gene_ += '0';
+    }
+    ECHO(gene_);
+  }
   void randomSetGene( int length );
   void normalSetGene( int length ) {
     gene_ = "";
@@ -394,7 +402,7 @@ class Cell : public __Mobile, public __Life {
   int immunogenicity_;
 };
 
-class Tcell : public __Mobile {
+class Tcell : public __Mobile, public __Life {
 public:
   Tcell() { }
   virtual ~Tcell() { }
@@ -566,9 +574,14 @@ int main() {
   // TODO: 普通の細胞は細胞土地のほうがいいかも
   VECTOR(Cell *) cells;
   FOR(i, CELL_SIZE) {
-    Cell *nm = new Cell();
-    nm->randomSetLocation();
-    cells.push_back( nm );
+    // 新しい細胞を作成。
+    // 位置を設定する
+    // 遺伝子を初期化する
+    // 配列に加える
+    Cell *newcell = new Cell();
+    newcell->randomSetLocation();
+    newcell->initiateGene( CELL_GENE_LENGTH );
+    cells.push_back( newcell );
   }
 
   // T細胞を初期化していく。
@@ -576,6 +589,7 @@ int main() {
   FOR( i, TCELL_SIZE ) {
     Tcell *tc = new Tcell();
     tc->randomSetLocation();
+    tc->initiateGene( CELL_GENE_LENGTH );
     tcells.push_back( tc );
   }
 
@@ -838,7 +852,7 @@ Cell::Cell() {
   if( cellState().isNormalCell() ) immunogenicity_ = 0;
   if( cellState().isCancerCell() ) immunogenicity_ = 50;
 
-  normalSetGene();
+  normalSetGene( CELL_GENE_LENGTH );
 }
 
 void Cell::changeState() {
