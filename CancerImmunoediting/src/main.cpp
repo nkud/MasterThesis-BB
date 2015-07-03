@@ -347,6 +347,15 @@ public:
     }
   }
 
+  void flip( int pos ) {
+    pos = pos%CELL_GENE_LENGTH;
+    if( gene_[pos] == '0' ) {
+      gene_[pos] = '1';
+    } else {
+      gene_[pos] = '0';
+    }
+  }
+
 private:
   GENE gene_;
 };
