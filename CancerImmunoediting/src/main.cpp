@@ -535,8 +535,22 @@ class CellMap {
 public:
   CellMap() { }
   ~CellMap();
+
+  void resetMap() {
+  }
+
+  void resistCells( VECTOR(Cell *) cells ) {
+    EACH( it_cell, cells ) {
+      Cell &cell = **it_cell;
+    }
+  }
+
+  VECTOR(Cell *) cellsAt( int i, int j ) {
+    return cell_map_[i][j];
+  }
+
 private:
-  VECTOR(Cell *) cell_map_;
+  VECTOR(Cell *) cell_map_[HEIGHT][WIDTH];
 };
 
 /**
@@ -654,6 +668,9 @@ int main() {
       Tcell& tcell = **it_tcell;
       tcell.move( *gs );
     }
+
+    // 細胞の位置などを登録する
+    cellmap->resistCells( cells );
 
     /*
      * 細胞分裂をする。
