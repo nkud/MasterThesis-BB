@@ -529,6 +529,17 @@ private:
 };
 
 /**
+ * @brief 細胞のマップクラス
+ */
+class CellMap {
+public:
+  CellMap() { }
+  ~CellMap();
+private:
+  VECTOR(Cell *) cell_map_;
+};
+
+/**
  * @brief ステップ管理するクラス
  *
  * 時間を更新するクラスを作成する。
@@ -598,6 +609,8 @@ int main() {
   // グルコース、酸素マップのインスタンスを作成する。
   GlucoseScape *gs = new GlucoseScape();
   OxygenScape *os = new OxygenScape();
+
+  CellMap *cellmap = new CellMap();
 
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
