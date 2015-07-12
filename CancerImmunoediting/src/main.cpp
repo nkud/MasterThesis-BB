@@ -746,6 +746,7 @@ int main() {
     EACH( it_tcell, tcells )
     {
       Tcell& tcell = **it_tcell;
+      int i = tcell.y(); int j = tcell.x();
     }
 
     /*
