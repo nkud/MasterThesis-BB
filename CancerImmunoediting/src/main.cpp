@@ -537,11 +537,20 @@ public:
   ~CellMap();
 
   void resetMap() {
+    FOR( i, HEIGHT ) {
+      FOR( j, WIDTH ) {
+        cell_map_[i][j].clear();
+      }
+    }
   }
 
   void resistCells( VECTOR(Cell *) cells ) {
+    resetMap();
     EACH( it_cell, cells ) {
       Cell &cell = **it_cell;
+      int i = cell.y();
+      int j = cell.x();
+      cell_map_[i][j].push_back( &cell );
     }
   }
 
