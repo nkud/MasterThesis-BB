@@ -100,7 +100,7 @@ const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 500; //: 最大ステップ数
+const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -340,13 +340,13 @@ public:
   }
 
   /** 遺伝子配列を初期化する */
-  void initiateGene( int length ) { 
+  void initiateGene( int length ) {
     gene_ = "";
     FOR( i, length ) {
       gene_ += '0';
     }
   }
-  
+
   /** 遺伝子配列をランダムに設定する */
   void randomSetGene( int length ) {
     gene_ = "";
@@ -364,7 +364,7 @@ public:
       gene_[pos] = '0';
     }
   }
-  
+
   /** 突然変異する */
   void mutate() {
     int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
@@ -554,8 +554,29 @@ public:
     }
   }
 
-  VECTOR(Cell *) cellsAt( int i, int j ) {
+  VECTOR(Cell *)& cellsAt( int i, int j ) {
     return cell_map_[i][j];
+  }
+
+  void deleteCancerCellAt( int i, int j ) {
+    if( cell_map_[i][j].size() <= 0 ) { return; }
+
+    FOREACH( it_cell, cell_map_[i][j] ) {
+      Cell& cell = **it_cell;
+      if( cell.cellState().isCancerCell() ) {
+        // SAFE_DELETE( *it_cell );
+        cell_map_[i][j].erase( it_cell );
+      } else { it_cell++; }
+    }
+
+    // FOREACH( it_cur_cell, cell_map_[i][j] ) {
+    //   Cell& cur_cell = **it_cur_cell;
+    //   if( &cur_cell == &cell ) {
+    //     SAFE_DELETE( *it_cur_cell );
+    //     cell_map_[i][j].erase( it_cur_cell );
+    //     break;
+    //   } else { it_cur_cell++; }
+    // }
   }
 
 private:
@@ -751,11 +772,20 @@ int main() {
     {
       Tcell& tcell = **it_tcell;
       int i = tcell.y(); int j = tcell.x();
-      VECTOR(Cell *) cells = cellmap->cellsAt(i, j);
-      EACH( it_cell, cells ) {
-        cell& cell = **it_cell;
-        
-      }
+
+      cellmap->deleteCancerCellAt( i, j );
+
+      // VECTOR(Cell *)& poscells = cellmap->cellsAt(i, j);
+
+      // T細胞の位置に細胞がなければ処理する必要なし
+      // if( cells.size() <= 0 ) { break; }
+      // FOREACH( it_cell, poscells ) {
+      //   Cell& cell = **it_cell;
+      //   if( cell.cellState().isCancerCell() ) {
+      //     SAFE_DELETE( *it_cell );
+      //     poscells.erase( it_cell );
+      //   } else { it_cell++; }
+      // }
     }
 
     /*
@@ -776,6 +806,7 @@ int main() {
     //output_cell_map( cells );
     output_map_with_value( "cell", cells );
     output_map_with_value( "tcell", tcells );
+
     // 細胞の平均エネルギーを出力する。
     output_cell_energy_average( cells );
 
