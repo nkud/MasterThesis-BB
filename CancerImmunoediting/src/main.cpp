@@ -742,11 +742,20 @@ int main() {
 
     /*
      * 免疫で除去する
+     *
+     * T細胞と同じ位置に、
+     * がん細胞かつ認識するがん細胞がある場合、
+     * そのがん細胞を細胞配列から除去する。
      */
     EACH( it_tcell, tcells )
     {
       Tcell& tcell = **it_tcell;
       int i = tcell.y(); int j = tcell.x();
+      VECTOR(Cell *) cells = cellmap->cellsAt(i, j);
+      EACH( it_cell, cells ) {
+        cell& cell = **it_cell;
+        
+      }
     }
 
     /*
