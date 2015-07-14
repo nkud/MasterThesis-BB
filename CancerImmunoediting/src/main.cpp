@@ -531,56 +531,35 @@ private:
 /**
  * @brief 細胞のマップクラス
  */
-class CellMap {
+class TcellMap {
 public:
-  CellMap() { }
-  ~CellMap();
+  TcellMap() { }
+  ~TcellMap();
 
   void resetMap() {
     FOR( i, HEIGHT ) {
       FOR( j, WIDTH ) {
-        cell_map_[i][j].clear();
+        tcell_map_[i][j].clear();
       }
     }
   }
 
-  void resistCells( VECTOR(Cell *) cells ) {
+  void resistTcells( VECTOR(Tcell *) tcells ) {
     resetMap();
-    EACH( it_cell, cells ) {
-      Cell &cell = **it_cell;
-      int i = cell.y();
-      int j = cell.x();
-      cell_map_[i][j].push_back( &cell );
+    EACH( it_tcell, tcells ) {
+      Tcell &tcell = **it_tcell;
+      int i = tcell.y();
+      int j = tcell.x();
+      tcell_map_[i][j].push_back( &tcell );
     }
   }
 
-  VECTOR(Cell *)& cellsAt( int i, int j ) {
-    return cell_map_[i][j];
-  }
-
-  void deleteCancerCellAt( int i, int j ) {
-    if( cell_map_[i][j].size() <= 0 ) { return; }
-
-    FOREACH( it_cell, cell_map_[i][j] ) {
-      Cell& cell = **it_cell;
-      if( cell.cellState().isCancerCell() ) {
-        // SAFE_DELETE( *it_cell );
-        cell_map_[i][j].erase( it_cell );
-      } else { it_cell++; }
-    }
-
-    // FOREACH( it_cur_cell, cell_map_[i][j] ) {
-    //   Cell& cur_cell = **it_cur_cell;
-    //   if( &cur_cell == &cell ) {
-    //     SAFE_DELETE( *it_cur_cell );
-    //     cell_map_[i][j].erase( it_cur_cell );
-    //     break;
-    //   } else { it_cur_cell++; }
-    // }
+  VECTOR(Tcell *)& cellsAt( int i, int j ) {
+    return tcell_map_[i][j];
   }
 
 private:
-  VECTOR(Cell *) cell_map_[HEIGHT][WIDTH];
+  VECTOR(Tcell *) tcell_map_[HEIGHT][WIDTH];
 };
 
 /**
@@ -654,7 +633,7 @@ int main() {
   GlucoseScape *gs = new GlucoseScape();
   OxygenScape *os = new OxygenScape();
 
-  CellMap *cellmap = new CellMap();
+  TcellMap *tcellmap = new TcellMap();
 
   // 細胞を初期化していく。
   // TODO: 普通の細胞は細胞土地のほうがいいかも
@@ -700,7 +679,7 @@ int main() {
     }
 
     // 細胞の位置などを登録する
-    cellmap->resistCells( cells );
+    tcellmap->resistTcells( tcells );
 
     /*
      * 細胞分裂をする。
@@ -768,24 +747,11 @@ int main() {
      * がん細胞かつ認識するがん細胞がある場合、
      * そのがん細胞を細胞配列から除去する。
      */
-    EACH( it_tcell, tcells )
-    {
-      Tcell& tcell = **it_tcell;
-      int i = tcell.y(); int j = tcell.x();
-
-      cellmap->deleteCancerCellAt( i, j );
-
-      // VECTOR(Cell *)& poscells = cellmap->cellsAt(i, j);
-
-      // T細胞の位置に細胞がなければ処理する必要なし
-      // if( cells.size() <= 0 ) { break; }
-      // FOREACH( it_cell, poscells ) {
-      //   Cell& cell = **it_cell;
-      //   if( cell.cellState().isCancerCell() ) {
-      //     SAFE_DELETE( *it_cell );
-      //     poscells.erase( it_cell );
-      //   } else { it_cell++; }
-      // }
+    EACH( it_cell, cells ) {
+      Cell& cell = **it_cell;
+      if( cell.cellState().isCancerCell() ) {
+        // XXX
+      }
     }
 
     /*
