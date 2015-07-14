@@ -104,7 +104,7 @@ const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 100; //: T初期総細胞数
+const int TCELL_SIZE = 1000; //: T初期総細胞数
 
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
@@ -747,6 +747,7 @@ int main() {
      * がん細胞かつ認識するがん細胞がある場合、
      * そのがん細胞を細胞配列から除去する。
      */
+    int deletedcellssize = 0;
     FOREACH( it_cell, cells ) {
       Cell& cell = **it_cell;
       int i = cell.y(); int j = cell.x();
@@ -755,6 +756,7 @@ int main() {
         if( tcells.size() > 0 ) {
           SAFE_DELETE( *it_cell );
           cells.erase( it_cell );
+          deletedcellssize++;
         } else { it_cell++; }
       } else { it_cell++; }
     }
@@ -798,6 +800,7 @@ int main() {
     }
     output_value_with_step("normalcell-size.txt", normalsize);
     output_value_with_step("cancercell-size.txt", cancersize);
+    output_value_with_step("deleted-cell-size.txt", deletedcellssize);
   }
   // ------------------------------------------------------
 

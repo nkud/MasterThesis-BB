@@ -69,6 +69,11 @@ auto_plot_line += 'set ylabel "CANCER CELL SIZE";'
 auto_plot_line += 'plot "../bin/cancercell-size.txt" w l;'
 auto_plot_line += 'set output "cancercell-size.png";'
 auto_plot_line += 'replot;set output;'
+
+auto_plot_line += 'set ylabel "DELETED CELL SIZE";'
+auto_plot_line += 'plot "../bin/deleted-cell-size.txt" w l;'
+auto_plot_line += 'set output "deleted-cell-size.png";'
+auto_plot_line += 'replot;set output;'
 # -----------------------------------------------
 
 for line in auto_plot_line:
@@ -280,6 +285,7 @@ html_line += '<h2>%s</h2>\n' % '総細胞数'
 html_line += image_set_line('normalcell-size.png')
 html_line += image_set_line('cancercell-size.png')
 html_line += image_set_line('cell-size.png')
+html_line += image_set_line('deleted-cell-size.png')
 html_line += '</body></html>'
 # -----------------------------------------------
 
