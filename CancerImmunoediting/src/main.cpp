@@ -100,11 +100,11 @@ const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 5000; //: 最大ステップ数
+const int MAX_STEP = 2000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 100; //: T初期総細胞数
+const int TCELL_SIZE = 200; //: T初期総細胞数
 
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
@@ -554,7 +554,7 @@ public:
     }
   }
 
-  VECTOR(Tcell *)& cellsAt( int i, int j ) {
+  VECTOR(Tcell *)& tcellsAt( int i, int j ) {
     return tcell_map_[i][j];
   }
 
@@ -747,11 +747,16 @@ int main() {
      * がん細胞かつ認識するがん細胞がある場合、
      * そのがん細胞を細胞配列から除去する。
      */
-    EACH( it_cell, cells ) {
+    FOREACH( it_cell, cells ) {
       Cell& cell = **it_cell;
+      int i = cell.y(); int j = cell.x();
       if( cell.cellState().isCancerCell() ) {
-        // XXX
-      }
+        VECTOR(Tcell *) tcells = tcellmap->tcellsAt( i, j );
+        if( tcells.size() > 0 ) {
+          SAFE_DELETE( *it_cell );
+          cells.erase( it_cell );
+        } else { it_cell++; }
+      } else { it_cell++; }
     }
 
     /*
