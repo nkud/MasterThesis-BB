@@ -100,11 +100,11 @@ const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 2000; //: 最大ステップ数
+const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 200; //: T初期総細胞数
+const int TCELL_SIZE = 100; //: T初期総細胞数
 
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
@@ -764,7 +764,7 @@ int main() {
      */
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      cell.mutate(CELL_MUTATION_RATE);
+      cell.mutate( CELL_MUTATION_RATE );
     }
 
     // グルコーススケープが再生する。
