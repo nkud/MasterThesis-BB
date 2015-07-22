@@ -371,6 +371,7 @@ public:
     flip(pos);
   }
 
+  /** 遺伝子が同一の配列かどうかを判定する */
   bool match( __Life& life ) {
     if( gene() == life.gene() ) { return true; }
     else { return false; }
