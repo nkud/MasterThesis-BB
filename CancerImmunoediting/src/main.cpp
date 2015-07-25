@@ -366,7 +366,7 @@ public:
   }
 
   /** 突然変異する */
-  void mutate() {
+  void mutateGene() {
     int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
     flip(pos);
   }
@@ -754,10 +754,18 @@ int main() {
       int i = cell.y(); int j = cell.x();
       if( cell.cellState().isCancerCell() ) {
         VECTOR(Tcell *) tcells = tcellmap->tcellsAt( i, j );
-        if( tcells.size() > 0 ) {
-          SAFE_DELETE( *it_cell );
-          cells.erase( it_cell );
-          deletedcellssize++;
+        if( tcells.size() > 0 )
+        {
+          EACH( it_tcell, tcells ) {
+            Tcell& tcell = **it_tcell;
+            if( cell.match( tcell ) ) {
+              SAFE_DELETE( *it_cell );
+              cells.erase( it_cell );
+              deletedcellssize++;
+              break;
+            }
+          }
+          break;
         } else { it_cell++; }
       } else { it_cell++; }
     }
@@ -767,7 +775,8 @@ int main() {
      */
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      cell.mutate( CELL_MUTATION_RATE );
+      //cell.mutate( CELL_MUTATION_RATE );
+      cell.mutateGene();
     }
 
     // グルコーススケープが再生する。
