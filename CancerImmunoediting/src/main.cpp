@@ -123,7 +123,7 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 100.000000; //: 細胞分裂エネ
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 5; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
@@ -366,9 +366,11 @@ public:
   }
 
   /** 突然変異する */
-  void mutateGene() {
-    int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
-    flip(pos);
+  void mutateGene( int prob ) {
+    if( Random::Instance().probability(prob) ) {
+      int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
+      flip(pos);
+    }
   }
 
   /** 遺伝子が同一の配列かどうかを判定する */
@@ -400,8 +402,19 @@ class Cell : public __Mobile, public __Life {
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
 
-  __CellState& cellState() { return *state_; }
+  __CellState& cellState();
   void changeState();
+
+  /** がん細胞かどうかを返す */
+  // 遺伝子の評価値が１以上ならば、がん細胞
+  bool isCancerCell() {
+    if( geneValue() > 0 ) { return true; }
+    else { return false; }
+  }
+  bool isNormalCell() {
+    if( geneValue() <= 0 ) { return true; }
+    else { return false; }
+  }
 
   void incrementDivisionCount() { cell_division_count_++; }
   int divisionCount() { return cell_division_count_; }
@@ -646,7 +659,6 @@ int main() {
     // 配列に加える
     Cell *newcell = new Cell();
     newcell->randomSetLocation();
-    // newcell->initiateGene( CELL_GENE_LENGTH );
     cells.push_back( newcell );
   }
 
@@ -752,20 +764,20 @@ int main() {
     FOREACH( it_cell, cells ) {
       Cell& cell = **it_cell;
       int i = cell.y(); int j = cell.x();
-      if( cell.cellState().isCancerCell() ) {
+      if( cell.isCancerCell() ) {
         VECTOR(Tcell *) tcells = tcellmap->tcellsAt( i, j );
-        if( tcells.size() > 0 )
-        {
+        if( tcells.size() > 0 ) {
+          bool matching = false;
           EACH( it_tcell, tcells ) {
             Tcell& tcell = **it_tcell;
             if( cell.match( tcell ) ) {
               SAFE_DELETE( *it_cell );
               cells.erase( it_cell );
               deletedcellssize++;
-              break;
+              matching = true;
             }
           }
-          break;
+          if( matching == false ) it_cell++;
         } else { it_cell++; }
       } else { it_cell++; }
     }
@@ -776,7 +788,7 @@ int main() {
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
       //cell.mutate( CELL_MUTATION_RATE );
-      cell.mutateGene();
+      cell.mutateGene( CELL_MUTATION_RATE );
     }
 
     // グルコーススケープが再生する。
@@ -804,7 +816,7 @@ int main() {
     int cancersize = 0;
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      if( cell.cellState().isNormalCell() ) {
+      if( cell.isNormalCell() ) {
         normalsize++;
       } else cancersize++;
     }
@@ -980,5 +992,13 @@ bool Cell::canDivision() {
     return true;
   } else {
     return false;
+  }
+}
+
+__CellState& Cell::cellState() {
+  if( isNormalCell() ) {
+    return NormalCellState::Instance();
+  } else {
+    return CancerCellState::Instance();
   }
 }
