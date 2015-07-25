@@ -173,14 +173,17 @@ class __Landscape {
     __Landscape() : width_(WIDTH), height_(HEIGHT) { }
     ~__Landscape() { }
 
-    int width() const { return width_; }
-    int height() const { return height_; }
+    int width() const;
+    int height() const;
 
     // ランドスケープ上に存在する点かどうかを評価する。
     bool isExistingPoint( int x, int y );
   private:
     int width_, height_;
 };
+
+int __Landscape::width() const { return width_; }
+int __Landscape::height() const { return height_; }
 
 /**
  * @brief シュガースケープのインターフェイス
@@ -199,23 +202,9 @@ class __SugarScape : public __Landscape {
  */
 class GlucoseScape : public __SugarScape {
   public:
-    GlucoseScape() {
-      // 全てのマップに初期グルコース量を配置する。
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          glucose_map_[i][j] = 5;
-        }
-      }
-    }
-    virtual void generate() {
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          if(glucose(j, i) <= MAX_GLUCOSE - GLUCOSE_GENERATE) {
-            glucose_map_[i][j] += GLUCOSE_GENERATE;
-          }
-        }
-      }
-    }
+    GlucoseScape();
+
+    virtual void generate();
     MATERIAL glucose(int x, int y) const { return glucose_map_[y][x]; }
     virtual MATERIAL material(int x, int y) const { return glucose(x, y); }
     void setGlucose(int x, int y, MATERIAL value) { glucose_map_[y][x] = value; }
@@ -228,29 +217,23 @@ class GlucoseScape : public __SugarScape {
  */
 class OxygenScape : public __SugarScape {
   public:
-    OxygenScape() {
-      // 全てのマップに初期酸素量を配置する。
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          oxygen_map_[i][j] = 5;
-        }
-      }
-    }
-    MATERIAL oxygen(int x, int y) const { return oxygen_map_[y][x]; }
-    virtual MATERIAL material(int x, int y) const { return oxygen(x, y); }
-    void setOxygen(int x, int y, MATERIAL value) { oxygen_map_[y][x] = value; }
-    virtual void generate() {
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          if(oxygen(j, i) <= MAX_OXYGEN - OXYGEN_GENERATE) {
-            oxygen_map_[i][j] += OXYGEN_GENERATE;
-          }
-        }
-      }
-    }
+    OxygenScape();
+
+    MATERIAL oxygen(int x, int y) const;
+    virtual MATERIAL material(int x, int y) const;
+    void setOxygen(int x, int y, MATERIAL value);
+    virtual void generate();
   private:
     MATERIAL oxygen_map_[HEIGHT][WIDTH];
 };
+OxygenScape::OxygenScape() {
+  // 全てのマップに初期酸素量を配置する。
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      oxygen_map_[i][j] = 5;
+    }
+  }
+}
 
 /**
  * @brief 位置情報のクラス
@@ -943,6 +926,43 @@ bool StepKeeper::loop() {
 bool StepKeeper::isInterval( int interval ) {
   if(step()%interval == 0) return true;
   else return false;
+}
+
+/*
+ * GlucoseScape
+ */
+GlucoseScape::GlucoseScape() {
+  // 全てのマップに初期グルコース量を配置する。
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      glucose_map_[i][j] = 5;
+    }
+  }
+}
+void GlucoseScape::generate() {
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      if(glucose(j, i) <= MAX_GLUCOSE - GLUCOSE_GENERATE) {
+        glucose_map_[i][j] += GLUCOSE_GENERATE;
+      }
+    }
+  }
+}
+
+/*
+ * OxygenScape
+ */
+MATERIAL OxygenScape::oxygen(int x, int y) const { return oxygen_map_[y][x]; }
+MATERIAL OxygenScape::material(int x, int y) const { return oxygen(x, y); }
+void OxygenScape::setOxygen(int x, int y, MATERIAL value) { oxygen_map_[y][x] = value; }
+void OxygenScape::generate() {
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      if(oxygen(j, i) <= MAX_OXYGEN - OXYGEN_GENERATE) {
+        oxygen_map_[i][j] += OXYGEN_GENERATE;
+      }
+    }
+  }
 }
 
 /*
