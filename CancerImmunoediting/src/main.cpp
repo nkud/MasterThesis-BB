@@ -100,7 +100,7 @@ const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 1000; //: 最大ステップ数
+const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -384,7 +384,7 @@ class Cell : public __Mobile, public __Life {
    */
   void mutate( double prob );
 
-  int immunogenicity() { return immunogenicity_; }
+  int immunogenicity();
 
  private:
   ENERGY energy_;
@@ -392,8 +392,15 @@ class Cell : public __Mobile, public __Life {
   int cell_division_count_;
 
   // 免疫原性率 0 ~ 100 %
-  int immunogenicity_;
+  //int immunogenicity_;
 };
+
+int Cell::immunogenicity() {
+  int ret = 0;
+  ret = 100*geneValue()/CELL_GENE_LENGTH;
+  return ret;
+}
+
 class Tcell : public __Mobile, public __Life {
 public:
   Tcell() { }
@@ -710,16 +717,20 @@ int main() {
      * そのがん細胞を細胞配列から除去する。
      */
     int deletedcellssize = 0;
-    FOREACH( it_cell, cells ) {
+    FOREACH( it_cell, cells )
+    {
       Cell& cell = **it_cell;
       int i = cell.y(); int j = cell.x();
       if( cell.isCancerCell() ) {
         VECTOR(Tcell *) tcells = tcellmap->tcellsAt( i, j );
-        if( tcells.size() > 0 ) {
+        if( tcells.size() > 0 )
+        {
           bool matching = false;
-          EACH( it_tcell, tcells ) {
+          EACH( it_tcell, tcells )
+          {
             Tcell& tcell = **it_tcell;
-            if( cell.match( tcell ) ) {
+            if( Random::Instance().probability( cell.immunogenicity() ) and cell.match( tcell ) )
+            {
               SAFE_DELETE( *it_cell );
               cells.erase( it_cell );
               deletedcellssize++;
@@ -952,9 +963,10 @@ Cell::Cell() {
   setEnergy( INITIAL_CELL_ENERGY );
   state_ = &( NormalCellState::Instance() );
   cell_division_count_ = 0;
-  immunogenicity_ = 0;
-  if( cellState().isNormalCell() ) immunogenicity_ = 0;
-  if( cellState().isCancerCell() ) immunogenicity_ = 50;
+
+  //immunogenicity_ = 0;
+  //if( cellState().isNormalCell() ) immunogenicity_ = 0;
+  //if( cellState().isCancerCell() ) immunogenicity_ = 50;
 
   initiateGene( CELL_GENE_LENGTH );
 }
