@@ -4,8 +4,8 @@
 #+LANGUAGE: ja
 #+LaTeX_CLASS: thesis
 #+STARTUP: content
-#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:13px;}</style>
-#+HTML_HEAD: <style type="text/css">body {padding: 0px 50px;}</style>
+#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:11px;}</style>
+
 #+HTML_HEAD: <style type="text/css">h2 {text-decoration:underline;margin-top:3em;}</style>
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
