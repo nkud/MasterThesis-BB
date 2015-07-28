@@ -100,7 +100,7 @@ const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 1000; //: 最大ステップ数
+const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -123,7 +123,7 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 100.000000; //: 細胞分裂エネ
 
 const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 5; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
@@ -173,14 +173,17 @@ class __Landscape {
     __Landscape() : width_(WIDTH), height_(HEIGHT) { }
     ~__Landscape() { }
 
-    int width() const { return width_; }
-    int height() const { return height_; }
+    int width() const;
+    int height() const;
 
     // ランドスケープ上に存在する点かどうかを評価する。
     bool isExistingPoint( int x, int y );
   private:
     int width_, height_;
 };
+
+int __Landscape::width() const { return width_; }
+int __Landscape::height() const { return height_; }
 
 /**
  * @brief シュガースケープのインターフェイス
@@ -199,59 +202,29 @@ class __SugarScape : public __Landscape {
  */
 class GlucoseScape : public __SugarScape {
   public:
-    GlucoseScape() {
-      // 全てのマップに初期グルコース量を配置する。
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          glucose_map_[i][j] = 5;
-        }
-      }
-    }
-    virtual void generate() {
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          if(glucose(j, i) <= MAX_GLUCOSE - GLUCOSE_GENERATE) {
-            glucose_map_[i][j] += GLUCOSE_GENERATE;
-          }
-        }
-      }
-    }
-    MATERIAL glucose(int x, int y) const { return glucose_map_[y][x]; }
-    virtual MATERIAL material(int x, int y) const { return glucose(x, y); }
-    void setGlucose(int x, int y, MATERIAL value) { glucose_map_[y][x] = value; }
+    GlucoseScape();
+
+    virtual void generate();
+    MATERIAL glucose(int x, int y) const;
+    virtual MATERIAL material(int x, int y) const;
+    void setGlucose(int x, int y, MATERIAL value);
   private:
     MATERIAL glucose_map_[HEIGHT][WIDTH];
 };
-
 /**
  * @brief 酸素のクラスを作成する。
  */
 class OxygenScape : public __SugarScape {
   public:
-    OxygenScape() {
-      // 全てのマップに初期酸素量を配置する。
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          oxygen_map_[i][j] = 5;
-        }
-      }
-    }
-    MATERIAL oxygen(int x, int y) const { return oxygen_map_[y][x]; }
-    virtual MATERIAL material(int x, int y) const { return oxygen(x, y); }
-    void setOxygen(int x, int y, MATERIAL value) { oxygen_map_[y][x] = value; }
-    virtual void generate() {
-      FOR(i, HEIGHT) {
-        FOR(j, WIDTH) {
-          if(oxygen(j, i) <= MAX_OXYGEN - OXYGEN_GENERATE) {
-            oxygen_map_[i][j] += OXYGEN_GENERATE;
-          }
-        }
-      }
-    }
+    OxygenScape();
+
+    MATERIAL oxygen(int x, int y) const;
+    virtual MATERIAL material(int x, int y) const;
+    void setOxygen(int x, int y, MATERIAL value);
+    virtual void generate();
   private:
     MATERIAL oxygen_map_[HEIGHT][WIDTH];
 };
-
 /**
  * @brief 位置情報のクラス
  *
@@ -294,20 +267,7 @@ class __Mobile : public __Location {
      * @param landscape スケープ
      * @return 移動した距離を、マンハッタン距離で返す。
      */
-    virtual double move( __Landscape& landscape ) {
-      Random& random = Random::Instance();
-      double distance = 0;
-      int from_x = x(); int from_y = y();
-      int to_x = from_x; int to_y = from_y;
-      if( random.randomBool() ) { to_x += random.randomSign(); }
-      if( random.randomBool() ) { to_y += random.randomSign(); }
-
-      if( landscape.isExistingPoint( to_x, to_y ) ) {
-        setX( to_x ); setY( to_y );
-        distance = abs(from_x-to_x) + abs(from_y-to_y);
-      }
-      return distance;
-    }
+    virtual double move( __Landscape& landscape );
     int movementDistance() const { return movement_distance_; }
   private:
     int movement_distance_;
@@ -366,9 +326,11 @@ public:
   }
 
   /** 突然変異する */
-  void mutate() {
-    int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
-    flip(pos);
+  void mutateGene( int prob ) {
+    if( Random::Instance().probability(prob) ) {
+      int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
+      flip(pos);
+    }
   }
 
   /** 遺伝子が同一の配列かどうかを判定する */
@@ -400,19 +362,20 @@ class Cell : public __Mobile, public __Life {
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
 
-  __CellState& cellState() { return *state_; }
+  __CellState& cellState();
   void changeState();
+
+  /** がん細胞かどうかを返す */
+  // 遺伝子の評価値が１以上ならば、がん細胞
+  bool isCancerCell();
+  bool isNormalCell();
 
   void incrementDivisionCount() { cell_division_count_++; }
   int divisionCount() { return cell_division_count_; }
   bool canDivision();
 
   /** スケープ上を移動する */
-  virtual double move( __Landscape& landscape ) {
-    double distance = __Mobile::move(landscape);
-    consumeEnergy( distance );
-    return distance;
-  }
+  virtual double move( __Landscape& landscape );
 
   /**
    * 指定した確率で突然変異する。
@@ -421,7 +384,7 @@ class Cell : public __Mobile, public __Life {
    */
   void mutate( double prob );
 
-  int immunogenicity() { return immunogenicity_; }
+  int immunogenicity();
 
  private:
   ENERGY energy_;
@@ -429,8 +392,14 @@ class Cell : public __Mobile, public __Life {
   int cell_division_count_;
 
   // 免疫原性率 0 ~ 100 %
-  int immunogenicity_;
+  //int immunogenicity_;
 };
+
+int Cell::immunogenicity() {
+  int ret = 0;
+  ret = 100*geneValue()/CELL_GENE_LENGTH;
+  return ret;
+}
 
 class Tcell : public __Mobile, public __Life {
 public:
@@ -646,7 +615,6 @@ int main() {
     // 配列に加える
     Cell *newcell = new Cell();
     newcell->randomSetLocation();
-    // newcell->initiateGene( CELL_GENE_LENGTH );
     cells.push_back( newcell );
   }
 
@@ -749,15 +717,27 @@ int main() {
      * そのがん細胞を細胞配列から除去する。
      */
     int deletedcellssize = 0;
-    FOREACH( it_cell, cells ) {
+    FOREACH( it_cell, cells )
+    {
       Cell& cell = **it_cell;
       int i = cell.y(); int j = cell.x();
-      if( cell.cellState().isCancerCell() ) {
+      if( cell.isCancerCell() ) {
         VECTOR(Tcell *) tcells = tcellmap->tcellsAt( i, j );
-        if( tcells.size() > 0 ) {
-          SAFE_DELETE( *it_cell );
-          cells.erase( it_cell );
-          deletedcellssize++;
+        if( tcells.size() > 0 )
+        {
+          bool matching = false;
+          EACH( it_tcell, tcells )
+          {
+            Tcell& tcell = **it_tcell;
+            if( Random::Instance().probability( cell.immunogenicity() ) and cell.match( tcell ) )
+            {
+              SAFE_DELETE( *it_cell );
+              cells.erase( it_cell );
+              deletedcellssize++;
+              matching = true;
+            }
+          }
+          if( matching == false ) it_cell++;
         } else { it_cell++; }
       } else { it_cell++; }
     }
@@ -767,7 +747,8 @@ int main() {
      */
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      cell.mutate( CELL_MUTATION_RATE );
+      //cell.mutate( CELL_MUTATION_RATE );
+      cell.mutateGene( CELL_MUTATION_RATE );
     }
 
     // グルコーススケープが再生する。
@@ -795,7 +776,7 @@ int main() {
     int cancersize = 0;
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      if( cell.cellState().isNormalCell() ) {
+      if( cell.isNormalCell() ) {
         normalsize++;
       } else cancersize++;
     }
@@ -925,6 +906,56 @@ bool StepKeeper::isInterval( int interval ) {
 }
 
 /*
+ * GlucoseScape
+ */
+GlucoseScape::GlucoseScape() {
+  // 全てのマップに初期グルコース量を配置する。
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      glucose_map_[i][j] = 5;
+    }
+  }
+}
+void GlucoseScape::generate() {
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      if(glucose(j, i) <= MAX_GLUCOSE - GLUCOSE_GENERATE) {
+        glucose_map_[i][j] += GLUCOSE_GENERATE;
+      }
+    }
+  }
+}
+
+MATERIAL GlucoseScape::glucose(int x, int y) const { return glucose_map_[y][x]; }
+MATERIAL GlucoseScape::material(int x, int y) const { return glucose(x, y); }
+void GlucoseScape::setGlucose(int x, int y, MATERIAL value) { glucose_map_[y][x] = value; }
+
+/*
+ * OxygenScape
+ */
+MATERIAL OxygenScape::oxygen(int x, int y) const { return oxygen_map_[y][x]; }
+MATERIAL OxygenScape::material(int x, int y) const { return oxygen(x, y); }
+void OxygenScape::setOxygen(int x, int y, MATERIAL value) { oxygen_map_[y][x] = value; }
+void OxygenScape::generate() {
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      if(oxygen(j, i) <= MAX_OXYGEN - OXYGEN_GENERATE) {
+        oxygen_map_[i][j] += OXYGEN_GENERATE;
+      }
+    }
+  }
+}
+
+OxygenScape::OxygenScape() {
+  // 全てのマップに初期酸素量を配置する。
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      oxygen_map_[i][j] = 5;
+    }
+  }
+}
+
+/*
  * Cell
  */
 Cell::Cell() {
@@ -932,9 +963,10 @@ Cell::Cell() {
   setEnergy( INITIAL_CELL_ENERGY );
   state_ = &( NormalCellState::Instance() );
   cell_division_count_ = 0;
-  immunogenicity_ = 0;
-  if( cellState().isNormalCell() ) immunogenicity_ = 0;
-  if( cellState().isCancerCell() ) immunogenicity_ = 50;
+
+  //immunogenicity_ = 0;
+  //if( cellState().isNormalCell() ) immunogenicity_ = 0;
+  //if( cellState().isCancerCell() ) immunogenicity_ = 50;
 
   initiateGene( CELL_GENE_LENGTH );
 }
@@ -958,6 +990,21 @@ void Cell::mutate( double prob ) {
   }
 }
 
+bool Cell::isCancerCell() {
+  if( geneValue() > 0 ) { return true; }
+  else { return false; }
+}
+bool Cell::isNormalCell() {
+  if( geneValue() <= 0 ) { return true; }
+  else { return false; }
+}
+double Cell::move( __Landscape& landscape ) {
+  double distance = __Mobile::move(landscape);
+  consumeEnergy( distance );
+  return distance;
+}
+
+
 /**
  * 分裂可能かを返す
  *
@@ -973,3 +1020,30 @@ bool Cell::canDivision() {
     return false;
   }
 }
+
+__CellState& Cell::cellState() {
+  if( isNormalCell() ) {
+    return NormalCellState::Instance();
+  } else {
+    return CancerCellState::Instance();
+  }
+}
+
+/* 
+ * __Mobile
+ */
+double __Mobile::move( __Landscape& landscape ) {
+  Random& random = Random::Instance();
+  double distance = 0;
+  int from_x = x(); int from_y = y();
+  int to_x = from_x; int to_y = from_y;
+  if( random.randomBool() ) { to_x += random.randomSign(); }
+  if( random.randomBool() ) { to_y += random.randomSign(); }
+
+  if( landscape.isExistingPoint( to_x, to_y ) ) {
+    setX( to_x ); setY( to_y );
+    distance = abs(from_x-to_x) + abs(from_y-to_y);
+  }
+  return distance;
+}
+

@@ -2,6 +2,7 @@ bin/
 stat/
 
 html/
+master/
 
 *.swp
 *.tmp
