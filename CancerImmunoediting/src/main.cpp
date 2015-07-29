@@ -96,11 +96,11 @@ const int HEIGHT = 30; //: 高さ
 /* グルコース, 酸素の再生量 /1step */
 const MATERIAL GLUCOSE_GENERATE = 0.1; //: グルコース再生量
 const MATERIAL OXYGEN_GENERATE = 0.1; //: 酸素再生量
-const MATERIAL MAX_GLUCOSE = 1000; //: 最大グルコース量
-const MATERIAL MAX_OXYGEN = 1000; //: 最大酸素量
+const MATERIAL MAX_GLUCOSE = 10; //: 最大グルコース量
+const MATERIAL MAX_OXYGEN = 10; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 5000; //: 最大ステップ数
+const int MAX_STEP = 2000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -173,8 +173,8 @@ class __Landscape {
     __Landscape() : width_(WIDTH), height_(HEIGHT) { }
     ~__Landscape() { }
 
-    int width() const;
-    int height() const;
+    int width() const;  // 幅を返す
+    int height() const; // 高さを返す
 
     // ランドスケープ上に存在する点かどうかを評価する。
     bool isExistingPoint( int x, int y );
@@ -192,8 +192,8 @@ int __Landscape::height() const { return height_; }
  */
 class __SugarScape : public __Landscape {
   public:
-    virtual void generate() = 0;
-    virtual MATERIAL material(int x, int y) const = 0;
+    virtual void generate() = 0;  // シュガーを再生する
+    virtual MATERIAL material(int x, int y) const = 0;  // シュガーの量を返す
   private:
 };
 
@@ -204,10 +204,10 @@ class GlucoseScape : public __SugarScape {
   public:
     GlucoseScape();
 
-    virtual void generate();
-    MATERIAL glucose(int x, int y) const;
-    virtual MATERIAL material(int x, int y) const;
-    void setGlucose(int x, int y, MATERIAL value);
+    virtual void generate();              // 再生する
+    MATERIAL glucose(int x, int y) const; // グルコースの量を返す
+    virtual MATERIAL material(int x, int y) const;  // グルコースの量を返す
+    void setGlucose(int x, int y, MATERIAL value);  // グルコースの量を設定する
   private:
     MATERIAL glucose_map_[HEIGHT][WIDTH];
 };
