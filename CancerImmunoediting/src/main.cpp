@@ -272,8 +272,9 @@ class __Mobile : public __Location {
      */
     virtual double move( __Landscape& landscape );
     int movementDistance() const { return movement_distance_; }
+  
   private:
-    int movement_distance_;
+    int movement_distance_;  // 移動距離変数
 };
 
 class __CellState;
@@ -289,52 +290,22 @@ class CancerCellState;
 class __Life {
 public:
   /** 遺伝子配列を返す */
-  GENE gene() { return gene_; }
+  GENE gene();
 
   /** 遺伝子の値を返す */
-  int geneValue() {
-    int ret = 0;
-    FOR( i, CELL_GENE_LENGTH ) {
-      if( gene_[i] == '1' ) {
-        ret++;
-      }
-    }
-    return ret;
-  }
+  int geneValue();
 
   /** 遺伝子配列を初期化する */
-  void initiateGene( int length ) {
-    gene_ = "";
-    FOR( i, length ) {
-      gene_ += '0';
-    }
-  }
+  void initiateGene( int length );
 
   /** 遺伝子配列をランダムに設定する */
-  void randomSetGene( int length ) {
-    gene_ = "";
-    FOR( i, length ) {
-      gene_ += Random::Instance().probability(50) ? '0' : '1';
-    }
-  }
+  void randomSetGene( int length );
 
   /** フリップする */
-  void flip( int pos ) {
-    pos = pos%CELL_GENE_LENGTH;
-    if( gene_[pos] == '0' ) {
-      gene_[pos] = '1';
-    } else {
-      gene_[pos] = '0';
-    }
-  }
+  void flip( int pos );
 
   /** 突然変異する */
-  void mutateGene( int prob ) {
-    if( Random::Instance().probability(prob) ) {
-      int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
-      flip(pos);
-    }
-  }
+  void mutateGene( int prob );
 
   /** 遺伝子が同一の配列かどうかを判定する */
   bool match( __Life& life );
@@ -342,11 +313,6 @@ public:
 private:
   GENE gene_;  // 遺伝子文字列
 };
-
-bool __Life::match( __Life& life ) {
-  if( gene() == life.gene() ) { return true; }
-  else { return false; }
-}
 
 /**
  * @brief 細胞クラス
@@ -1056,3 +1022,48 @@ double __Mobile::move( __Landscape& landscape ) {
   return distance;
 }
 
+/*
+ * __Life
+ */
+GENE __Life::gene() { return gene_; }
+int __Life::geneValue() {
+  int ret = 0;
+  FOR( i, CELL_GENE_LENGTH ) {
+    if( gene_[i] == '1' ) {
+      ret++;
+    }
+  }
+  return ret;
+}
+void __Life::randomSetGene( int length ) {
+  gene_ = "";
+  FOR( i, length ) {
+    gene_ += Random::Instance().probability(50) ? '0' : '1';
+  }
+}
+
+void __Life::initiateGene( int length ) {
+  gene_ = "";
+  FOR( i, length ) {
+    gene_ += '0';
+  }
+}
+void __Life::flip( int pos ) {
+  pos = pos%CELL_GENE_LENGTH;
+  if( gene_[pos] == '0' ) {
+    gene_[pos] = '1';
+  } else {
+    gene_[pos] = '0';
+  }
+}
+
+void __Life::mutateGene( int prob ) {
+  if( Random::Instance().probability(prob) ) {
+    int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
+    flip(pos);
+  }
+}
+bool __Life::match( __Life& life ) {
+  if( gene() == life.gene() ) { return true; }
+  else { return false; }
+}
