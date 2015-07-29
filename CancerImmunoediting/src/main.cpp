@@ -721,6 +721,9 @@ int main() {
     {
       Cell& cell = **it_cell;
       int i = cell.y(); int j = cell.x();
+
+      // がん細胞であれば、
+      // T細胞によって排除されるか判定される
       if( cell.isCancerCell() ) {
         VECTOR(Tcell *) tcells = tcellmap->tcellsAt( i, j );
         if( tcells.size() > 0 )
@@ -735,6 +738,7 @@ int main() {
               cells.erase( it_cell );
               deletedcellssize++;
               matching = true;
+              break;
             }
           }
           if( matching == false ) it_cell++;
