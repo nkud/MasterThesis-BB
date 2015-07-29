@@ -430,7 +430,10 @@ public:
     }
   }
 
+  /** 正常細胞なら真を返す */
   virtual bool isNormalCell() { return true; }
+
+  /** がん細胞なら真を返す */
   virtual bool isCancerCell() { return false; }
 private:
   NormalCellState() { }
@@ -477,6 +480,7 @@ public:
   TcellMap() { }
   ~TcellMap();
 
+  /** マップをリセットする */
   void resetMap() {
     FOR( i, HEIGHT ) {
       FOR( j, WIDTH ) {
@@ -485,6 +489,7 @@ public:
     }
   }
 
+  /** T細胞の位置を登録する */
   void resistTcells( VECTOR(Tcell *) tcells ) {
     resetMap();
     EACH( it_tcell, tcells ) {
@@ -495,6 +500,7 @@ public:
     }
   }
 
+  /** 指定した位置のT細胞配列を返す */
   VECTOR(Tcell *)& tcellsAt( int i, int j ) {
     return tcell_map_[i][j];
   }
