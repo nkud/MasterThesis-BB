@@ -209,7 +209,7 @@ class GlucoseScape : public __SugarScape {
     virtual MATERIAL material(int x, int y) const;  // グルコースの量を返す
     void setGlucose(int x, int y, MATERIAL value);  // グルコースの量を設定する
   private:
-    MATERIAL glucose_map_[HEIGHT][WIDTH];
+    MATERIAL glucose_map_[HEIGHT][WIDTH];  // グルコースマップ配列
 };
 /**
  * @brief 酸素のクラスを作成する。
@@ -218,13 +218,14 @@ class OxygenScape : public __SugarScape {
   public:
     OxygenScape();
 
-    MATERIAL oxygen(int x, int y) const;
-    virtual MATERIAL material(int x, int y) const;
-    void setOxygen(int x, int y, MATERIAL value);
-    virtual void generate();
+    MATERIAL oxygen(int x, int y) const;  // 酸素の量を返す
+    virtual MATERIAL material(int x, int y) const;  // 酸素の量を返す
+    void setOxygen(int x, int y, MATERIAL value);   // 酸素の量を設定する
+    virtual void generate();                        // 再生する
   private:
-    MATERIAL oxygen_map_[HEIGHT][WIDTH];
+    MATERIAL oxygen_map_[HEIGHT][WIDTH];  // 酸素マップ配列
 };
+
 /**
  * @brief 位置情報のクラス
  *
@@ -235,6 +236,7 @@ class __Location {
   public:
     __Location() { }
     ~__Location() { }
+
     int x() const { return x_; }
     int y() const { return y_; }
     void setX(int x) { x_ = x; }
@@ -246,6 +248,7 @@ class __Location {
       setX(Random::Instance().uniformInt(0, WIDTH-1));
       setY(Random::Instance().uniformInt(0, HEIGHT-1));
     }
+
   private:
     int x_, y_;
 };
@@ -334,14 +337,16 @@ public:
   }
 
   /** 遺伝子が同一の配列かどうかを判定する */
-  bool match( __Life& life ) {
-    if( gene() == life.gene() ) { return true; }
-    else { return false; }
-  }
+  bool match( __Life& life );
 
 private:
-  GENE gene_;
+  GENE gene_;  // 遺伝子文字列
 };
+
+bool __Life::match( __Life& life ) {
+  if( gene() == life.gene() ) { return true; }
+  else { return false; }
+}
 
 /**
  * @brief 細胞クラス
