@@ -20,6 +20,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdlib>
+#include <cassert>
 
 // ===========================================================================
 /*
@@ -54,6 +55,10 @@
 /*
  * 汎用マクロ
  */
+// #define ASSERT(x)               do { assert(x); }while(0);
+#define ASSERT(x)               if(!x) { do { std::cerr<<RED<<"[ ASSERT! ] " \
+  <<CLR_ST<<#x<<" <== L"<<__LINE__<<" " \
+  <<""<<__FILE__<<std::endl; }while(0);}
 #define FOR(i, n)               for(int (i)=0; (i)<(n); (i)++) // i: 0 ~ (n-1)
 #define REP(i, min, max)        for(int (i)=(min); (i)<=(max); (i)++)
 
@@ -100,7 +105,7 @@ const MATERIAL MAX_GLUCOSE = 10; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 10; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 5000; //: 最大ステップ数
+const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -111,7 +116,7 @@ const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
 
-const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 5; //:  がん細胞代謝時グルコース使用量
+const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 10; //:  がん細胞代謝時グルコース使用量
 
 const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
 const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
@@ -672,7 +677,7 @@ int main() {
         continue;
       }
 
-      double origin_energy = origincell.energy();
+      ENERGY origin_energy = origincell.energy();
       if( origin_energy > CELL_DIVISION_THRESHOLD_ENERGY ) {
         Cell *newcell = new Cell();
 
@@ -681,14 +686,13 @@ int main() {
         newcell->setLocation( newx, newy );
 
         // 遺伝子配列を同じにする。
-        newcell->setGene( origincell.gene() );
         // がん細胞からはがん細胞が分裂する。
-        if( origincell.isCancerCell() )
-        {
-          // newcell->changeState();
-          cancerdivisioncount++;
-        } else {
+        newcell->setGene( origincell.gene() );
+        ASSERT( origincell.match(*newcell) );
+        if( origincell.isNormalCell() ) {
           normaldivisioncount++;
+        } else {
+          cancerdivisioncount++;
         }
 
         // 半分にエネルギーを分ける。
@@ -696,10 +700,10 @@ int main() {
         origincell.setEnergy( origin_energy / 2 );
 
         new_cells.push_back( newcell );
-        origincell.incrementDivisionCount();
+        origincell.incrementDivisionCount();  // 分裂回数を増やす。
       }
     }
-    cells.insert(cells.end(), new_cells.begin(), new_cells.end());
+    cells.insert(cells.end(), new_cells.begin(), new_cells.end()); // 配列に加える。
 
 
     /*
