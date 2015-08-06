@@ -68,11 +68,14 @@ plot:
 	@$(CLRECHO)
 	@$(MKDIR) $(stat_dir)
 	-@cd $(stat_dir); $(PLOT) auto.plt 1>/dev/null
-	-@cd $(stat_dir); $(PLOT) animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) cell-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) last-cell-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) tcell-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) last-tcell-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) glucose-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) oxygen-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) last-oxygen-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) last-glucose-animation.plt 1>/dev/null
 	@$(COLORECHO)
 	@$(PRINT) '==> Done'
 	@$(CLRECHO)
