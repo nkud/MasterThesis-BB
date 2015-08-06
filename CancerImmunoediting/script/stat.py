@@ -267,6 +267,7 @@ html_line = []
 # -----------------------------------------------
 html_line += '<html>'
 html_line += '<title>result</title>'
+html_line += '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> '
 
 # CSS
 html_line += '<style type="text/css">'
