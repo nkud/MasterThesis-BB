@@ -97,6 +97,15 @@ auto_plot_line += 'set ylabel "MUTATION COUNT";'
 auto_plot_line += 'plot "../bin/mutation-count.txt" w l;'
 auto_plot_line += 'set output "mutation-count.png";'
 auto_plot_line += 'replot;set output;'
+
+auto_plot_line += 'set ylabel "NORMAL DIVISION COUNT";'
+auto_plot_line += 'plot "../bin/normal-division-count.txt" w l;'
+auto_plot_line += 'set output "normal-division-count.png";'
+auto_plot_line += 'replot;set output;'
+auto_plot_line += 'set ylabel "CANCER DIVISION COUNT";'
+auto_plot_line += 'plot "../bin/cancer-division-count.txt" w l;'
+auto_plot_line += 'set output "cancer-division-count.png";'
+auto_plot_line += 'replot;set output;'
 # -----------------------------------------------
 
 for line in auto_plot_line:
@@ -261,6 +270,8 @@ html_line += image_set_line('init-tcell-size.png')
 
 html_line += '<hr />'
 html_line += image_set_line('mutation-count.png')
+html_line += image_set_line('normal-division-count.png')
+html_line += image_set_line('cancer-division-count.png')
 
 
 html_line += '</body></html>'

@@ -94,13 +94,13 @@ const int WIDTH  = 30; //: 幅
 const int HEIGHT = 30; //: 高さ
 
 /* グルコース, 酸素の再生量 /1step */
-const MATERIAL GLUCOSE_GENERATE = 0.1; //: グルコース再生量
-const MATERIAL OXYGEN_GENERATE = 0.1; //: 酸素再生量
+const MATERIAL GLUCOSE_GENERATE = 1; //: グルコース再生量
+const MATERIAL OXYGEN_GENERATE = 1; //: 酸素再生量
 const MATERIAL MAX_GLUCOSE = 10; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 10; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 1000; //: 最大ステップ数
+const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -295,6 +295,8 @@ public:
   /** 遺伝子配列を返す */
   GENE gene();
 
+  void setGene( GENE gene ) { gene_ = gene; }
+
   /** 遺伝子の値を返す */
   int geneValue();
 
@@ -336,8 +338,8 @@ class Cell : public __Mobile, public __Life {
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
 
-  __CellState& cellState();
-  void changeState();
+  // __CellState& cellState();
+  // void changeState();
 
   /** がん細胞かどうかを返す */
   // 遺伝子の評価値が１以上ならば、がん細胞
@@ -659,6 +661,8 @@ int main() {
      * 同じ位置に新しい細胞を作成する。
      * エネルギーは、半分分け与える。
      */
+    int normaldivisioncount = 0;
+    int cancerdivisioncount = 0;
     VECTOR(Cell *) new_cells;
     EACH( it_cell, cells ) {
       Cell& origincell = **it_cell;
@@ -676,9 +680,15 @@ int main() {
         int newx = origincell.x(); int newy = origincell.y();
         newcell->setLocation( newx, newy );
 
+        // 遺伝子配列を同じにする。
+        newcell->setGene( origincell.gene() );
         // がん細胞からはがん細胞が分裂する。
-        if( origincell.cellState().isCancerCell() ) {
-          newcell->changeState();
+        if( origincell.isCancerCell() )
+        {
+          // newcell->changeState();
+          cancerdivisioncount++;
+        } else {
+          normaldivisioncount++;
         }
 
         // 半分にエネルギーを分ける。
@@ -816,6 +826,8 @@ int main() {
     output_value_with_step("tcell-size.txt", tcellsize);
     output_value_with_step("init-tcell-size.txt", inittcellsize);
     output_value_with_step("mutation-count.txt", mutationcount);
+    output_value_with_step("normal-division-count.txt", normaldivisioncount);
+    output_value_with_step("cancer-division-count.txt", cancerdivisioncount);
   }
   // ------------------------------------------------------
 
@@ -1004,9 +1016,9 @@ Cell::Cell() {
   initiateGene( CELL_GENE_LENGTH );
 }
 
-void Cell::changeState() {
-  // state_ = &( CancerCellState::Instance() );
-}
+// void Cell::changeState() {
+//   state_ = &( CancerCellState::Instance() );
+// }
 
 void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
   // state_->metabolize( *this, gs, os );
@@ -1059,13 +1071,13 @@ bool Cell::canDivision() {
   }
 }
 
-__CellState& Cell::cellState() {
-  if( isNormalCell() ) {
-    return NormalCellState::Instance();
-  } else {
-    return CancerCellState::Instance();
-  }
-}
+// __CellState& Cell::cellState() {
+//   if( isNormalCell() ) {
+//     return NormalCellState::Instance();
+//   } else {
+//     return CancerCellState::Instance();
+//   }
+// }
 
 /* 
  * __Mobile
