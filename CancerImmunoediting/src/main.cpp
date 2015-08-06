@@ -100,11 +100,12 @@ const MATERIAL MAX_GLUCOSE = 10; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 10; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 500; //: 最大ステップ数
+const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
-const int CELL_SIZE = 100; //: 初期総細胞数
+const int CELL_SIZE = 1000; //: 初期総細胞数
 const int TCELL_SIZE = 500; //: T初期総細胞数
+const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
@@ -121,9 +122,9 @@ const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
 const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 100.000000; //: 細胞分裂エネルギー閾値
 
-const int MAX_CELL_DIVISION_COUNT = 30; //: 通常細胞の最大分裂回数
+const int MAX_CELL_DIVISION_COUNT = 1; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 0; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
@@ -379,6 +380,8 @@ public:
 
   int age();
   void aging();
+  void initAge();
+
 private:
   int age_;
 };
@@ -390,6 +393,7 @@ int Tcell::age() { return age_; }
 void Tcell::aging() {
   age_ += 1;
 }
+void Tcell::initAge() { age_ = 0; }
 
 /*
  * 細胞の状態をあらわすクラスを作成する。
@@ -580,7 +584,11 @@ void output_cell_energy_average( VECTOR(Cell *)& cells );
 void output_glucose_map( GlucoseScape& gs );
 void output_oxygen_map( OxygenScape& os );
 
+
+// ========================================================
+//
 // エントリーポイント
+//
 int main() {
   ECHO("Cancer Immunoediting Model");
 
@@ -751,12 +759,23 @@ int main() {
     /*
      * T細胞が老化する
      */
-    int tcellsize = 0;
+    int tcellsize = 0;  // T細胞の総数をカウント
+    int inittcellsize = 0;  // T細胞が初期化された回数をカウント
     EACH( it_tcell, tcells )
     {
       Tcell &tcell = **it_tcell;
       tcell.aging();
 
+      // T細胞が寿命なら、
+      // 初期化する。
+      // 遺伝子を再初期化して、
+      // 細胞年齢を初期化する。
+      if( tcell.age() >= TCELL_LIFESPAN ) {
+        tcell.randomSetGene( CELL_GENE_LENGTH );
+        tcell.initAge();
+        
+        inittcellsize++;
+      }
       tcellsize++;
     }
 
@@ -789,6 +808,7 @@ int main() {
     output_value_with_step("cancercell-size.txt", cancersize);
     output_value_with_step("deleted-cell-size.txt", deletedcellssize);
     output_value_with_step("tcell-size.txt", tcellsize);
+    output_value_with_step("init-tcell-size.txt", inittcellsize);
   }
   // ------------------------------------------------------
 
@@ -1018,7 +1038,7 @@ double Cell::move( __Landscape& landscape ) {
  */
 bool Cell::canDivision() {
   // がん細胞なら無条件で分裂可能にする。
-  if( cellState().isCancerCell() ) return true;
+  if( isCancerCell() ) return true;
 
   if( divisionCount() < MAX_CELL_DIVISION_COUNT ) {
     return true;
