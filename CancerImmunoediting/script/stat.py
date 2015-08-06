@@ -91,6 +91,12 @@ auto_plot_line += 'set ylabel "INIT TCELL SIZE";'
 auto_plot_line += 'plot "../bin/init-tcell-size.txt" w l;'
 auto_plot_line += 'set output "init-tcell-size.png";'
 auto_plot_line += 'replot;set output;'
+
+# 突然変異回数
+auto_plot_line += 'set ylabel "MUTATION COUNT";'
+auto_plot_line += 'plot "../bin/mutation-count.txt" w l;'
+auto_plot_line += 'set output "mutation-count.png";'
+auto_plot_line += 'replot;set output;'
 # -----------------------------------------------
 
 for line in auto_plot_line:
@@ -252,6 +258,9 @@ html_line += '<hr />'
 html_line += '<h2>%s</h2>\n' % 'T細胞'
 html_line += image_set_line('tcell-size.png')
 html_line += image_set_line('init-tcell-size.png')
+
+html_line += '<hr />'
+html_line += image_set_line('mutation-count.png')
 
 
 html_line += '</body></html>'

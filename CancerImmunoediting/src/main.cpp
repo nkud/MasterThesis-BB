@@ -103,13 +103,15 @@ const MATERIAL MAX_OXYGEN = 10; //: 最大酸素量
 const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
-const int CELL_SIZE = 1000; //: 初期総細胞数
+const int CELL_SIZE = 100; //: 初期総細胞数
 const int TCELL_SIZE = 500; //: T初期総細胞数
 const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
+
+const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 5; //:  がん細胞代謝時グルコース使用量
 
 const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
 const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
@@ -122,9 +124,9 @@ const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
 const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 100.000000; //: 細胞分裂エネルギー閾値
 
-const int MAX_CELL_DIVISION_COUNT = 1; //: 通常細胞の最大分裂回数
+const int MAX_CELL_DIVISION_COUNT = 5; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 0; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
@@ -306,7 +308,7 @@ public:
   void flip( int pos );
 
   /** 突然変異する */
-  void mutateGene( int prob );
+  bool mutateGene( int prob );
 
   /** 遺伝子が同一の配列かどうかを判定する */
   bool match( __Life& life );
@@ -379,6 +381,7 @@ public:
   virtual ~Tcell() { }
 
   int age();
+  void setAge( int age ) { age_ = age; }
   void aging();
   void initAge();
 
@@ -476,7 +479,7 @@ public:
    */
   virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
     MATERIAL g = gs.glucose(cell.x(), cell.y());
-    MATERIAL use_glucose = CELL_METABOLIZE_GLUCOSE;
+    MATERIAL use_glucose = CANCER_CELL_METABOLIZE_GLUCOSE;
     if( g >= use_glucose ) {
       cell.gainEnergy( CANCER_CELL_GAIN_ENERGY );
       gs.setGlucose( cell.x(), cell.y(), g-use_glucose );
@@ -612,6 +615,7 @@ int main() {
     // 配列に加える
     Cell *newcell = new Cell();
     newcell->randomSetLocation();
+    newcell->setEnergy( Random::Instance().uniformInt(0, INITIAL_CELL_ENERGY) );
     cells.push_back( newcell );
   }
 
@@ -621,6 +625,7 @@ int main() {
     Tcell *tc = new Tcell();
     tc->randomSetLocation();
     tc->randomSetGene( CELL_GENE_LENGTH );
+    tc->setAge( Random::Instance().uniformInt(0, TCELL_LIFESPAN ));
     tcells.push_back( tc );
   }
 
@@ -746,10 +751,11 @@ int main() {
     /*
      * 突然変異する
      */
+    int mutationcount = 0;
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
       //cell.mutate( CELL_MUTATION_RATE );
-      cell.mutateGene( CELL_MUTATION_RATE );
+      if( cell.mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
     }
 
     // グルコーススケープが再生する。
@@ -809,6 +815,7 @@ int main() {
     output_value_with_step("deleted-cell-size.txt", deletedcellssize);
     output_value_with_step("tcell-size.txt", tcellsize);
     output_value_with_step("init-tcell-size.txt", inittcellsize);
+    output_value_with_step("mutation-count.txt", mutationcount);
   }
   // ------------------------------------------------------
 
@@ -1002,19 +1009,24 @@ void Cell::changeState() {
 }
 
 void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
-  state_->metabolize( *this, gs, os );
-}
-
-void Cell::mutate( double prob ) {
-  if(Random::Instance().probability(prob)) {
-    /*
-     * 正常細胞なら、がん細胞に変異する。
-     */
-    if( state_->isNormalCell() ) {
-      changeState();
-    }
+  // state_->metabolize( *this, gs, os );
+  if( isNormalCell() ) {
+    NormalCellState::Instance().metabolize(*this, gs, os);
+  } else {
+    CancerCellState::Instance().metabolize(*this, gs, os);
   }
 }
+
+// void Cell::mutate( double prob ) {
+//   if(Random::Instance().probability(prob)) {
+//     /*
+//      * 正常細胞なら、がん細胞に変異する。
+//      */
+//     if( state_->isNormalCell() ) {
+//       changeState();
+//     }
+//   }
+// }
 
 bool Cell::isCancerCell() {
   if( geneValue() > 0 ) { return true; }
@@ -1108,11 +1120,14 @@ void __Life::flip( int pos ) {
   }
 }
 
-void __Life::mutateGene( int prob ) {
+bool __Life::mutateGene( int prob ) {
+  // 突然変異をしたら、真を返す
   if( Random::Instance().probability(prob) ) {
     int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
     flip(pos);
+    return true;
   }
+  return false;
 }
 bool __Life::match( __Life& life ) {
   if( gene() == life.gene() ) { return true; }
