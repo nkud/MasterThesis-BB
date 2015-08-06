@@ -100,7 +100,7 @@ const MATERIAL MAX_GLUCOSE = 10; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 10; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 2000; //: 最大ステップ数
+const int MAX_STEP = 500; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -374,10 +374,22 @@ int Cell::immunogenicity() {
 
 class Tcell : public __Mobile, public __Life {
 public:
-  Tcell() { }
+  Tcell();
   virtual ~Tcell() { }
+
+  int age();
+  void aging();
 private:
+  int age_;
 };
+
+Tcell::Tcell() {
+  age_ = 0;
+}
+int Tcell::age() { return age_; }
+void Tcell::aging() {
+  age_ += 1;
+}
 
 /*
  * 細胞の状態をあらわすクラスを作成する。
@@ -735,6 +747,15 @@ int main() {
     // グルコーススケープが再生する。
     gs->generate();
     os->generate();
+
+    /*
+     * T細胞が老化する
+     */
+    EACH( it_tcell, tcells )
+    {
+      Tcell &tcell = **it_tcell;
+      tcell.aging();
+    }
 
     // -----------------------------------------------------------------------
     /* ファイルに出力する */
