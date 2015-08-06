@@ -72,6 +72,7 @@ plot:
 	-@cd $(stat_dir); $(PLOT) tcell-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) glucose-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) oxygen-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) last-oxygen-animation.plt 1>/dev/null
 	@$(COLORECHO)
 	@$(PRINT) '==> Done'
 	@$(CLRECHO)
