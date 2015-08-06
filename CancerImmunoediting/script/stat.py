@@ -59,20 +59,29 @@ auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
 auto_plot_line += 'set output "normalcell-size.png";'
 auto_plot_line += 'replot;set output;'
 
+# 正常細胞＋がん細胞数
 auto_plot_line += 'set ylabel "NORMAL & CANCER";'
 auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
 auto_plot_line += 'replot "../bin/cancercell-size.txt" w l;'
 auto_plot_line += 'set output "cell-size.png";'
 auto_plot_line += 'replot;set output;'
 
+# がん細胞数
 auto_plot_line += 'set ylabel "CANCER CELL SIZE";'
 auto_plot_line += 'plot "../bin/cancercell-size.txt" w l;'
 auto_plot_line += 'set output "cancercell-size.png";'
 auto_plot_line += 'replot;set output;'
 
+# 排除された細胞数
 auto_plot_line += 'set ylabel "DELETED CELL SIZE";'
 auto_plot_line += 'plot "../bin/deleted-cell-size.txt" w l;'
 auto_plot_line += 'set output "deleted-cell-size.png";'
+auto_plot_line += 'replot;set output;'
+
+# T細胞数
+auto_plot_line += 'set ylabel "TCELL SIZE";'
+auto_plot_line += 'plot "../bin/tcell-size.txt" w l;'
+auto_plot_line += 'set output "tcell-size.png";'
 auto_plot_line += 'replot;set output;'
 # -----------------------------------------------
 
@@ -286,6 +295,7 @@ html_line += image_set_line('normalcell-size.png')
 html_line += image_set_line('cancercell-size.png')
 html_line += image_set_line('cell-size.png')
 html_line += image_set_line('deleted-cell-size.png')
+html_line += image_set_line('tcell-size.png')
 html_line += '</body></html>'
 # -----------------------------------------------
 

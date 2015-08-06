@@ -104,7 +104,7 @@ const int MAX_STEP = 500; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 1000; //: T初期総細胞数
+const int TCELL_SIZE = 500; //: T初期総細胞数
 
 
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
