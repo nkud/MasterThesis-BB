@@ -362,7 +362,7 @@ class Cell : public __Mobile, public __Life {
 
  private:
   ENERGY energy_;
-  __CellState *state_;
+  // __CellState *state_;
   int cell_division_count_;
 
   // 免疫原性率 0 ~ 100 %
@@ -994,7 +994,7 @@ OxygenScape::OxygenScape() {
 Cell::Cell() {
   // energy_ = Random::Instance().uniformInt(0, INITIAL_CELL_ENERGY);
   setEnergy( INITIAL_CELL_ENERGY );
-  state_ = &( NormalCellState::Instance() );
+  // state_ = &( NormalCellState::Instance() );
   cell_division_count_ = 0;
 
   //immunogenicity_ = 0;
@@ -1005,7 +1005,7 @@ Cell::Cell() {
 }
 
 void Cell::changeState() {
-  state_ = &( CancerCellState::Instance() );
+  // state_ = &( CancerCellState::Instance() );
 }
 
 void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
