@@ -4,7 +4,7 @@
 #+LANGUAGE: ja
 #+LaTeX_CLASS: thesis
 #+STARTUP: content
-#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:11px;}</style>
+#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:0.8em;}</style>
 
 #+HTML_HEAD: <style type="text/css">h2 {text-decoration:underline;margin-top:3em;}</style>
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
@@ -57,6 +57,7 @@ class 酸素スケープ {
 7. グルコース、酸素のマップが再生する
 ** 備考
 *** グルコース、酸素の分布は、現段階では空間一様になっている。
+*** 遺伝子の評価値によって、正常細胞かがん細胞かを判断している。
 * 論文構成
 ** 序論
 *** 背景説明
@@ -161,3 +162,6 @@ class グルコーススケープ {
 - 電子タグを使う
 - ハミング距離はなし。今後も必要と無いと思う。
 - できたらドライブにあげる。
+** <2015-08-06 木>
+- [ ] 特定の突然変異を戻らないようにする
+- [ ] 「特定の突然変異が、抗原提示を妨げる」ことに関する参考文献を探す。
