@@ -1,0 +1,101 @@
+[user]
+  name = Naoki Ueda
+  email = su104003@gmail.com
+
+[core]
+  excludesfile = /Users/naoki/.gitignore_global
+  ;editor = /usr/bin/vim -u NONE
+  editor = vim
+  ;editor = vim -y
+  ;editor = /usr/bin/nano
+  ;editor = /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+  autocrlf = input
+# pager = ""
+
+[difftool "sourcetree"]
+  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+  path = 
+
+[mergetool "sourcetree"]
+  cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  trustExitCode = true
+
+[color]
+  ui = auto
+
+[alias]
+  s = status -sb
+  ss = status
+  ssi = status -sb --ignored
+
+  a = add
+  ai = add --interactive
+  aa = add .
+  ap = add -p
+
+  cc = commit
+  cca = commit -a
+  cci = commit --interactive
+  ccm = commit -m
+  ccu = commit -m '---'
+
+  ch = checkout
+  chn = checkout -b
+  chh = checkout HEAD
+  chm = checkout master
+
+  d = diff --stat
+  dp = diff HEAD^ --stat
+  dc = diff --cached --stat
+  dd = diff
+  ddp = diff HEAD^
+  ddc = diff --cached
+
+  fe = fetch --verbose --progress
+
+  l = log --oneline --decorate --graph --all -10
+  ls = log --oneline --decorate --graph --all --stat -10
+  la = log
+  ll = log --oneline --decorate --graph --all
+  lls = log --oneline --decorate --graph --all --stat
+  lp = log --oneline --decorate --reverse -p --all -1
+
+  sl = shortlog
+
+  b = branch
+  bb = branch -av
+
+  mg = merge --no-ff --log
+
+  sh = show
+  shb = show-branch
+  shbs = show-branch -a --topics
+
+  sta = stash
+  sta = stash show
+  stal = stash list
+  stap = stash pop
+
+  t = tag
+  td = tag -d
+  tl = tag -l -n2
+  tf = tag --force
+  ta = tag -a
+  tt = push --tags
+
+  r = remote
+  ru = remote update
+
+  p = push --progress
+  pa = push --all --progress
+  pt = push --tags --progress
+
+  pl = pull --progress --no-ff --no-commit
+
+  re = reset
+  reh = reset --hard
+
+  deb = branch -d
+[http]
+;;; for Gnupack Settings
+;  sslcainfo = C:/Program Files/Git/bin/curl-ca-bundle.crt

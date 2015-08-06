@@ -6,7 +6,8 @@ import datetime
 # constant value ################################
 
 # 最大ステップ数
-MAX_STEP = 100
+ANIM_MAX_STEP = 100
+MAX_STEP = 0
 
 SOURCE_FNAME = '../src/main.cpp'
 
@@ -32,6 +33,7 @@ for line in source_file:
         else:
             paramline = '%s = %s' % (line[2], line[4][:-1])
         print paramline
+        if line[2] == 'MAX_STEP': MAX_STEP = line[4][:-1]
         config_line.append(paramline)
 
 ###############################################################################
@@ -83,6 +85,12 @@ auto_plot_line += 'set ylabel "TCELL SIZE";'
 auto_plot_line += 'plot "../bin/tcell-size.txt" w l;'
 auto_plot_line += 'set output "tcell-size.png";'
 auto_plot_line += 'replot;set output;'
+
+# 初期化されたT細胞数
+auto_plot_line += 'set ylabel "INIT TCELL SIZE";'
+auto_plot_line += 'plot "../bin/init-tcell-size.txt" w l;'
+auto_plot_line += 'set output "init-tcell-size.png";'
+auto_plot_line += 'replot;set output;'
 # -----------------------------------------------
 
 for line in auto_plot_line:
@@ -92,6 +100,40 @@ for line in auto_plot_line:
 #
 # アニメーション用のプロットスクリプトを生成する。
 #
+
+def animation( title, anim_title ):
+    ANIM_TITLE = '%s-animation' % title
+    FRAME_TITLE = '%s-frame' % title
+    # animation.plt
+    animation_plot_file = open('%s.plt' % ANIM_TITLE, 'w')
+    animation_plot_file = []
+    # -----------------------------------------------
+    animation_plot_line += 'set terminal gif animate optimize size 200,200 delay 5;'
+    animation_plot_line += 'set output "%s.gif";' % ANIM_TITLE
+    animation_plot_line += 'set style line 1 lw 2;'
+    animation_plot_line += 'set key below right;'
+    animation_plot_line += 'set key textcolor lt 0;'
+    animation_plot_line += 'n=1;'
+    animation_plot_line += 'load "%s.plt";' % FRAME_TITLE
+    # -----------------------------------------------
+    for line in animation_plot_line:
+        animation_plot_file.write(line)
+    # frame.plt
+    frame_plot_file = open('%s.plt' % FRAME_TITLE, 'w')
+    frame_plot_line = []
+    # -----------------------------------------------
+    frame_plot_line += 'title(n)=sprintf("t = %d", n);'
+    frame_plot_line += 'file(n)=sprintf("../bin/%d-'+title+'.txt", n);'
+    frame_plot_line += 'set title title(n);'
+    frame_plot_line += 'set view map;'
+    frame_plot_line += 'set cbrange[0:10];'
+    frame_plot_line += 'set xlabel "%s";' % anim_title
+    frame_plot_line += 'splot file(n) w pm3d;'
+    frame_plot_line += 'if(n<%d) n=n+1; reread;' % ANIM_MAX_STEP
+    # -----------------------------------------------
+    for line in frame_plot_line:
+        frame_plot_file.write(line)
+
 
 # 酸素マップアニメーション ################################################################
 # animation.plt
@@ -123,7 +165,42 @@ frame_plot_line += 'set view map;'
 frame_plot_line += 'set cbrange[0:10];'
 frame_plot_line += 'set xlabel "OXYGEN MAP";'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % ANIM_MAX_STEP
+# -----------------------------------------------
+
+for line in frame_plot_line:
+    frame_plot_file.write(line)
+
+
+# last-animation.plt
+animation_plot_file = open('last-oxygen-animation.plt', 'w')
+
+animation_plot_line = []
+# -----------------------------------------------
+animation_plot_line += 'set terminal gif animate optimize size 200,200 delay 5;'
+animation_plot_line += 'set output "last-oxygen-animation.gif";'
+animation_plot_line += 'set style line 1 lw 2;'
+animation_plot_line += 'set key below right;'
+animation_plot_line += 'set key textcolor lt 0;'
+animation_plot_line += 'n=%d;' % (int(MAX_STEP) - ANIM_MAX_STEP)
+animation_plot_line += 'load "last-oxygen-frame.plt";'
+# -----------------------------------------------
+
+for line in animation_plot_line:
+    animation_plot_file.write(line)
+# last-frame.plt
+frame_plot_file = open('last-oxygen-frame.plt', 'w')
+
+frame_plot_line = []
+# -----------------------------------------------
+frame_plot_line += 'title(n)=sprintf("t = %d", n);'
+frame_plot_line += 'file(n)=sprintf("../bin/%d-oxygen.txt", n);'
+frame_plot_line += 'set title title(n);'
+frame_plot_line += 'set view map;'
+frame_plot_line += 'set cbrange[0:10];'
+frame_plot_line += 'set xlabel "LAST OXYGEN MAP";'
+frame_plot_line += 'splot file(n) w pm3d;'
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % int(MAX_STEP)
 # -----------------------------------------------
 
 for line in frame_plot_line:
@@ -159,7 +236,7 @@ frame_plot_line += 'set view map;'
 frame_plot_line += 'set cbrange[0:10];'
 frame_plot_line += 'set xlabel "GLUCOSE MAP";'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % ANIM_MAX_STEP
 # -----------------------------------------------
 
 for line in frame_plot_line:
@@ -195,7 +272,7 @@ frame_plot_line += 'set view map;'
 frame_plot_line += 'set cbrange[0:1];'
 frame_plot_line += 'set xlabel "NORMAL & CANCER MAP";'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % ANIM_MAX_STEP
 # -----------------------------------------------
 
 for line in frame_plot_line:
@@ -231,7 +308,7 @@ frame_plot_line += 'set view map;'
 frame_plot_line += 'set cbrange[0:1];'
 frame_plot_line += 'set xlabel "TCELL MAP";'
 frame_plot_line += 'splot file(n) w pm3d;'
-frame_plot_line += 'if(n<%d) n=n+1; reread;' % MAX_STEP
+frame_plot_line += 'if(n<%d) n=n+1; reread;' % ANIM_MAX_STEP
 # -----------------------------------------------
 
 for line in frame_plot_line:
@@ -279,24 +356,37 @@ html_line += '<body>'
 html_line += '<h1>#result-%s</h1>' % datetime.datetime.now()
 
 html_line += '<h2>parameter</h2>'
+
+# パラメータ表
 html_line += '<table>'
 for line in config_line:
     line = line.split()
     html_line += '<tr><td>%s</td><td>%s</td></tr>' % ( line[0], line[2] )
 html_line += '</table>'
-html_line += '<hr />'
 
+
+html_line += '<hr />'
+html_line += '<h2>%s</h2>\n' % '開始直後マップ'
 html_line += image_set_line('animation.gif', 'tcell-animation.gif', 'glucose-animation.gif', 'oxygen-animation.gif')
+html_line += image_set_line('last-animation.gif', 'last-tcell-animation.gif', 'last-glucose-animation.gif', 'last-oxygen-animation.gif')
+
 html_line += '<hr />'
 html_line += '<h2>%s</h2>\n' % '平均細胞エネルギー'
 html_line += image_set_line('cell-energy-average.png')
+
 html_line += '<hr />'
-html_line += '<h2>%s</h2>\n' % '総細胞数'
+html_line += '<h2>%s</h2>\n' % '正常細胞・がん細胞'
 html_line += image_set_line('normalcell-size.png')
 html_line += image_set_line('cancercell-size.png')
 html_line += image_set_line('cell-size.png')
 html_line += image_set_line('deleted-cell-size.png')
+
+html_line += '<hr />'
+html_line += '<h2>%s</h2>\n' % 'T細胞'
 html_line += image_set_line('tcell-size.png')
+html_line += image_set_line('init-tcell-size.png')
+
+
 html_line += '</body></html>'
 # -----------------------------------------------
 
