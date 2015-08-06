@@ -751,10 +751,13 @@ int main() {
     /*
      * T細胞が老化する
      */
+    int tcellsize = 0;
     EACH( it_tcell, tcells )
     {
       Tcell &tcell = **it_tcell;
       tcell.aging();
+
+      tcellsize++;
     }
 
     // -----------------------------------------------------------------------
@@ -785,6 +788,7 @@ int main() {
     output_value_with_step("normalcell-size.txt", normalsize);
     output_value_with_step("cancercell-size.txt", cancersize);
     output_value_with_step("deleted-cell-size.txt", deletedcellssize);
+    output_value_with_step("tcell-size.txt", tcellsize);
   }
   // ------------------------------------------------------
 
