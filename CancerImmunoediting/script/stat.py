@@ -46,7 +46,7 @@ auto_plot_file = open('auto.plt', 'w')
 
 auto_plot_line = []
 # -----------------------------------------------
-auto_plot_line += 'set terminal png size 1000,150;'
+auto_plot_line += 'set terminal png size 800,150;'
 
 # 平均細胞エネルギー
 auto_plot_line += 'set xlabel "STEP";'
@@ -235,7 +235,7 @@ html_line += 'body{font-family:"verdana", "consolas", "courier";}'
 html_line += '</style>'
 
 html_line += '<body>'
-html_line += '<h1>#result-%s</h1>' % datetime.datetime.now()
+html_line += '<h1># result-%s</h1>' % datetime.datetime.now()
 
 html_line += '<h2>parameter</h2>'
 
