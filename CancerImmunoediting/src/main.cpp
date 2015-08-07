@@ -109,7 +109,7 @@ const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 0; //: T初期総細胞数
+const int TCELL_SIZE = 1000; //: T初期総細胞数
 const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 
 
@@ -127,9 +127,9 @@ const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 20; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギー閾値
 
-const int MAX_CELL_DIVISION_COUNT = 5; //: 通常細胞の最大分裂回数
+const int MAX_CELL_DIVISION_COUNT = 2; //: 通常細胞の最大分裂回数
 
 const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
