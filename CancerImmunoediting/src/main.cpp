@@ -280,7 +280,7 @@ class __Mobile : public __Location {
      */
     virtual double move( __Landscape& landscape );
     int movementDistance() const { return movement_distance_; }
-  
+
   private:
     int movement_distance_;  // 移動距離変数
 };
@@ -391,6 +391,14 @@ public:
   void setAge( int age ) { age_ = age; }
   void aging();
   void initAge();
+
+  Tcell& clone() {
+    Tcell *newtcell = new Tcell();  // 新しいT細胞を作成する。
+    newtcell->setGene( gene() );    // 遺伝子を設定して、
+    newtcell->setX(x());            // 座標を
+    newtcell->setY(y());            // 同じ位置にして、
+    return *newtcell;               // 返す。
+  }
 
 private:
   int age_;
@@ -733,6 +741,7 @@ int main() {
      * そのがん細胞を細胞配列から除去する。
      */
     int deletedcellssize = 0;
+    VECTOR(Tcell *) newtcells;
     FOREACH( it_cell, cells )
     {
       Cell& cell = **it_cell;
@@ -748,12 +757,18 @@ int main() {
           EACH( it_tcell, tcells )
           {
             Tcell& tcell = **it_tcell;
+
+            // 免疫原性の確率で、
+            // 遺伝子配列が一致していれば、
+            // 除去する。
             if( Random::Instance().probability( cell.immunogenicity() ) and cell.match( tcell ) )
             {
               SAFE_DELETE( *it_cell );
               cells.erase( it_cell );
               deletedcellssize++;
               matching = true;
+
+              newtcells.push_back( &tcell.clone() );
               break;
             }
           }
@@ -761,6 +776,7 @@ int main() {
         } else { it_cell++; }
       } else { it_cell++; }
     }
+    tcells.insert(tcells.end(), newtcells.begin(), newtcells.end()); // 配列に加える。
 
     /*
      * 突然変異する
@@ -793,7 +809,7 @@ int main() {
       if( tcell.age() >= TCELL_LIFESPAN ) {
         tcell.randomSetGene( CELL_GENE_LENGTH );
         tcell.initAge();
-        
+
         inittcellsize++;
       }
       tcellsize++;
@@ -1083,7 +1099,7 @@ bool Cell::canDivision() {
 //   }
 // }
 
-/* 
+/*
  * __Mobile
  */
 double __Mobile::move( __Landscape& landscape ) {
