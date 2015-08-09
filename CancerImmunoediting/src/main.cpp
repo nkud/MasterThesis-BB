@@ -588,6 +588,8 @@ void output_value_with_step( const char *fname, T value );
  */
 template < typename T >
 void output_map_with_value( const char *fname, VECTOR(T *)& agents );
+void output_normalcell_map_with_value( const char *fname,  VECTOR(Cell *)& cells );
+void output_cancercell_map_with_value( const char *fname,  VECTOR(Cell *)& cells );
 
 /**
  * 細胞クラスの、スケープ上での2次元マップを出力する。
@@ -846,6 +848,8 @@ int main() {
     // 細胞の分布を出力する
     //output_cell_map( cells );
     output_map_with_value( "cell", cells );
+    output_normalcell_map_with_value( "normalcell", cells );
+    output_cancercell_map_with_value( "cancercell", cells );
     output_map_with_value( "tcell", tcells );
 
     // 細胞の平均エネルギーを出力する。
@@ -909,6 +913,53 @@ void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
   EACH(it_agent, agents) {
     T& agent = **it_agent;
     agent_map[agent.y()][agent.x()]++;
+  }
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      agent_map_ofs << i << SEPARATOR;
+      agent_map_ofs << j << SEPARATOR;
+      agent_map_ofs << agent_map[j][i];
+      agent_map_ofs << std::endl;
+    }
+    agent_map_ofs << std::endl;
+  }
+}
+
+void output_normalcell_map_with_value( const char *fname,  VECTOR(Cell *)& cells ) {
+  // ファイル名
+  char file_name[256];
+  sprintf(file_name, "%d-%s.txt", StepKeeper::Instance().step(), fname);
+  std::ofstream agent_map_ofs(file_name);
+
+  // マップの全ての位置を0で初期化する。
+  int agent_map[HEIGHT][WIDTH] = {};
+  EACH(it_cell, cells) {
+    Cell& cell = **it_cell;
+    if( cell.isNormalCell() == false ) continue;
+    agent_map[cell.y()][cell.x()]++;
+  }
+  FOR(i, HEIGHT) {
+    FOR(j, WIDTH) {
+      agent_map_ofs << i << SEPARATOR;
+      agent_map_ofs << j << SEPARATOR;
+      agent_map_ofs << agent_map[j][i];
+      agent_map_ofs << std::endl;
+    }
+    agent_map_ofs << std::endl;
+  }
+}
+void output_cancercell_map_with_value( const char *fname,  VECTOR(Cell *)& cells ) {
+  // ファイル名
+  char file_name[256];
+  sprintf(file_name, "%d-%s.txt", StepKeeper::Instance().step(), fname);
+  std::ofstream agent_map_ofs(file_name);
+
+  // マップの全ての位置を0で初期化する。
+  int agent_map[HEIGHT][WIDTH] = {};
+  EACH(it_cell, cells) {
+    Cell& cell = **it_cell;
+    if( cell.isCancerCell() == false ) continue;
+    agent_map[cell.y()][cell.x()]++;
   }
   FOR(i, HEIGHT) {
     FOR(j, WIDTH) {

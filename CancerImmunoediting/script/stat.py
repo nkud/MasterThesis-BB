@@ -15,7 +15,6 @@ SOURCE_FNAME = '../src/main.cpp'
 CONST_STRING = '//:'
 
 #################################################
-
 #
 # 設定パラメータを取得する。
 #
@@ -48,18 +47,31 @@ auto_plot_line = []
 # -----------------------------------------------
 auto_plot_line += 'set terminal png size 800,150;'
 
+def graph_lines(fname, xlabel, ylabel):
+    """ グラフ用の文字列を返す """
+    lines = []
+    lines += 'set xlabel "%s";' % xlabel
+    lines += 'set ylabel "%s";' % ylabel
+    lines += 'plot "../bin/%s.txt" w l;' % fname
+    lines += 'set output "%s.png";' % fname
+    lines += 'replot;set output;'
+    return lines
+
 # 平均細胞エネルギー
-auto_plot_line += 'set xlabel "STEP";'
-auto_plot_line += 'set ylabel "ENERGY AVERAGE";'
-auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
-auto_plot_line += 'set output "cell-energy-average.png";'
-auto_plot_line += 'replot;set output;'
+auto_plot_line += graph_lines("cell-energy-average", "STEP", "ENERGY AVERAGE")
+# auto_plot_line += 'set xlabel "STEP";'
+# auto_plot_line += 'set ylabel "ENERGY AVERAGE";'
+# auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
+# auto_plot_line += 'set output "cell-energy-average.png";'
+# auto_plot_line += 'replot;set output;'
 
 # 総細胞数
-auto_plot_line += 'set ylabel "NORMAL CELL SIZE";'
-auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
-auto_plot_line += 'set output "normalcell-size.png";'
-auto_plot_line += 'replot;set output;'
+auto_plot_line += graph_lines("normalcell-size", "STEP", "NORMAL CELL SIZE")
+
+# auto_plot_line += 'set ylabel "NORMAL CELL SIZE";'
+# auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
+# auto_plot_line += 'set output "normalcell-size.png";'
+# auto_plot_line += 'replot;set output;'
 
 # 正常細胞＋がん細胞数
 auto_plot_line += 'set ylabel "NORMAL & CANCER";'
@@ -117,6 +129,7 @@ for line in auto_plot_line:
 #
 
 def animation( title, anim_title ):
+    """ gifアニメーションを作成する """
     ANIM_TITLE = '%s-animation' % title
     FRAME_TITLE = '%s-frame' % title
     # animation.plt
@@ -148,6 +161,7 @@ def animation( title, anim_title ):
     # -----------------------------------------------
     for line in frame_plot_line:
         frame_plot_file.write(line)
+    ######################
     # last-animation.plt
     animation_plot_file = open('last-%s.plt' % ANIM_TITLE, 'w')
     animation_plot_line = []
@@ -180,20 +194,17 @@ def animation( title, anim_title ):
 
 
 # 酸素マップアニメーション ################################################################
-# animation.plt
 animation( 'oxygen', 'OXYGEN MAP' )
 
 # グルコースマップアニメーション #############################################################
-
 animation( 'glucose', 'GLUCOSE MAP' )
 
 # 細胞マップアニメーション ################################################################
-
 animation( 'cell', 'NORMAL & CANCER MAP' )
-
+animation( 'normalcell', 'NORMAL CELL MAP' )
+animation( 'cancercell', 'CANCER CELL MAP' )
 
 # T細胞マップアニメーション ###############################################################
-
 animation( 'tcell', 'TCELL MAP' )
 
 ###############################################################################
@@ -249,8 +260,10 @@ html_line += '</table>'
 
 html_line += '<hr />'
 html_line += '<h2>%s</h2>\n' % '開始直後マップ'
-html_line += image_set_line('cell-animation.gif', 'tcell-animation.gif', 'glucose-animation.gif', 'oxygen-animation.gif')
-html_line += image_set_line('last-cell-animation.gif', 'last-tcell-animation.gif', 'last-glucose-animation.gif', 'last-oxygen-animation.gif')
+html_line += image_set_line('cell-animation.gif', 'normalcell-animation.gif', 'cancercell-animation.gif')
+html_line += image_set_line('last-cell-animation.gif', 'last-normalcell-animation.gif', 'last-cancercell-animation.gif')
+html_line += image_set_line('tcell-animation.gif', 'glucose-animation.gif', 'oxygen-animation.gif')
+html_line += image_set_line('last-tcell-animation.gif', 'last-glucose-animation.gif', 'last-oxygen-animation.gif')
 
 html_line += '<hr />'
 html_line += '<h2>%s</h2>\n' % '平均細胞エネルギー'

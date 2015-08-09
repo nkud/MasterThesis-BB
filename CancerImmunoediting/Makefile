@@ -70,6 +70,10 @@ plot:
 	-@cd $(stat_dir); $(PLOT) auto.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) cell-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) last-cell-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) normalcell-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) last-normalcell-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) cancercell-animation.plt 1>/dev/null
+	-@cd $(stat_dir); $(PLOT) last-cancercell-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) tcell-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) last-tcell-animation.plt 1>/dev/null
 	-@cd $(stat_dir); $(PLOT) glucose-animation.plt 1>/dev/null
