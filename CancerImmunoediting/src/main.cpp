@@ -797,23 +797,49 @@ int main() {
      */
     int tcellsize = 0;  // T細胞の総数をカウント
     int inittcellsize = 0;  // T細胞が初期化された回数をカウント
-    EACH( it_tcell, tcells )
+    FOREACH( it_tcell, tcells )
     {
       Tcell &tcell = **it_tcell;
       tcell.aging();
 
-      // T細胞が寿命なら、
-      // 初期化する。
-      // 遺伝子を再初期化して、
-      // 細胞年齢を初期化する。
       if( tcell.age() >= TCELL_LIFESPAN ) {
-        tcell.randomSetGene( CELL_GENE_LENGTH );
-        tcell.initAge();
-
+        SAFE_DELETE( *it_tcell );
+        tcells.erase( it_tcell );
         inittcellsize++;
+      } else {
+        tcellsize++;
+        it_tcell++;
       }
+    }
+
+    /*
+     * T細胞を補完する。
+     */
+    int short_tcell_size = TCELL_SIZE - tcellsize;
+    FOR( i, std::max( 0, short_tcell_size ) ) {
+      Tcell *tc = new Tcell();
+      tc->randomSetLocation();  // 位置はランダム
+      tc->randomSetGene( CELL_GENE_LENGTH );  // 遺伝子配列もランダム
+      tcells.push_back( tc );
       tcellsize++;
     }
+    // EACH( it_tcell, tcells )
+    // {
+    //   Tcell &tcell = **it_tcell;
+    //   tcell.aging();
+
+    //   // T細胞が寿命なら、
+    //   // 初期化する。
+    //   // 遺伝子を再初期化して、
+    //   // 細胞年齢を初期化する。
+    //   if( tcell.age() >= TCELL_LIFESPAN ) {
+    //     tcell.randomSetGene( CELL_GENE_LENGTH );
+    //     tcell.initAge();
+
+    //     inittcellsize++;
+    //   }
+    //   tcellsize++;
+    // }
 
     // -----------------------------------------------------------------------
     /* ファイルに出力する */
