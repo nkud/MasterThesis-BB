@@ -105,7 +105,7 @@ const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 1000; //: 最大ステップ数
+const int MAX_STEP = 500; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -115,7 +115,7 @@ const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 // 使用量
 const MATERIAL NORMALCELL_METABOLIZE_GLUCOSE = 1; //: 正常細胞代謝時グルコース使用量
 const MATERIAL NORMALCELL_METABOLIZE_OXYGEN = 1; //: 正常細胞代謝時酸素使用量
-const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 10; //: がん細胞代謝時グルコース使用量
+const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 1; //: がん細胞代謝時グルコース使用量
 
 // 代謝量
 const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
@@ -135,8 +135,8 @@ const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
-const double NORMALCELL_METABOLIZE_PROB = 60; //: 正常代謝する確率
-const double CANCERCELL_METABOLIZE_PROB = 60; //: がん代謝する確率
+const double NORMALCELL_METABOLIZE_PROB = 20; //: 正常代謝する確率
+const double CANCERCELL_METABOLIZE_PROB = 80; //: がん代謝する確率
 const double NORMALCELL_DIVISION_PROB = 30; //: 正常細胞分裂確率
 const double CANCERCELL_DIVISION_PROB = 30; //: がん細胞分裂確率
 
