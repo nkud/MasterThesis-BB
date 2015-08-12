@@ -59,6 +59,8 @@ def graph_lines(fname, xlabel, ylabel):
 
 # 平均細胞エネルギー
 auto_plot_line += graph_lines("cell-energy-average", "STEP", "ENERGY AVERAGE")
+auto_plot_line += graph_lines("normal-energy-average", "STEP", "NORMAL ENERGY AVE")
+auto_plot_line += graph_lines("cancer-energy-average", "STEP", "CANCER ENERGY AVE")
 # auto_plot_line += 'set xlabel "STEP";'
 # auto_plot_line += 'set ylabel "ENERGY AVERAGE";'
 # auto_plot_line += 'plot "../bin/cell-energy-average.txt" w l;'
@@ -268,6 +270,8 @@ html_line += image_set_line('last-tcell-animation.gif', 'last-glucose-animation.
 html_line += '<hr />'
 html_line += '<h2>%s</h2>\n' % '平均細胞エネルギー'
 html_line += image_set_line('cell-energy-average.png')
+html_line += image_set_line('normal-energy-average.png')
+html_line += image_set_line('cancer-energy-average.png')
 
 html_line += '<hr />'
 html_line += '<h2>%s</h2>\n' % '正常細胞・がん細胞'

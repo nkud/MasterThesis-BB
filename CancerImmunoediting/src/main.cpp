@@ -101,23 +101,23 @@ const int HEIGHT = 30; //: 高さ
 /* グルコース, 酸素の再生量 /1step */
 const MATERIAL GLUCOSE_GENERATE = 1; //: グルコース再生量
 const MATERIAL OXYGEN_GENERATE = 1; //: 酸素再生量
-const MATERIAL MAX_GLUCOSE = 10; //: 最大グルコース量
-const MATERIAL MAX_OXYGEN = 10; //: 最大酸素量
+const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
+const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
 const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 1000; //: T初期総細胞数
+const int TCELL_SIZE = 0; //: T初期総細胞数
 const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 
+// 使用量
+const MATERIAL NORMALCELL_METABOLIZE_GLUCOSE = 1; //: 正常細胞代謝時グルコース使用量
+const MATERIAL NORMALCELL_METABOLIZE_OXYGEN = 1; //: 正常細胞代謝時酸素使用量
+const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 10; //: がん細胞代謝時グルコース使用量
 
-const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
-const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
-
-const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 1; //:  がん細胞代謝時グルコース使用量
-
+// 代謝量
 const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
 const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 
@@ -127,13 +127,18 @@ const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 5; //: 細胞分裂エネルギー閾値
 
-const int MAX_CELL_DIVISION_COUNT = 5; //: 通常細胞の最大分裂回数
+const int MAX_CELL_DIVISION_COUNT = 10; //: 通常細胞の最大分裂回数
 
 const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
+
+const double NORMALCELL_METABOLIZE_PROB = 60; //: 正常代謝する確率
+const double CANCERCELL_METABOLIZE_PROB = 60; //: がん代謝する確率
+const double NORMALCELL_DIVISION_PROB = 30; //: 正常細胞分裂確率
+const double CANCERCELL_DIVISION_PROB = 30; //: がん細胞分裂確率
 
 /*
  * クラスを定義していく。
@@ -353,7 +358,7 @@ class Cell : public __Mobile, public __Life {
 
   void incrementDivisionCount() { cell_division_count_++; }
   int divisionCount() { return cell_division_count_; }
-  bool canDivision();
+  bool willDvision();
 
   /** スケープ上を移動する */
   virtual double move( __Landscape& landscape );
@@ -455,8 +460,8 @@ public:
   virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
     MATERIAL g = gs.glucose(cell.x(), cell.y());
     MATERIAL o = os.oxygen(cell.x(), cell.y());
-    MATERIAL use_glucose = CELL_METABOLIZE_GLUCOSE;
-    MATERIAL use_oxygen = CELL_METABOLIZE_OXYGEN;
+    MATERIAL use_glucose = NORMALCELL_METABOLIZE_GLUCOSE;
+    MATERIAL use_oxygen = NORMALCELL_METABOLIZE_OXYGEN;
     if( g >= use_glucose && o >= use_oxygen ) {
       cell.gainEnergy( NORMAL_CELL_GAIN_ENERGY );
       gs.setGlucose( cell.x(), cell.y(), g - use_glucose );
@@ -684,7 +689,7 @@ int main() {
       Cell& origincell = **it_cell;
 
       // 分裂不可能ならスキップする。
-      if( origincell.canDivision() == false ) {
+      if( origincell.willDvision() == false ) {
         continue;
       }
 
@@ -978,14 +983,32 @@ void output_cancercell_map_with_value( const char *fname,  VECTOR(Cell *)& cells
 
 void output_cell_energy_average( VECTOR(Cell *)& cells ) {
   int sum = 0;
+  int normalsum = 0;
+  int cancersum = 0;
+  int normalsize = 0;
+  int cancersize = 0;
   EACH(it_cell, cells) {
     Cell& cell = **it_cell;
     sum += cell.energy();
+    if(cell.isNormalCell()) {
+      normalsum += cell.energy();
+      normalsize++;
+    }
+    else { 
+      cancersum += cell.energy(); 
+      cancersize++;
+    }
   }
   double average = 0;
+  double normalave = 0;
+  double cancerave = 0;
   if( cells.size() > 0 ) average = (double)sum/cells.size();
+  if( normalsize > 0 ) normalave = (double)normalsum/normalsize;
+  if( cancersize > 0 ) cancerave = (double)cancersum/cancersize;
 
   output_value_with_step("cell-energy-average.txt", average);
+  output_value_with_step("normal-energy-average.txt", normalave);
+  output_value_with_step("cancer-energy-average.txt", cancerave);
 }
 
 
@@ -1123,9 +1146,9 @@ Cell::Cell() {
 
 void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
   // state_->metabolize( *this, gs, os );
-  if( isNormalCell() ) {
+  if( isNormalCell() and Random::Instance().probability(NORMALCELL_METABOLIZE_PROB) ) {
     NormalCellState::Instance().metabolize(*this, gs, os);
-  } else {
+  } else if( Random::Instance().probability(CANCERCELL_METABOLIZE_PROB) ) {
     CancerCellState::Instance().metabolize(*this, gs, os);
   }
 }
@@ -1161,12 +1184,15 @@ double Cell::move( __Landscape& landscape ) {
  *
  * @return 真偽値
  */
-bool Cell::canDivision() {
+bool Cell::willDvision() {
   // がん細胞なら無条件で分裂可能にする。
-  if( isCancerCell() ) return true;
-
-  if( divisionCount() < MAX_CELL_DIVISION_COUNT ) {
-    return true;
+  if( isCancerCell() and Random::Instance().probability(CANCERCELL_DIVISION_PROB) ) return true;
+  if( isNormalCell() and Random::Instance().probability(NORMALCELL_DIVISION_PROB) ) {
+    if( divisionCount() < MAX_CELL_DIVISION_COUNT ) {
+      return true;
+    } else {
+      return false;
+    }
   } else {
     return false;
   }
