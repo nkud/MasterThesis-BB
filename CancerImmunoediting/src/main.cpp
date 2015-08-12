@@ -116,7 +116,7 @@ const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 const MATERIAL CELL_METABOLIZE_GLUCOSE = 1; //:  細胞代謝時グルコース使用量
 const MATERIAL CELL_METABOLIZE_OXYGEN = 1; //:  細胞代謝時酸素使用量
 
-const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 10; //:  がん細胞代謝時グルコース使用量
+const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 1; //:  がん細胞代謝時グルコース使用量
 
 const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
 const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
@@ -129,9 +129,9 @@ const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
 const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギー閾値
 
-const int MAX_CELL_DIVISION_COUNT = 2; //: 通常細胞の最大分裂回数
+const int MAX_CELL_DIVISION_COUNT = 5; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 0.1; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
@@ -678,6 +678,7 @@ int main() {
      */
     int normaldivisioncount = 0;
     int cancerdivisioncount = 0;
+    int mutationcount = 0;
     VECTOR(Cell *) new_cells;
     EACH( it_cell, cells ) {
       Cell& origincell = **it_cell;
@@ -697,6 +698,7 @@ int main() {
 
         // 遺伝子配列を同じにする。
         // がん細胞からはがん細胞が分裂する。
+        // 正常細胞からは、がん細胞が分裂する可能性がある
         newcell->setGene( origincell.gene() );
         ASSERT( origincell.match(*newcell) );
         if( origincell.isNormalCell() ) {
@@ -704,6 +706,8 @@ int main() {
         } else {
           cancerdivisioncount++;
         }
+
+        if( newcell->mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
 
         // 半分にエネルギーを分ける。
         newcell->setEnergy( origin_energy / 2 );
@@ -783,12 +787,12 @@ int main() {
     /*
      * 突然変異する
      */
-    int mutationcount = 0;
-    EACH( it_cell, cells ) {
-      Cell& cell = **it_cell;
-      //cell.mutate( CELL_MUTATION_RATE );
-      if( cell.mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
-    }
+    // int mutationcount = 0;
+    // EACH( it_cell, cells ) {
+    //   Cell& cell = **it_cell;
+    //   //cell.mutate( CELL_MUTATION_RATE );
+    //   if( cell.mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
+    // }
 
     // グルコーススケープが再生する。
     gs->generate();
