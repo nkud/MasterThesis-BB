@@ -131,7 +131,7 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギ�
 
 const int MAX_CELL_DIVISION_COUNT = 2; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
+const double CELL_MUTATION_RATE = 0.1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
@@ -315,7 +315,7 @@ public:
   void flip( int pos );
 
   /** 突然変異する */
-  bool mutateGene( int prob );
+  bool mutateGene( double prob );
 
   /** 遺伝子が同一の配列かどうかを判定する */
   bool match( __Life& life );
@@ -1229,7 +1229,7 @@ void __Life::flip( int pos ) {
   }
 }
 
-bool __Life::mutateGene( int prob ) {
+bool __Life::mutateGene( double prob ) {
   // 突然変異をしたら、真を返す
   if( Random::Instance().probability(prob) ) {
     int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
