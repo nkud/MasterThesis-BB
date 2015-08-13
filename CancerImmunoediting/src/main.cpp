@@ -119,7 +119,7 @@ const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 1; //: がん細胞代謝時グ�
 
 // 代謝量
 const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
-const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
+const ENERGY CANCER_CELL_GAIN_ENERGY = 5; //: がん細胞代謝量
 
 /*
  * 細胞に関するパラメータ
@@ -131,14 +131,17 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギ�
 
 const int MAX_CELL_DIVISION_COUNT = 10; //: 通常細胞の最大分裂回数
 
-const PROBABILITY CELL_MUTATION_RATE = 0; //: 細胞突然変異確率
+const PROBABILITY CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
-const PROBABILITY NORMALCELL_METABOLIZE_PROB = 10; //: 正常代謝する確率
+const PROBABILITY NORMALCELL_METABOLIZE_PROB = 20; //: 正常代謝する確率
 const PROBABILITY CANCERCELL_METABOLIZE_PROB = 80; //: がん代謝する確率
 const PROBABILITY NORMALCELL_DIVISION_PROB = 30; //: 正常細胞分裂確率
 const PROBABILITY CANCERCELL_DIVISION_PROB = 30; //: がん細胞分裂確率
+// 移動する確率
+// const PROBABILITY MOTILITY_PROB
+const double MOTILITY_WEIGHT = 1.5; //: 移動にかかるコストの重み
 
 /*
  * クラスを定義していく。
@@ -1148,9 +1151,11 @@ void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
   // state_->metabolize( *this, gs, os );
   if( isNormalCell() and Random::Instance().probability(NORMALCELL_METABOLIZE_PROB) ) {
     NormalCellState::Instance().metabolize(*this, gs, os);
+    return;
   }
   if( isCancerCell() and Random::Instance().probability(CANCERCELL_METABOLIZE_PROB) ) {
     CancerCellState::Instance().metabolize(*this, gs, os);
+    return;
   }
 }
 
@@ -1175,7 +1180,7 @@ bool Cell::isNormalCell() {
 }
 double Cell::move( __Landscape& landscape ) {
   double distance = __Mobile::move(landscape);
-  consumeEnergy( distance );
+  consumeEnergy( distance * MOTILITY_WEIGHT );
   return distance;
 }
 
