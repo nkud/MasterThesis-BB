@@ -92,7 +92,7 @@
 typedef double MATERIAL;
 typedef double ENERGY;
 typedef std::string GENE;
-typedef int PROBABILITY;
+typedef double PROBABILITY;
 
 // ランドスケープの幅と高さを設定する。
 const int WIDTH  = 30; //: 幅
@@ -127,18 +127,18 @@ const ENERGY CANCER_CELL_GAIN_ENERGY = 1; //: がん細胞代謝量
 const ENERGY INITIAL_CELL_ENERGY = 20; //: 初期細胞エネルギー
 
 const ENERGY CELL_DEATH_THRESHOLD_ENERGY = 0; //: 細胞アポトーシスエネルギー閾値
-const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 5; //: 細胞分裂エネルギー閾値
+const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギー閾値
 
 const int MAX_CELL_DIVISION_COUNT = 10; //: 通常細胞の最大分裂回数
 
-const double CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
+const PROBABILITY CELL_MUTATION_RATE = 0; //: 細胞突然変異確率
 
 const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
-const double NORMALCELL_METABOLIZE_PROB = 20; //: 正常代謝する確率
-const double CANCERCELL_METABOLIZE_PROB = 80; //: がん代謝する確率
-const double NORMALCELL_DIVISION_PROB = 30; //: 正常細胞分裂確率
-const double CANCERCELL_DIVISION_PROB = 30; //: がん細胞分裂確率
+const PROBABILITY NORMALCELL_METABOLIZE_PROB = 10; //: 正常代謝する確率
+const PROBABILITY CANCERCELL_METABOLIZE_PROB = 80; //: がん代謝する確率
+const PROBABILITY NORMALCELL_DIVISION_PROB = 30; //: 正常細胞分裂確率
+const PROBABILITY CANCERCELL_DIVISION_PROB = 30; //: がん細胞分裂確率
 
 /*
  * クラスを定義していく。
@@ -1021,7 +1021,7 @@ void output_glucose_map( GlucoseScape& gs ) {
     FOR(j, WIDTH) {
       glucose_map_ofs << i << SEPARATOR;
       glucose_map_ofs << j << SEPARATOR;
-      glucose_map_ofs << gs.glucose(i, j);
+      glucose_map_ofs << gs.glucose(j, i);
       glucose_map_ofs << std::endl;
     }
     glucose_map_ofs << std::endl;
@@ -1037,7 +1037,7 @@ void output_oxygen_map( OxygenScape& os ) {
     FOR(j, WIDTH) {
       oxygen_map_ofs << i << SEPARATOR;
       oxygen_map_ofs << j << SEPARATOR;
-      oxygen_map_ofs << os.oxygen(i, j);
+      oxygen_map_ofs << os.oxygen(j, i);
       oxygen_map_ofs << std::endl;
     }
     oxygen_map_ofs << std::endl;
@@ -1148,7 +1148,8 @@ void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
   // state_->metabolize( *this, gs, os );
   if( isNormalCell() and Random::Instance().probability(NORMALCELL_METABOLIZE_PROB) ) {
     NormalCellState::Instance().metabolize(*this, gs, os);
-  } else if( Random::Instance().probability(CANCERCELL_METABOLIZE_PROB) ) {
+  }
+  if( isCancerCell() and Random::Instance().probability(CANCERCELL_METABOLIZE_PROB) ) {
     CancerCellState::Instance().metabolize(*this, gs, os);
   }
 }
