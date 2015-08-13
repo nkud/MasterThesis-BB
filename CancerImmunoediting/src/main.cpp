@@ -105,7 +105,7 @@ const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 500; //: 最大ステップ数
+const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -115,11 +115,11 @@ const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 // 使用量
 const MATERIAL NORMALCELL_METABOLIZE_GLUCOSE = 1; //: 正常細胞代謝時グルコース使用量
 const MATERIAL NORMALCELL_METABOLIZE_OXYGEN = 1; //: 正常細胞代謝時酸素使用量
-const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 1; //: がん細胞代謝時グルコース使用量
+const MATERIAL CANCER_CELL_METABOLIZE_GLUCOSE = 2; //: がん細胞代謝時グルコース使用量
 
 // 代謝量
-const ENERGY NORMAL_CELL_GAIN_ENERGY = 10; //: 正常細胞代謝量
-const ENERGY CANCER_CELL_GAIN_ENERGY = 5; //: がん細胞代謝量
+const ENERGY NORMAL_CELL_GAIN_ENERGY = 5; //: 正常細胞代謝量
+const ENERGY CANCER_CELL_GAIN_ENERGY = 2; //: がん細胞代謝量
 
 /*
  * 細胞に関するパラメータ
@@ -141,7 +141,7 @@ const PROBABILITY NORMALCELL_DIVISION_PROB = 30; //: 正常細胞分裂確率
 const PROBABILITY CANCERCELL_DIVISION_PROB = 30; //: がん細胞分裂確率
 // 移動する確率
 // const PROBABILITY MOTILITY_PROB
-const double MOTILITY_WEIGHT = 1.5; //: 移動にかかるコストの重み
+const double MOTILITY_WEIGHT = 1; //: 移動にかかるコストの重み
 
 /*
  * クラスを定義していく。
@@ -365,6 +365,12 @@ class Cell : public __Mobile, public __Life {
 
   /** スケープ上を移動する */
   virtual double move( __Landscape& landscape );
+
+  bool willDie() {
+    if( energy() <= CELL_DEATH_THRESHOLD_ENERGY ) return true;
+    if( divisionCount() >= MAX_CELL_DIVISION_COUNT ) return true;
+    return false;
+  }
 
   /**
    * 指定した確率で突然変異する。
@@ -741,7 +747,7 @@ int main() {
      */
     FOREACH( it_cell, cells ) {
       Cell& cell = **it_cell;
-      if( cell.energy() <= CELL_DEATH_THRESHOLD_ENERGY ) {
+      if( cell.willDie() ) {
         SAFE_DELETE( *it_cell );
         cells.erase( it_cell );
       } else { it_cell++; }
@@ -930,7 +936,7 @@ void output_map_with_value( const char *fname,  VECTOR(T *)& agents ) {
     FOR(j, WIDTH) {
       agent_map_ofs << i << SEPARATOR;
       agent_map_ofs << j << SEPARATOR;
-      agent_map_ofs << agent_map[j][i];
+      agent_map_ofs << agent_map[i][j];
       agent_map_ofs << std::endl;
     }
     agent_map_ofs << std::endl;
@@ -954,7 +960,7 @@ void output_normalcell_map_with_value( const char *fname,  VECTOR(Cell *)& cells
     FOR(j, WIDTH) {
       agent_map_ofs << i << SEPARATOR;
       agent_map_ofs << j << SEPARATOR;
-      agent_map_ofs << agent_map[j][i];
+      agent_map_ofs << agent_map[i][j];
       agent_map_ofs << std::endl;
     }
     agent_map_ofs << std::endl;
@@ -977,7 +983,7 @@ void output_cancercell_map_with_value( const char *fname,  VECTOR(Cell *)& cells
     FOR(j, WIDTH) {
       agent_map_ofs << i << SEPARATOR;
       agent_map_ofs << j << SEPARATOR;
-      agent_map_ofs << agent_map[j][i];
+      agent_map_ofs << agent_map[i][j];
       agent_map_ofs << std::endl;
     }
     agent_map_ofs << std::endl;
