@@ -108,12 +108,12 @@ const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 3000; //: 最大ステップ数
+const int MAX_STEP = 1000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 5000; //: T初期総細胞数
-const int TCELL_LIFESPAN = 10; //: T細胞の寿命
+const int TCELL_SIZE = 1000; //: T初期総細胞数
+const int TCELL_LIFESPAN = 5; //: T細胞の寿命
 
 // 使用量
 const MATERIAL NORMALCELL_METABOLIZE_GLUCOSE = 1; //: 正常細胞代謝時グルコース使用量
@@ -623,10 +623,11 @@ void output_glucose_map( GlucoseScape& gs );
 void output_oxygen_map( OxygenScape& os );
 
 
-// ========================================================
+// ============================================================================
 //
 // エントリーポイント
 //
+// ============================================================================
 int main() {
   ECHO("Cancer Immunoediting Model");
 
@@ -725,6 +726,7 @@ int main() {
           cancerdivisioncount++;
         }
 
+        // 突然変異する
         if( newcell->mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
 
         // 半分にエネルギーを分ける。
@@ -800,17 +802,6 @@ int main() {
         } else { it_cell++; }
       } else { it_cell++; }
     }
-    tcells.insert(tcells.end(), newtcells.begin(), newtcells.end()); // 配列に加える。
-
-    /*
-     * 突然変異する
-     */
-    // int mutationcount = 0;
-    // EACH( it_cell, cells ) {
-    //   Cell& cell = **it_cell;
-    //   //cell.mutate( CELL_MUTATION_RATE );
-    //   if( cell.mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
-    // }
 
     // グルコーススケープが再生する。
     gs->generate();
@@ -821,6 +812,7 @@ int main() {
      */
     int tcellsize = 0;  // T細胞の総数をカウント
     int inittcellsize = 0;  // T細胞が初期化された回数をカウント
+    VECTOR(Tcell *) newborntcells;
     FOREACH( it_tcell, tcells )
     {
       Tcell &tcell = **it_tcell;
@@ -830,10 +822,16 @@ int main() {
         SAFE_DELETE( *it_tcell );
         tcells.erase( it_tcell );
         inittcellsize++;
+
+        // 新しいT細胞を加える。
+        // Tcell *tc = new Tcell();
+        // tc->randomSetLocation();  // 位置はランダム
+        // tc->randomSetGene( CELL_GENE_LENGTH );  // 遺伝子配列もランダム
+        // newborntcells.push_back( tc );
       } else {
+        it_tcell++; 
         tcellsize++;
-        it_tcell++;
-      }
+      }        
     }
 
     /*
@@ -847,6 +845,9 @@ int main() {
       tcells.push_back( tc );
       tcellsize++;
     }
+    tcells.insert(tcells.end(), newtcells.begin(), newtcells.end()); // 配列に加える。
+    tcells.insert(tcells.end(), newborntcells.begin(), newborntcells.end()); // 配列に加える。
+
     // EACH( it_tcell, tcells )
     // {
     //   Tcell &tcell = **it_tcell;
@@ -895,7 +896,7 @@ int main() {
     output_value_with_step("normalcell-size.txt", normalsize);
     output_value_with_step("cancercell-size.txt", cancersize);
     output_value_with_step("deleted-cell-size.txt", deletedcellssize);
-    output_value_with_step("tcell-size.txt", tcellsize);
+    output_value_with_step("tcell-size.txt", tcells.size() );
     output_value_with_step("init-tcell-size.txt", inittcellsize);
     output_value_with_step("mutation-count.txt", mutationcount);
     output_value_with_step("normal-division-count.txt", normaldivisioncount);
