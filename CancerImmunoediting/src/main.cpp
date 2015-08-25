@@ -136,7 +136,7 @@ const int MAX_CELL_DIVISION_COUNT = 10; //: 通常細胞の最大分裂回数
 
 const PROBABILITY CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
 
-const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
+const int CELL_GENE_LENGTH = 4; //: 遺伝子の長さ
 
 const PROBABILITY NORMALCELL_METABOLIZE_PROB = 20; //: 正常代謝する確率
 const PROBABILITY CANCERCELL_METABOLIZE_PROB = 80; //: がん代謝する確率
@@ -395,7 +395,8 @@ class Cell : public __Mobile, public __Life {
 
 int Cell::immunogenicity() {
   int ret = 0;
-  // if(gene()[0]=='1') return 20;
+  // if(gene()[0]=='1') return 10;
+  if(geneValue() == 4) return 10;
   // return 100;
   ret = 100*geneValue()/CELL_GENE_LENGTH;
   return ret;
