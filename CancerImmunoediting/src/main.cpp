@@ -395,8 +395,8 @@ class Cell : public __Mobile, public __Life {
 
 int Cell::immunogenicity() {
   int ret = 0;
-  if(gene()[0]=='1') return 10;
-  return 100;
+  if(gene()[0]=='1') return 20;
+  // return 100;
   ret = 100*geneValue()/CELL_GENE_LENGTH;
   return ret;
 }
@@ -880,6 +880,8 @@ int main() {
     output_cell_energy_average( cells );
 
     // 突然変異がん細胞の数を出力する
+    int normalsize = 0;
+    int cancersize = 0;
     int mutantcancercellsize = 0;
     int standardcancercellsize = 0;
     EACH( it_cell, cells ) {
@@ -888,6 +890,9 @@ int main() {
         if( cell.gene()[0] == '1' ) { mutantcancercellsize++; }
         else { standardcancercellsize++; }
       }
+      if( cell.isNormalCell() ) {
+        normalsize++;
+      } else { cancersize++; }
     }
     output_value_with_step("mutantcancer-size.txt", mutantcancercellsize);
     output_value_with_step("standardcancer-size.txt", standardcancercellsize);
@@ -899,14 +904,14 @@ int main() {
     }
 
     /* 細胞数を出力する */
-    int normalsize = 0;
-    int cancersize = 0;
-    EACH( it_cell, cells ) {
-      Cell& cell = **it_cell;
-      if( cell.isNormalCell() ) {
-        normalsize++;
-      } else cancersize++;
-    }
+    // int normalsize = 0;
+    // int cancersize = 0;
+    // EACH( it_cell, cells ) {
+    //   Cell& cell = **it_cell;
+    //   if( cell.isNormalCell() ) {
+    //     normalsize++;
+    //   } else cancersize++;
+    // }
     output_value_with_step("normalcell-size.txt", normalsize);
     output_value_with_step("cancercell-size.txt", cancersize);
     output_value_with_step("deleted-cell-size.txt", deletedcellssize);
