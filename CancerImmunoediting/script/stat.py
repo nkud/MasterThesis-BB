@@ -70,6 +70,14 @@ auto_plot_line += graph_lines("cancer-energy-average", "STEP", "CANCER ENERGY AV
 # 総細胞数
 auto_plot_line += graph_lines("normalcell-size", "STEP", "NORMAL CELL SIZE")
 
+auto_plot_line += graph_lines("mutantcancer-size", "STEP", "MUTANT CANCER SIZE")
+auto_plot_line += graph_lines("standardcancer-size", "STEP", "STANDARD CANCER SIZE")
+auto_plot_line += 'set ylabel "MUTANT & STANDARD";'
+auto_plot_line += 'plot "../bin/standardcancer-size.txt" w l;'
+auto_plot_line += 'replot "../bin/mutantcancer-size.txt" w l;'
+auto_plot_line += 'set output "mutant-standard-cancer-size.png";'
+auto_plot_line += 'replot;set output;'
+
 # auto_plot_line += 'set ylabel "NORMAL CELL SIZE";'
 # auto_plot_line += 'plot "../bin/normalcell-size.txt" w l;'
 # auto_plot_line += 'set output "normalcell-size.png";'
@@ -279,6 +287,11 @@ html_line += image_set_line('normalcell-size.png')
 html_line += image_set_line('cancercell-size.png')
 html_line += image_set_line('cell-size.png')
 html_line += image_set_line('deleted-cell-size.png')
+
+html_line += '<hr />'
+html_line += image_set_line('mutantcancer-size.png')
+html_line += image_set_line('standardcancer-size.png')
+html_line += image_set_line('mutant-standard-cancer-size.png')
 
 html_line += '<hr />'
 html_line += '<h2>%s</h2>\n' % 'T細胞'

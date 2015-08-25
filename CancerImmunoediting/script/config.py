@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-SOURCE_FNAME = '../src/main.cpp'
+SOURCE_FNAME = 'src/main.cpp'
 
 source_file = open(SOURCE_FNAME, 'r')
 

@@ -116,7 +116,8 @@ info:
 	@$(PRINT) '==> Information'
 	@$(CLRECHO)
 	@$(COLORECHO)
-	@$(PRINT) '^^^^^^^^^^^^^^^'
+	@$(PY) script/config.py
+	# @$(PRINT) '^^^^^^^^^^^^^^^'
 	@$(CLRECHO)
 
 open:
@@ -130,6 +131,6 @@ open:
 
 re: clean $(TARGET)
 
-all: clean $(TARGET) run stat open
+all: clean $(TARGET) info run stat open
 
 -include colors.mk

@@ -108,7 +108,7 @@ const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 1000; //: 最大ステップ数
+const int MAX_STEP = 3000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -395,6 +395,7 @@ class Cell : public __Mobile, public __Life {
 
 int Cell::immunogenicity() {
   int ret = 0;
+  if(gene()[0]=='1') return 10;
   return 100;
   ret = 100*geneValue()/CELL_GENE_LENGTH;
   return ret;
@@ -877,6 +878,19 @@ int main() {
 
     // 細胞の平均エネルギーを出力する。
     output_cell_energy_average( cells );
+
+    // 突然変異がん細胞の数を出力する
+    int mutantcancercellsize = 0;
+    int standardcancercellsize = 0;
+    EACH( it_cell, cells ) {
+      Cell& cell = **it_cell;
+      if( cell.isCancerCell() ) {
+        if( cell.gene()[0] == '1' ) { mutantcancercellsize++; }
+        else { standardcancercellsize++; }
+      }
+    }
+    output_value_with_step("mutantcancer-size.txt", mutantcancercellsize);
+    output_value_with_step("standardcancer-size.txt", standardcancercellsize);
 
     if( stepKeeper.isInterval(1)) {
       // グルコースマップを出力する。
