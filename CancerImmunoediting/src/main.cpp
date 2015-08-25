@@ -113,7 +113,7 @@ const int MAX_STEP = 3000; //: 最大ステップ数
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
 const int TCELL_SIZE = 1000; //: T初期総細胞数
-const int TCELL_LIFESPAN = 5; //: T細胞の寿命
+const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 
 // 使用量
 const MATERIAL NORMALCELL_METABOLIZE_GLUCOSE = 1; //: 正常細胞代謝時グルコース使用量
@@ -395,7 +395,7 @@ class Cell : public __Mobile, public __Life {
 
 int Cell::immunogenicity() {
   int ret = 0;
-  if(gene()[0]=='1') return 20;
+  // if(gene()[0]=='1') return 20;
   // return 100;
   ret = 100*geneValue()/CELL_GENE_LENGTH;
   return ret;
@@ -1297,12 +1297,18 @@ void __Life::flip( int pos ) {
 
 bool __Life::mutateGene( double prob ) {
   // 突然変異をしたら、真を返す
+  // 0の時だけ1にする
+  bool changed = false;
   if( Random::Instance().probability(prob) ) {
     int pos = Random::Instance().uniformInt( 0, CELL_GENE_LENGTH-1 );
-    flip(pos);
-    return true;
+    // flip(pos);
+    pos = pos%CELL_GENE_LENGTH;
+    if( gene_[pos] == '0' ) {
+      gene_[pos] = '1';
+      changed = true;
+    }
   }
-  return false;
+  return changed;
 }
 bool __Life::match( __Life& life ) {
   if( gene() == life.gene() ) { return true; }
