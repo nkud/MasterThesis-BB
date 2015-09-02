@@ -108,7 +108,7 @@ const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 3000; //: 最大ステップ数
+const int MAX_STEP = 5000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -395,8 +395,8 @@ class Cell : public __Mobile, public __Life {
 
 int Cell::immunogenicity() {
   int ret = 0;
-  // if(gene()[0]=='1') return 10;
-  if(geneValue() == 4) return 10;
+  // if(gene()[0]=='1') return 50;
+  if(geneValue() == 4) return 50;
   // return 100;
   ret = 100*geneValue()/CELL_GENE_LENGTH;
   return ret;
@@ -729,7 +729,9 @@ int main() {
         }
 
         // 突然変異する
-        if( newcell->mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
+        if( stepKeeper.step() >= 1000 ) {
+          if( newcell->mutateGene( CELL_MUTATION_RATE ) ) { mutationcount++; } // 突然変異をしたらカウントする
+        }
 
         // 半分にエネルギーを分ける。
         newcell->setEnergy( origin_energy / 2 );
@@ -880,13 +882,16 @@ int main() {
     // 細胞の平均エネルギーを出力する。
     output_cell_energy_average( cells );
 
-    // 突然変異がん細胞の数を出力する
+    // 統計をとる
     int normalsize = 0;
     int cancersize = 0;
     int mutantcancercellsize = 0;
     int standardcancercellsize = 0;
+    double genevalueave = 0;
+    int genevaluesum = 0;
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
+      genevaluesum += cell.geneValue();
       if( cell.isCancerCell() ) {
         if( cell.gene()[0] == '1' ) { mutantcancercellsize++; }
         else { standardcancercellsize++; }
@@ -895,8 +900,10 @@ int main() {
         normalsize++;
       } else { cancersize++; }
     }
+    if(cancersize>0) { genevalueave = (double)genevaluesum/cancersize; }
     output_value_with_step("mutantcancer-size.txt", mutantcancercellsize);
     output_value_with_step("standardcancer-size.txt", standardcancercellsize);
+    output_value_with_step("genevalue-ave.txt", genevalueave);
 
     if( stepKeeper.isInterval(1)) {
       // グルコースマップを出力する。
