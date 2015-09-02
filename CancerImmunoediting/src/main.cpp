@@ -383,6 +383,7 @@ class Cell : public __Mobile, public __Life {
   void mutate( double prob );
 
   int immunogenicity();
+  bool isHiddenCancer();
 
  private:
   ENERGY energy_;
@@ -393,10 +394,16 @@ class Cell : public __Mobile, public __Life {
   //int immunogenicity_;
 };
 
+bool Cell::isHiddenCancer() {
+  if( isNormalCell() ) return false;
+  // if(gene()[0] == '1') return true;
+  if(geneValue() == 4) return true;
+
+  else return false;
+}
 int Cell::immunogenicity() {
   int ret = 0;
-  // if(gene()[0]=='1') return 50;
-  if(geneValue() == 4) return 50;
+  if( isHiddenCancer() ) return 50;
   // return 100;
   ret = 100*geneValue()/CELL_GENE_LENGTH;
   return ret;
@@ -885,7 +892,7 @@ int main() {
     // 統計をとる
     int normalsize = 0;
     int cancersize = 0;
-    int mutantcancercellsize = 0;
+    int hiddencancercellsize = 0;
     int standardcancercellsize = 0;
     double genevalueave = 0;
     int genevaluesum = 0;
@@ -893,7 +900,7 @@ int main() {
       Cell& cell = **it_cell;
       genevaluesum += cell.geneValue();
       if( cell.isCancerCell() ) {
-        if( cell.gene()[0] == '1' ) { mutantcancercellsize++; }
+        if( cell.isHiddenCancer() ) { hiddencancercellsize++; }
         else { standardcancercellsize++; }
       }
       if( cell.isNormalCell() ) {
@@ -901,7 +908,7 @@ int main() {
       } else { cancersize++; }
     }
     if(cancersize>0) { genevalueave = (double)genevaluesum/cancersize; }
-    output_value_with_step("mutantcancer-size.txt", mutantcancercellsize);
+    output_value_with_step("mutantcancer-size.txt", hiddencancercellsize);
     output_value_with_step("standardcancer-size.txt", standardcancercellsize);
     output_value_with_step("genevalue-ave.txt", genevalueave);
 
