@@ -108,7 +108,7 @@ const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 5000; //: 最大ステップ数
+const int MAX_STEP = 10000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
@@ -134,14 +134,14 @@ const ENERGY CELL_DIVISION_THRESHOLD_ENERGY = 10; //: 細胞分裂エネルギ�
 
 const int MAX_CELL_DIVISION_COUNT = 10; //: 通常細胞の最大分裂回数
 
-const PROBABILITY CELL_MUTATION_RATE = 1; //: 細胞突然変異確率
+const PROBABILITY CELL_MUTATION_RATE = 5; //: 細胞突然変異確率
 
-const int CELL_GENE_LENGTH = 4; //: 遺伝子の長さ
+const int CELL_GENE_LENGTH = 8; //: 遺伝子の長さ
 
 const PROBABILITY NORMALCELL_METABOLIZE_PROB = 20; //: 正常代謝する確率
 const PROBABILITY CANCERCELL_METABOLIZE_PROB = 80; //: がん代謝する確率
-const PROBABILITY NORMALCELL_DIVISION_PROB = 30; //: 正常細胞分裂確率
-const PROBABILITY CANCERCELL_DIVISION_PROB = 30; //: がん細胞分裂確率
+const PROBABILITY NORMALCELL_DIVISION_PROB = 60; //: 正常細胞分裂確率
+const PROBABILITY CANCERCELL_DIVISION_PROB = 60; //: がん細胞分裂確率
 // 移動する確率
 // const PROBABILITY MOTILITY_PROB
 const double MOTILITY_WEIGHT = 1; //: 移動にかかるコストの重み
@@ -403,9 +403,9 @@ bool Cell::isHiddenCancer() {
 }
 int Cell::immunogenicity() {
   int ret = 0;
-  if( isHiddenCancer() ) return 50;
-  // return 100;
-  ret = 100*geneValue()/CELL_GENE_LENGTH;
+  if( isHiddenCancer() ) return 10;
+  return 100;
+  // ret = 100*geneValue()/CELL_GENE_LENGTH;
   return ret;
 }
 
