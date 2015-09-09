@@ -912,6 +912,12 @@ int main() {
     output_value_with_step("standardcancer-size.txt", standardcancercellsize);
     output_value_with_step("genevalue-ave.txt", genevalueave);
 
+    // デバッグログ
+    if( stepKeeper.isInterval(100) ) {
+      DEBUG(hiddencancercellsize);
+      DEBUG(genevalueave);
+    }
+
     if( stepKeeper.isInterval(1)) {
       // グルコースマップを出力する。
       output_glucose_map( *gs );
