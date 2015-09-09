@@ -108,11 +108,11 @@ const MATERIAL MAX_GLUCOSE = 20; //: 最大グルコース量
 const MATERIAL MAX_OXYGEN = 20; //: 最大酸素量
 
 // 最大計算期間を設定する。
-const int MAX_STEP = 10000; //: 最大ステップ数
+const int MAX_STEP = 15000; //: 最大ステップ数
 
 // 細胞数を設定する。
 const int CELL_SIZE = 100; //: 初期総細胞数
-const int TCELL_SIZE = 1000; //: T初期総細胞数
+const int TCELL_SIZE = 2000; //: T初期総細胞数
 const int TCELL_LIFESPAN = 10; //: T細胞の寿命
 
 // 使用量
@@ -397,7 +397,7 @@ class Cell : public __Mobile, public __Life {
 bool Cell::isHiddenCancer() {
   if( isNormalCell() ) return false;
   // if(gene()[0] == '1') return true;
-  if(geneValue() == 4) return true;
+  if(geneValue() == CELL_GENE_LENGTH) return true;
 
   else return false;
 }

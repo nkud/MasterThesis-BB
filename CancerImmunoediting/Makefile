@@ -98,13 +98,16 @@ stat: script plot
 
 pack:
 	@$(COLORECHO)
-	@$(PRINT) '==> Packing...'
+	@$(PRINT) '==> Packing... >> $(result_dir)'
 	@$(CLRECHO).
 	@$(MKDIR) $(master_dir)
 	@$(MKDIR) $(master_dir)/$(result_dir)
 	@$(MKDIR) $(master_dir)/$(result_dir)/$(program_dir)
+	@$(PRINT) '==> mkdir done.'
 	@$(COPY) src script $(master_dir)/$(result_dir)/$(program_dir)/
+	@$(PRINT) '==> cp src done.'
 	@$(COPY) bin stat $(master_dir)/$(result_dir)/
+	@$(PRINT) '==> cp stat done.'
 	@$(PRINT) '$(master_dir)/$(result_dir)'
 	@ls -al '$(master_dir)/$(result_dir)'
 	@$(COLORECHO)
