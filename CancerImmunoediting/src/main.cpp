@@ -354,9 +354,6 @@ class Cell : public __Mobile, public __Life {
   /** 代謝する */
   void metabolize( GlucoseScape& gs, OxygenScape& os );
 
-  // __CellState& cellState();
-  // void changeState();
-
   /** がん細胞かどうかを返す */
   // 遺伝子の評価値が１以上ならば、がん細胞
   bool isCancerCell();
@@ -387,11 +384,7 @@ class Cell : public __Mobile, public __Life {
 
  private:
   ENERGY energy_;
-  // __CellState *state_;
   int cell_division_count_;
-
-  // 免疫原性率 0 ~ 100 %
-  //int immunogenicity_;
 };
 
 bool Cell::isHiddenCancer() {
@@ -440,99 +433,6 @@ void Tcell::aging() {
   age_ += 1;
 }
 void Tcell::initAge() { age_ = 0; }
-
-/*
- * 細胞の状態をあらわすクラスを作成する。
- * 正常細胞とがん細胞との、状態による違いをプログラムする。
- */
-
-/**
- * @brief 細胞状態をあわらす抽象クラス
- *
- * Stateパターンを使用する。
- * シングルトンパターンを使用する。
- */
-// class __CellState {
-// public:
-//   // virtual __CellState& Instance() = 0;
-//   virtual void metabolize( Cell& cell, GlucoseScape& gs, OxygenScape& os ) = 0;
-//   virtual bool isNormalCell() = 0;
-//   virtual bool isCancerCell() = 0;
-// private:
-// };
-
-// /**
-//  * @brief 正常細胞の状態を表すクラス
-//  *
-//  * 酸化的リン酸化を利用してエネルギーを産生する。
-//  */
-// class NormalCellState : public __CellState {
-// public:
-//   static NormalCellState& Instance() {
-//     static NormalCellState singleton;
-//     return singleton;
-//   }
-
-//   /**
-//    * グルコースと酸素を利用してエネルギーを産生する。
-//    *
-//    * @param cell 細胞
-//    * @param gs グルコーススケープ
-//    * @param os 酸素スケープ
-//    */
-//   virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
-//     MATERIAL g = gs.glucose(cell.x(), cell.y());
-//     MATERIAL o = os.oxygen(cell.x(), cell.y());
-//     MATERIAL use_glucose = NORMALCELL_METABOLIZE_GLUCOSE;
-//     MATERIAL use_oxygen = NORMALCELL_METABOLIZE_OXYGEN;
-//     if( g >= use_glucose && o >= use_oxygen ) {
-//       cell.gainEnergy( NORMAL_CELL_GAIN_ENERGY );
-//       gs.setGlucose( cell.x(), cell.y(), g - use_glucose );
-//       os.setOxygen( cell.x(), cell.y(), o - use_oxygen );
-//     }
-//   }
-
-//   /** 正常細胞なら真を返す */
-//   virtual bool isNormalCell() { return true; }
-
-//   /** がん細胞なら真を返す */
-//   virtual bool isCancerCell() { return false; }
-// private:
-//   NormalCellState() { }
-// };
-
-// /**
-//  * @brief がん細胞状態を表すクラス
-//  *
-//  * 嫌気的解糖系を利用してエネルギーを産生する。
-//  */
-// class CancerCellState : public __CellState {
-// public:
-//   static CancerCellState& Instance() {
-//     static CancerCellState singleton;
-//     return singleton;
-//   }
-
-//   /**
-//    * グルコースのみを利用してエネルギーを産生する。
-//    *
-//    * @param cell 細胞
-//    * @param gs グルコーススケープ
-//    * @param os 酸素スケープ
-//    */
-//   virtual void metabolize( Cell& cell,  GlucoseScape& gs, OxygenScape& os ) {
-//     MATERIAL g = gs.glucose(cell.x(), cell.y());
-//     MATERIAL use_glucose = CANCER_CELL_METABOLIZE_GLUCOSE;
-//     if( g >= use_glucose ) {
-//       cell.gainEnergy( CANCER_CELL_GAIN_ENERGY );
-//       gs.setGlucose( cell.x(), cell.y(), g-use_glucose );
-//     }
-//   }
-
-//   virtual bool isNormalCell() { return false; }
-//   virtual bool isCancerCell() { return true; }
-// private:
-// };
 
 /**
  * @brief 細胞のマップクラス
@@ -834,12 +734,6 @@ int main() {
         SAFE_DELETE( *it_tcell );
         tcells.erase( it_tcell );
         inittcellsize++;
-
-        // 新しいT細胞を加える。
-        // Tcell *tc = new Tcell();
-        // tc->randomSetLocation();  // 位置はランダム
-        // tc->randomSetGene( CELL_GENE_LENGTH );  // 遺伝子配列もランダム
-        // newborntcells.push_back( tc );
       } else {
         it_tcell++; 
         tcellsize++;
@@ -859,24 +753,6 @@ int main() {
     }
     tcells.insert(tcells.end(), newtcells.begin(), newtcells.end()); // 配列に加える。
     tcells.insert(tcells.end(), newborntcells.begin(), newborntcells.end()); // 配列に加える。
-
-    // EACH( it_tcell, tcells )
-    // {
-    //   Tcell &tcell = **it_tcell;
-    //   tcell.aging();
-
-    //   // T細胞が寿命なら、
-    //   // 初期化する。
-    //   // 遺伝子を再初期化して、
-    //   // 細胞年齢を初期化する。
-    //   if( tcell.age() >= TCELL_LIFESPAN ) {
-    //     tcell.randomSetGene( CELL_GENE_LENGTH );
-    //     tcell.initAge();
-
-    //     inittcellsize++;
-    //   }
-    //   tcellsize++;
-    // }
 
     // -----------------------------------------------------------------------
     /* ファイルに出力する */
@@ -900,13 +776,16 @@ int main() {
     EACH( it_cell, cells ) {
       Cell& cell = **it_cell;
       genevaluesum += cell.geneValue();
-      if( cell.isCancerCell() ) {
+      if( cell.isCancerCell() ) 
+      {
+        cancersize++;
         if( cell.isHiddenCancer() ) { hiddencancercellsize++; }
         else { standardcancercellsize++; }
       }
-      if( cell.isNormalCell() ) {
+      if( cell.isNormalCell() ) 
+      {
         normalsize++;
-      } else { cancersize++; }
+      }
     }
     if(cancersize>0) { genevalueave = (double)genevaluesum/cancersize; }
     output_value_with_step("mutantcancer-size.txt", hiddencancercellsize);
@@ -925,15 +804,6 @@ int main() {
       output_oxygen_map( *os );
     }
 
-    /* 細胞数を出力する */
-    // int normalsize = 0;
-    // int cancersize = 0;
-    // EACH( it_cell, cells ) {
-    //   Cell& cell = **it_cell;
-    //   if( cell.isNormalCell() ) {
-    //     normalsize++;
-    //   } else cancersize++;
-    // }
     output_value_with_step("normalcell-size.txt", normalsize);
     output_value_with_step("cancercell-size.txt", cancersize);
     output_value_with_step("deleted-cell-size.txt", deletedcellssize);
@@ -1185,25 +1055,14 @@ OxygenScape::OxygenScape() {
 Cell::Cell() {
   // energy_ = Random::Instance().uniformInt(0, INITIAL_CELL_ENERGY);
   setEnergy( INITIAL_CELL_ENERGY );
-  // state_ = &( NormalCellState::Instance() );
   cell_division_count_ = 0;
-
-  //immunogenicity_ = 0;
-  //if( cellState().isNormalCell() ) immunogenicity_ = 0;
-  //if( cellState().isCancerCell() ) immunogenicity_ = 50;
 
   initiateGene( CELL_GENE_LENGTH );
 }
 
-// void Cell::changeState() {
-//   state_ = &( CancerCellState::Instance() );
-// }
-
 void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
-  // state_->metabolize( *this, gs, os );
   if( isNormalCell() and Random::Instance().probability(NORMALCELL_METABOLIZE_PROB) ) 
   {
-    // NormalCellState::Instance().metabolize(*this, gs, os);
     Cell& cell = *this;
     MATERIAL g = gs.glucose(cell.x(), cell.y());
     MATERIAL o = os.oxygen(cell.x(), cell.y());
@@ -1218,7 +1077,6 @@ void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
   }
   if( isCancerCell() and Random::Instance().probability(CANCERCELL_METABOLIZE_PROB) )
   {
-    // CancerCellState::Instance().metabolize(*this, gs, os);
     Cell& cell = *this;
     MATERIAL g = gs.glucose(cell.x(), cell.y());
     MATERIAL use_glucose = CANCER_CELL_METABOLIZE_GLUCOSE;
@@ -1229,17 +1087,6 @@ void Cell::metabolize( GlucoseScape& gs, OxygenScape& os ) {
     return;
   }
 }
-
-// void Cell::mutate( double prob ) {
-//   if(Random::Instance().probability(prob)) {
-//     /*
-//      * 正常細胞なら、がん細胞に変異する。
-//      */
-//     if( state_->isNormalCell() ) {
-//       changeState();
-//     }
-//   }
-// }
 
 bool Cell::isCancerCell() {
   if( geneValue() > 0 ) { return true; }
@@ -1274,14 +1121,6 @@ bool Cell::willDvision() {
     return false;
   }
 }
-
-// __CellState& Cell::cellState() {
-//   if( isNormalCell() ) {
-//     return NormalCellState::Instance();
-//   } else {
-//     return CancerCellState::Instance();
-//   }
-// }
 
 /*
  * __Mobile
