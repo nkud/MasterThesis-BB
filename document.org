@@ -10,6 +10,13 @@
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+* Note
+** がん幹細胞仮説
+*** がん細胞は、正常な体細胞と比較すると3つの大きな特徴を持っている。<Wikipedia:がん幹細胞>
+**** しかし、がん組織すべてがこれらの能力を有しているわけではない。実際にはごく一部のがん細胞である。それらの一部のがん細胞をがん幹細胞と呼ぶ。
+***** 高い増殖力
+***** 細胞の不死化
+***** 周辺組織への浸潤や、体内の離れた部位への転移
 * 論文構想
 ** 序論
 * 論文構成
