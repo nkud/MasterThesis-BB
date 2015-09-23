@@ -1,23 +1,36 @@
 #+TITLE: 修士研究
 #+AUTHOR: Naoki Ueda
-#+OPTIONS: \n:nil H:1 toc:t author:nil email:nil timestamp:t creator:nil num:nil
+#+OPTIONS: \n:nil H:2 toc:t author:nil email:nil timestamp:t creator:nil num:nil
 #+LANGUAGE: ja
 #+LaTeX_CLASS: thesis
 #+STARTUP: content
-#+HTML_HEAD: <style type="text/css">body {font-family:"verdana";font-size:0.8em;}</style>
+#+HTML_HEAD: <style type="text/css">body {font-family:serif;font-size:0.8em;}</style>
 #+HTML_HEAD: <style type="text/css">h2 {text-decoration:underline;margin-top:3em;}</style>
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
-* Note
+* Notes
 ** がん幹細胞仮説
 *** がん細胞は、正常な体細胞と比較すると3つの大きな特徴を持っている。<Wikipedia:がん幹細胞>
-**** しかし、がん組織すべてがこれらの能力を有しているわけではない。実際にはごく一部のがん細胞である。それらの一部のがん細胞をがん幹細胞と呼ぶ。
+**** しかし、がん組織すべてがこれらの能力を有しているわけではない。実際にはごく一部のがん細胞である。それらの一部のがん細胞をがん幹細胞（Cancer Stem Cell, CSC）と呼ぶ。
 ***** 高い増殖力
 ***** 細胞の不死化
 ***** 周辺組織への浸潤や、体内の離れた部位への転移
-* 論文構想
-** 序論
+** 腫瘍特異抗原（TSA）
+** Cancer Immunoediting
+** Hallmarks of Cancer
+*** 血管新生の励起
+*** 細胞死への抵抗
+*** 発育抑制からの逃避
+*** 進化と転移の活性化
+** 嫌気的解糖
+- 無酸素状態時の解糖系の経路のこと。グルコースからピルビン酸まで分解し、
+  その後電子伝達系などが停止している場合には、
+  ピルビン酸から更にアルコールや乳酸などに分解を行う。
+  その主たる目的は嫌気状態でもATPの生産を行うこと、
+  また再び解糖系を稼動させるためにNADHの酸化を行うことにある。
+- がん細胞はエネルギー産生を、嫌気性解糖に依存しているので、
+  正常細胞の何十倍もの多くの glucose を必要とする。
 * 論文構成
 ** 序論
 *** 背景説明
@@ -46,7 +59,71 @@
 *** HOLD 得られた結果を説明する
 *** HOLD 得られた結果の価値を検討する
 *** HOLD 本論文の構成を述べる
-* モデル概略
+** 参考文献
+- Robert D. Schreiber, Lloyd J. Old, Mark J. Smyth, Cancer Immunoediting: Integrating Immunity’s Roles in Cancer Suppression and Promotion.[fn:1]
+[fn:1] http://www.sciencemag.org/content/331/6024/1565.short
+* 構成テンプレート
+** 序論
+*** 背景説明
+- 他分野である可能性が高い。
+*** 先行研究紹介
+*** 問題点を指摘する
+*** 問題を設定する
+*** 設定した問題性の重要性を議論する
+*** 問題を解くために使う方法
+- 既存なら参考文献を挙げる
+- 新規なら説明をする
+*** 得られた結果を説明する
+*** 得られた結果の価値を検討する
+*** 本論文の構成を述べる
+* プロットテンプレート
+** Authors　著者
+** Title　題名
+** Keyword list　キーワード
+** Abstract　抄録
+** TODO Introduction　序文
+** Methods　方法
+** TODO Results　結果
+** TODO Discussion　考察
+** Acknowledgement　謝辞
+** TODO Reference　参考文献
+** Supplementary material　補足資料
+* Seminar
+** <2015-06-10 水>
+- 見つけた論文について
+- 電子タグの論文を探す
+  - 電子タグの使われ方を調べる
+** <2015-06-26 金>
+- 電子タグを使う
+- ハミング距離はなし。今後も必要と無いと思う。
+- できたらドライブにあげる。
+** <2015-08-06 木>
+- [ ] 特定の突然変異を戻らないようにする
+- [ ] 「特定の突然変異が、抗原提示を妨げる」ことに関する参考文献を探す。
+** <2015-09-23 水>
+CAEの実証データ、医学的な論文を見つける。
+* COMMENT trash
+class 細胞 {
+-double energy_ : 細胞が所持するエネルギー
++double energy()
++void move( __Landscape& landscape ) : 移動する
++void metabolize( GlucoseScape& gs ) : 代謝する
+}
+class グルコーススケープ {
+-double glucose_map_[HEIGHT][WIDTH] : グルコースのマップ
++double glucose( int x, int y )
++setGlucose( int x, int y )
++void generate() : グルコースを再生する
+}
+* TODO COMMENT
+** 酸素の導入
+** 糖代謝のモデルを作成する
+** サムネイル用の画像を作成する
+** 状態の変わるデザインパターンを利用する
+* COMMENT アイデア
+** NowakのモデルをABM化する
+** 統計モデルを作ってみる
+* COMMENT モデル概略
 ** COMMENT オブジェクト説明
 - 各種細胞は、スケープ上を自由に移動する。
 #+BEGIN_SRC plantuml :file sample.svg :cmdline -charset UTF-8
@@ -97,79 +174,6 @@ class 酸素スケープ {
 *** 細胞分裂回数について
 **** 各正常細胞には、細胞分裂の最大回数が設定されている。
 **** 各がん細胞には、細胞分裂の最大回数は設定されていない。
-* 構成
-** 序論
-*** 背景説明
-- 他分野である可能性が高い。
-*** 先行研究紹介
-*** 問題点を指摘する
-*** 問題を設定する
-*** 設定した問題性の重要性を議論する
-*** 問題を解くために使う方法
-- 既存なら参考文献を挙げる
-- 新規なら説明をする
-*** 得られた結果を説明する
-*** 得られた結果の価値を検討する
-*** 本論文の構成を述べる
-* Note
-** Hallmarks of Cancer
-*** 血管新生の励起
-*** 細胞死への抵抗
-*** 発育抑制からの逃避
-*** 進化と転移の活性化
-** 嫌気的解糖
-- 無酸素状態時の解糖系の経路のこと。グルコースからピルビン酸まで分解し、
-  その後電子伝達系などが停止している場合には、
-  ピルビン酸から更にアルコールや乳酸などに分解を行う。
-  その主たる目的は嫌気状態でもATPの生産を行うこと、
-  また再び解糖系を稼動させるためにNADHの酸化を行うことにある。
-- がん細胞はエネルギー産生を、嫌気性解糖に依存しているので、
-  正常細胞の何十倍もの多くの glucose を必要とする。
-* プロット
-** Authors　著者
-** Title　題名
-** Keyword list　キーワード
-** Abstract　抄録
-** Introduction　序文
-** Methods　方法
-** Results　結果
-** Discussion　考察
-** Acknowledgement　社寺
-** Reference　参考文献
-** Supplementary material　補足資料
-* 構成
-** CancerImmunoediting
-*** 腫瘍モデル
-* TODO COMMENT
-** 酸素の導入
-** 糖代謝のモデルを作成する
-** サムネイル用の画像を作成する
-** 状態の変わるデザインパターンを利用する
-* アイデア
-** NowakのモデルをABM化する
-** 統計モデルを作ってみる
-* COMMENT trash
-class 細胞 {
--double energy_ : 細胞が所持するエネルギー
-+double energy()
-+void move( __Landscape& landscape ) : 移動する
-+void metabolize( GlucoseScape& gs ) : 代謝する
-}
-class グルコーススケープ {
--double glucose_map_[HEIGHT][WIDTH] : グルコースのマップ
-+double glucose( int x, int y )
-+setGlucose( int x, int y )
-+void generate() : グルコースを再生する
-}
-* Seminar
-** <2015-06-10 水>
-- 見つけた論文について
-- 電子タグの論文を探す
-  - 電子タグの使われ方を調べる
-** <2015-06-26 金>
-- 電子タグを使う
-- ハミング距離はなし。今後も必要と無いと思う。
-- できたらドライブにあげる。
-** <2015-08-06 木>
-- [ ] 特定の突然変異を戻らないようにする
-- [ ] 「特定の突然変異が、抗原提示を妨げる」ことに関する参考文献を探す。
+* 論文
+** ABiasedCompetitionTheoryOfCytotoxicTLymphocyteInteractionWithTumorNodules
+*** CTLとがん細胞のせめぎあいの数値解析的なモデルでは、免疫エディティングのプロセスをうまく表現できていない。
