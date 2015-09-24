@@ -61,9 +61,42 @@
 *** HOLD 得られた結果を説明する
 *** HOLD 得られた結果の価値を検討する
 *** HOLD 本論文の構成を述べる
-** 参考文献
-- Robert D. Schreiber, Lloyd J. Old, Mark J. Smyth, Cancer Immunoediting: Integrating Immunity’s Roles in Cancer Suppression and Promotion.[fn:1]
-[fn:1] http://www.sciencemag.org/content/331/6024/1565.short
+* 参考文献
+** TODO [1] Claire Christophe, A Biased Competition Theory Of Cytotoxic T Lymphocyte Interaction With Tumor Nodules, 27 March, 2015
+[1] http://www.sciencemag.org/content/331/6024/1565.short
+*** TODO Abstract
+CTLとがん細胞のせめぎあいの数値解析的なモデルでは、免疫エディティングのプロセスをうまく表現できていない。
+*** TODO Introduction
+*** TODO Dscriptioin of the model
+数字計算に用いた実験パラメータは、[3]の論文を参考にしている。
+**** Cell behaviors
+**** Discretization of the time and Ω
+**** Movement of the CTL population
+**** Biased displacement of CTL throught chemotactism
+**** CTL killing
+**** Tumor nodule growth
+**** Immunoediting
+**** Stochastic dynamical agent based model or differential equations?
+*** TODO Materials and Methods
+**** Experimental parameters mesurement
+**** Time and Scale calibration: grid definition
+**** Estimation of [mu]: the inverse of the time required for killing one target cell
+**** Estimation of [lambda]: rate of division
+**** Estimation of E: thickness of the proliferative part of the nodule
+*** TODO Results
+**** Early productive CTL/tumor collisions determines CTL success in tumor eradication
+**** Early productive collisions depend on CTL population size
+**** Early productive collisions do not depend on the time required for killing
+**** CTL chemotactism towards scout cells having detected the tumor strongly augments early productive collisions
+*** TODO Discussion
+*** Supporting Information
+*** Acknowledgments
+*** Author Contributions
+*** TODO References
+** [2] Robert D. Schreiber, Lloyd J. Old, Mark J. Smyth, Cancer Immunoediting: Integrating Immunity’s Roles in Cancer Suppression and Promotion.
+[2] http://www.sciencemag.org/content/331/6024/1565.short
+** [3] Visualizing CTL/melanoma cell interactions: Multiple hits must be delivered for tumour cell annihilation
+[3] http://onlinelibrary.wiley.com/doi/10.1111/j.1582-4934.2008.00586.x/full
 * 構成テンプレート
 ** 序論
 *** 背景説明
@@ -176,6 +209,3 @@ class 酸素スケープ {
 *** 細胞分裂回数について
 **** 各正常細胞には、細胞分裂の最大回数が設定されている。
 **** 各がん細胞には、細胞分裂の最大回数は設定されていない。
-* 論文
-** ABiasedCompetitionTheoryOfCytotoxicTLymphocyteInteractionWithTumorNodules
-*** CTLとがん細胞のせめぎあいの数値解析的なモデルでは、免疫エディティングのプロセスをうまく表現できていない。
