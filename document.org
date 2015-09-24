@@ -1,11 +1,13 @@
 #+TITLE: 修士研究
 #+AUTHOR: Naoki Ueda
-#+OPTIONS: \n:nil H:2 toc:t author:nil email:nil timestamp:t creator:nil num:nil
+#+OPTIONS: \n:nil H:2 toc:nil author:nil email:nil timestamp:t creator:nil num:nil
 #+LANGUAGE: ja
 #+LaTeX_CLASS: thesis
 #+STARTUP: content
-#+HTML_HEAD: <style type="text/css">body {font-family:serif;font-size:0.8em;}</style>
-#+HTML_HEAD: <style type="text/css">h2 {text-decoration:underline;margin-top:3em;}</style>
+#+HTML_HEAD: <style type="text/css">body {font-family:serif;font-size:9pt;}</style>
+#+HTML_HEAD: <style type="text/css">h2 {border-left:10px solid black;text-decoration:none;margin-top:3em;padding-left:5px;}</style>
+#+HTML_HEAD: <style type="text/css">h3 {text-decoration:underline;}</style>
+#+HTML_HEAD: <style type="text/css">.outline-3 {margin-left: 15px;}</style>
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
