@@ -5,6 +5,7 @@
 #+LaTeX_CLASS: thesis
 #+STARTUP: content
 #+HTML_HEAD: <style type="text/css">body {font-family:serif;font-size:9pt;}</style>
+#+HTML_HEAD: <style type="text/css">body {line-height:1.1em;}</style>
 #+HTML_HEAD: <style type="text/css">h2 {border-left:10px solid black;text-decoration:none;margin-top:3em;padding-left:5px;}</style>
 #+HTML_HEAD: <style type="text/css">h3 {text-decoration:underline;}</style>
 #+HTML_HEAD: <style type="text/css">.outline-3 {margin-left: 15px;}</style>
@@ -62,8 +63,8 @@
 *** HOLD 得られた結果の価値を検討する
 *** HOLD 本論文の構成を述べる
 * 参考文献
-** TODO [1] Claire Christophe, A Biased Competition Theory Of Cytotoxic T Lymphocyte Interaction With Tumor Nodules, 27 March, 2015
-[1] http://www.sciencemag.org/content/331/6024/1565.short
+** TODO [1] Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
+[1] http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0120053
 *** TODO Abstract
 CTLとがん細胞のせめぎあいの数値解析的なモデルでは、免疫エディティングのプロセスをうまく表現できていない。
 *** TODO Introduction
@@ -93,9 +94,9 @@ CTLとがん細胞のせめぎあいの数値解析的なモデルでは、免�
 *** Acknowledgments
 *** Author Contributions
 *** TODO References
-** [2] Robert D. Schreiber, Lloyd J. Old, Mark J. Smyth, Cancer Immunoediting: Integrating Immunity’s Roles in Cancer Suppression and Promotion.
+** [2] Schreiber, Robert D., Lloyd J. Old, and Mark J. Smyth. "Cancer immunoediting: integrating immunity’s roles in cancer suppression and promotion." Science 331.6024 (2011): 1565-1570.
 [2] http://www.sciencemag.org/content/331/6024/1565.short
-** [3] Visualizing CTL/melanoma cell interactions: Multiple hits must be delivered for tumour cell annihilation
+** [3] Caramalho, Íris, et al. "Visualizing CTL/melanoma cell interactions: Multiple hits must be delivered for tumour cell annihilation." Journal of cellular and molecular medicine 13.9b (2009): 3834-3846.
 [3] http://onlinelibrary.wiley.com/doi/10.1111/j.1582-4934.2008.00586.x/full
 * 構成テンプレート
 ** 序論
