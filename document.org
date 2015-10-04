@@ -2,9 +2,9 @@
 #+AUTHOR: Naoki Ueda
 #+OPTIONS: \n:nil H:2 toc:nil author:nil email:nil timestamp:t creator:nil num:nil
 #+LANGUAGE: ja
-#+LaTeX_CLASS: thesis
-#+STARTUP: content
-#+HTML_HEAD: <style type="text/css">body {font-family:serif;font-size:9pt;}</style>
+#+LaTeX_CLASS: elsevier
+#+STARTUP: overview
+#+HTML_HEAD: <style type="text/css">body {font-family:monospace, serif;font-size:9pt;}</style>
 #+HTML_HEAD: <style type="text/css">body {line-height:1.1em;}</style>
 #+HTML_HEAD: <style type="text/css">h2 {border-left:10px solid black;text-decoration:none;margin-top:3em;padding-left:5px;}</style>
 #+HTML_HEAD: <style type="text/css">h3 {text-decoration:underline;}</style>
@@ -12,6 +12,57 @@
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+* 参考文献
+** TODO [1] Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
+[1] http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0120053
+*** TODO *Abstract*
+- CTLとがん細胞のせめぎあいの数値解析的なモデルでは、免疫エディティングのプロセスをうまく表現できていない。
+- CTLと腫瘍細胞のダイナミックな関係性は、深くまで研究されている。
+  - しかし、腫瘍細胞が免疫監視から逃れる状況を考慮に入れた数学的ですとかスティックなモデルはない。（missing）
+- 私たちの結果は、"A biased competition theory of CTL function"に一致している。
+*** TODO *Introduction*
+- 私たちは、（CTLの昨日の偏りによる競争理論）を提唱する。
+  - 偏った移動は、効果的な機能の助けになるという理論である。
+- ここでは、私たちはコンピュータを使用した、実験計測に基づいたモデルを提案する。
+*** TODO *Dscriptioin of the model*
+- 数字計算に用いた実験パラメータは、[3]の論文を参考にしている。
+**** *Cell behaviors*
+- 各CTLはΩ上を新メトリックランダムウォークする。
+- 境界までくると、反射する。
+- 各CTLは最大で5つの腫瘍細胞まで殺傷できる。
+**** *Discretization of the time and Ω*
+- 各CTLのステップサイズΔは、 12.5μm.
+- CTLの平均速度：8.66μm/min.
+**** *Movement of the CTL population*
+**** *Biased displacement of CTL throught chemotactism*
+**** *CTL killing*
+**** *Tumor nodule growth*
+**** *Immunoediting*
+**** *Stochastic dynamical agent based model or differential equations?*
+*** TODO *Materials and Methods*
+**** Experimental parameters mesurement
+**** Time and Scale calibration: grid definition
+**** Estimation of [mu]: the inverse of the time required for killing one target cell
+**** Estimation of [lambda]: rate of division
+**** Estimation of E: thickness of the proliferative part of the nodule
+*** TODO *Results*
+**** Early productive CTL/tumor collisions determines CTL success in tumor eradication
+**** Early productive collisions depend on CTL population size
+**** Early productive collisions do not depend on the time required for killing
+**** CTL chemotactism towards scout cells having detected the tumor strongly augments early productive collisions
+*** TODO *Discussion*
+*** *Supporting Information*
+*** *Acknowledgments*
+*** *Author Contributions*
+*** TODO *References*
+*** パラメータ
+**** 免疫細胞
+***** 平均速度：
+**** 腫瘍細胞
+** [2] Schreiber, Robert D., Lloyd J. Old, and Mark J. Smyth. "Cancer immunoediting: integrating immunity’s roles in cancer suppression and promotion." Science 331.6024 (2011): 1565-1570.
+[2] http://www.sciencemag.org/content/331/6024/1565.short
+** [3] Caramalho, Íris, et al. "Visualizing CTL/melanoma cell interactions: Multiple hits must be delivered for tumour cell annihilation." Journal of cellular and molecular medicine 13.9b (2009): 3834-3846.
+[3] http://onlinelibrary.wiley.com/doi/10.1111/j.1582-4934.2008.00586.x/full
 * Notes
 ** がん幹細胞仮説
 *** がん細胞は、正常な体細胞と比較すると3つの大きな特徴を持っている。<Wikipedia:がん幹細胞>
@@ -62,42 +113,6 @@
 *** HOLD 得られた結果を説明する
 *** HOLD 得られた結果の価値を検討する
 *** HOLD 本論文の構成を述べる
-* 参考文献
-** TODO [1] Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
-[1] http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0120053
-*** TODO Abstract
-CTLとがん細胞のせめぎあいの数値解析的なモデルでは、免疫エディティングのプロセスをうまく表現できていない。
-*** TODO Introduction
-*** TODO Dscriptioin of the model
-数字計算に用いた実験パラメータは、[3]の論文を参考にしている。
-**** Cell behaviors
-**** Discretization of the time and Ω
-**** Movement of the CTL population
-**** Biased displacement of CTL throught chemotactism
-**** CTL killing
-**** Tumor nodule growth
-**** Immunoediting
-**** Stochastic dynamical agent based model or differential equations?
-*** TODO Materials and Methods
-**** Experimental parameters mesurement
-**** Time and Scale calibration: grid definition
-**** Estimation of [mu]: the inverse of the time required for killing one target cell
-**** Estimation of [lambda]: rate of division
-**** Estimation of E: thickness of the proliferative part of the nodule
-*** TODO Results
-**** Early productive CTL/tumor collisions determines CTL success in tumor eradication
-**** Early productive collisions depend on CTL population size
-**** Early productive collisions do not depend on the time required for killing
-**** CTL chemotactism towards scout cells having detected the tumor strongly augments early productive collisions
-*** TODO Discussion
-*** Supporting Information
-*** Acknowledgments
-*** Author Contributions
-*** TODO References
-** [2] Schreiber, Robert D., Lloyd J. Old, and Mark J. Smyth. "Cancer immunoediting: integrating immunity’s roles in cancer suppression and promotion." Science 331.6024 (2011): 1565-1570.
-[2] http://www.sciencemag.org/content/331/6024/1565.short
-** [3] Caramalho, Íris, et al. "Visualizing CTL/melanoma cell interactions: Multiple hits must be delivered for tumour cell annihilation." Journal of cellular and molecular medicine 13.9b (2009): 3834-3846.
-[3] http://onlinelibrary.wiley.com/doi/10.1111/j.1582-4934.2008.00586.x/full
 * 構成テンプレート
 ** 序論
 *** 背景説明
