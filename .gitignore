@@ -8,6 +8,8 @@
 *.out
 *.toc
 *.svg
+*.bbl
+*.blg
 document.html
 
 *.html

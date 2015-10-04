@@ -34,10 +34,18 @@
 - 各CTLのステップサイズΔは、 12.5μm.
 - CTLの平均速度：8.66μm/min.
 **** *Movement of the CTL population*
+- 各数値計算において、CTLの総数は固定である。
+  - 減少したCTLの分は、新しく近づいてきたCTLや分裂によって補われると仮定しているため。
+- CTLはランダムウォークする。ノイマン近傍。
 **** *Biased displacement of CTL throught chemotactism*
 **** *CTL killing*
+- CTLは、がん細胞に衝突すると、動くのをやめる。
+  - 殺傷し始める。
+- 殺傷後、再びランダムウォークを始める。
 **** *Tumor nodule growth*
 **** *Immunoediting*
+- 私たちは、腫瘍細胞が分裂する度に、娘細胞は進行的に免疫耐性がつくと考慮している。（rate:P_res）
+  - この場合、CTLは娘細胞のほうが殺傷に時間かけることになる。
 **** *Stochastic dynamical agent based model or differential equations?*
 *** TODO *Materials and Methods*
 **** Experimental parameters mesurement
