@@ -71,6 +71,11 @@
 [2] http://www.sciencemag.org/content/331/6024/1565.short
 ** [3] Caramalho, Íris, et al. "Visualizing CTL/melanoma cell interactions: Multiple hits must be delivered for tumour cell annihilation." Journal of cellular and molecular medicine 13.9b (2009): 3834-3846.
 [3] http://onlinelibrary.wiley.com/doi/10.1111/j.1582-4934.2008.00586.x/full
+** 「がん増殖と悪性化の分子機構」宮澤恵二・伊藤進編
+- がんとは、医学的には悪性腫瘍のことを指す。
+- ウィリスは、腫瘍（新生物）を、「正常組織との協調性を欠いて過剰に増殖し、その変化の原因となった
+  刺激を取り除いても過剰に増殖を続ける異常な組織の集塊」と定義している。
+- がん遺伝子（oncogene）：細胞のがん化を誘導する能力をもつ遺伝子の総称。
 * Notes
 ** がん幹細胞仮説
 *** がん細胞は、正常な体細胞と比較すると3つの大きな特徴を持っている。<Wikipedia:がん幹細胞>
