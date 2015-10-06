@@ -42,6 +42,7 @@
 - CTLは、がん細胞に衝突すると、動くのをやめる。
   - 殺傷し始める。
 - 殺傷後、再びランダムウォークを始める。
+- CTLは披露するまでに、定数：μの確率で、腫瘍細胞を殺傷する。
 **** *Tumor nodule growth*
 **** *Immunoediting*
 - 私たちは、腫瘍細胞が分裂する度に、娘細胞は進行的に免疫耐性がつくと考慮している。（rate:P_res）
@@ -55,6 +56,9 @@
 **** Estimation of E: thickness of the proliferative part of the nodule
 *** TODO *Results*
 **** Early productive CTL/tumor collisions determines CTL success in tumor eradication
+- 初めはCTLの走化性は無しで数値実験した。
+  - つまり、CTLはランダムウォークのみで移動する。
+- CTLの範囲？を600~1100の間で数値実験した。
 **** Early productive collisions depend on CTL population size
 **** Early productive collisions do not depend on the time required for killing
 **** CTL chemotactism towards scout cells having detected the tumor strongly augments early productive collisions
