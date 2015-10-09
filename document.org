@@ -13,6 +13,7 @@
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$']] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
 * 修士論文要旨(ja+eng, A4)
+- 簡単な言葉で
 ** 背景
 ** 先行研究
 ** 方法
@@ -89,6 +90,8 @@
 - ウィリスは、腫瘍（新生物）を、「正常組織との協調性を欠いて過剰に増殖し、その変化の原因となった
   刺激を取り除いても過剰に増殖を続ける異常な組織の集塊」と定義している。
 - がん遺伝子（oncogene）：細胞のがん化を誘導する能力をもつ遺伝子の総称。
+** 「新しい免疫入門」
+- 抗体は、Y字型の構造をしていて、ふたまたの先端の構造が１０００億種類以上もある。(P78)
 * Notes
 ** がん幹細胞仮説
 *** がん細胞は、正常な体細胞と比較すると3つの大きな特徴を持っている。<Wikipedia:がん幹細胞>
