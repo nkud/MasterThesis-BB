@@ -10,8 +10,17 @@
 #+HTML_HEAD: <style type="text/css">h3 {text-decoration:underline;}</style>
 #+HTML_HEAD: <style type="text/css">.outline-3 {margin-left: 15px;}</style>
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
-#+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\(","\)"]] },displayAlign:"center"});</script>
+#+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$']] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+* 修士論文要旨(ja+eng, A4)
+** 背景
+** 先行研究
+** 方法
+** 数理モデル
+** 数値計算結果
+** 結論
+** 結果の考察？
+** Figure
 * 参考文献
 ** TODO [1] Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
 [1] http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0120053
