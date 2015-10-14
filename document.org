@@ -4,7 +4,7 @@
 #+LANGUAGE: ja
 #+LaTeX_CLASS: elsevier
 #+STARTUP: overview
-#+HTML_HEAD: <style type="text/css">body {font-family:"Georgia", serif;font-size:7pt;}</style>
+#+HTML_HEAD: <style type="text/css">body {font-family:"times new roman", serif;font-size:7pt;}</style>
 #+HTML_HEAD: <style type="text/css">body {line-height:1.1em;}</style>
 #+HTML_HEAD: <style type="text/css">h2 {border-left:10px solid black;text-decoration:none;margin-top:3em;padding-left:5px;}</style>
 #+HTML_HEAD: <style type="text/css">h3 {text-decoration:underline;}</style>
