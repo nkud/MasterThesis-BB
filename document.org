@@ -13,7 +13,6 @@
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$']] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
 -----
-* HOLD 目標規定文
 * NEXT 修士論文要旨(ja+eng, A4)
 (簡単な言葉で。修士論文の要旨を作成する。)
 ** 背景
@@ -26,6 +25,9 @@
 - そこで私は、このがん免疫エディティングを考慮に入れ、より現実に近い数理モデルを作成した。
 ** 先行研究
 - Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
+  - この論文で扱っているモデルでは、
+  - 結果として、
+  - しかし、
 ** 方法
 - ストカスティックなモデルを作成した。
 ** 数理モデル
@@ -33,6 +35,7 @@
 ** 結論
 ** 研究の考察
 ** <Figure>
+* HOLD 目標規定文
 * 参考文献
 ** TODO [1] Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
 [1] http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0120053
