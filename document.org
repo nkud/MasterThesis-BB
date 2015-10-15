@@ -1,10 +1,10 @@
 #+TITLE: 修士研究
 #+AUTHOR: Naoki Ueda
-#+OPTIONS: \n:nil H:2 toc:nil author:nil email:nil timestamp:t creator:nil num:nil
+#+OPTIONS: \n:nil H:2 toc:nil author:t email:nil timestamp:t creator:nil num:nil
 #+LANGUAGE: ja
 #+LaTeX_CLASS: elsevier
 #+STARTUP: overview
-#+HTML_HEAD: <style type="text/css">body {font-family:monospace, serif;font-size:9pt;}</style>
+#+HTML_HEAD: <style type="text/css">body {font-family:"times new roman", serif;font-size:7pt;}</style>
 #+HTML_HEAD: <style type="text/css">body {line-height:1.1em;}</style>
 #+HTML_HEAD: <style type="text/css">h2 {border-left:10px solid black;text-decoration:none;margin-top:3em;padding-left:5px;}</style>
 #+HTML_HEAD: <style type="text/css">h3 {text-decoration:underline;}</style>
@@ -12,16 +12,30 @@
 #+HTML_HEAD: <script type="text/javascript"src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 #+HTML_HEAD: <script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$']] },displayAlign:"center"});</script>
 #+HTML_HEAD: <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
-* 修士論文要旨(ja+eng, A4)
-- 簡単な言葉で
+-----
+* NEXT 修士論文要旨(ja+eng, A4)
+(簡単な言葉で。修士論文の要旨を作成する。)
 ** 背景
+- これまで、免疫学の研究では、人間の免疫にかかわる分子や細胞について、作用や役割などを解明することができた。
+- しかし、実際に感染が起きたとき、それらの分子や細胞が、どのように空間的に免疫反応が起こっていくのかは分かっていない。
+- その点で、数理モデルを使用して巨視的な観点から、そういった免疫反応を時間軸に乗せて、空間的に把握できるようにすることは、有用である。
+- 現在、細胞傷害性T細胞(CTL)と腫瘍細胞の密接な関係性は数値解析によって深くまで表現されてきた。
+- しかし、近年提唱されているがん免疫エディティングまで考慮に入れている、ストカスティックなモデルは現在存在しない。
+- がん免疫エディティングとは、「免疫によって、腫瘍細胞は排除されるが、免疫原性の低い腫瘍細胞を増殖してしまう現象」のことを言う。
+- そこで私は、このがん免疫エディティングを考慮に入れ、より現実に近い数理モデルを作成した。
 ** 先行研究
+- Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
+  - この論文で扱っているモデルでは、
+  - 結果として、
+  - しかし、
 ** 方法
+- ストカスティックなモデルを作成した。
 ** 数理モデル
 ** 数値計算結果
 ** 結論
-** 結果の考察？
-** Figure
+** 研究の考察
+** <Figure>
+* HOLD 目標規定文
 * 参考文献
 ** TODO [1] Christophe, Claire, et al. "A Biased Competition Theory of Cytotoxic T Lymphocyte Interaction with Tumor Nodules." (2015): e0120053.
 [1] http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0120053
@@ -90,6 +104,15 @@
 - ウィリスは、腫瘍（新生物）を、「正常組織との協調性を欠いて過剰に増殖し、その変化の原因となった
   刺激を取り除いても過剰に増殖を続ける異常な組織の集塊」と定義している。
 - がん遺伝子（oncogene）：細胞のがん化を誘導する能力をもつ遺伝子の総称。
+** 「がん生物学イラストレイテッド」渋谷正史・湯浅保仁編集
+- がん抗原
+  - がん抗原の分類
+    - 変異遺伝子産物(mutation)
+      免疫原性が高い。抗原消失を起こしにくい。
+      多くは患者に固有の抗原であるため、治療への応用は難しい。
+    - 過剰発言抗原(overepressed antigens)
+      正常組織にも発現するが、がん細胞に過剰に発現するもの。
+      がん細胞の増殖・生存にかかわるものが多い。
 ** 「新しい免疫入門」
 - 抗体は、Y字型の構造をしていて、ふたまたの先端の構造が１０００億種類以上もある。(P78)
 * Notes
@@ -114,9 +137,8 @@
   また再び解糖系を稼動させるためにNADHの酸化を行うことにある。
 - がん細胞はエネルギー産生を、嫌気性解糖に依存しているので、
   正常細胞の何十倍もの多くの glucose を必要とする。
-* 論文構成
-** 序論
-*** 背景説明
+* 序論構成
+** 背景説明
 **** 免疫監視説とは、「癌細胞は頻繁に体内で生じているが、通常は、臨床で診断可能になるほど増殖する前に排除される」という説である。
 **** つまり腫瘍は、腫瘍細胞が免疫監視機構から逃避した時のみ発生することとなる。
 **** 免疫監視説を支持する証拠の１つとして、免疫力の低下した患者では癌の発生頻度が増加することがあげられる。
@@ -129,20 +151,20 @@
 **** ワールブルグ効果というものがある。がん細胞では、酸化的リン酸化によるエネルギー産生を抑え、嫌気的解糖系によってエネルギーを産生する量が多くなるという効果。
 **** がん細胞がなぜ広がってしまうのかということは、まだわかっていない。
 **** リアルタイムに観察のしにくい免疫機構を、数学的なモデルを使用して、ダイナミックなシステムを把握することは有用である。
-*** 先行研究紹介
-*** 問題点を指摘する
+** 先行研究紹介
+** 問題点を指摘する
 **** 医学だけでは、巨視的な視点から、ダイナミックな構造を読み解くことができない。
-*** 問題を設定する
+** 問題を設定する
 - 免疫機構の何が、これら３つの相を生み出しているのかは、まだ定かではない。
 - がん免疫エディティングの
-*** 設定した問題点の重要性を議論する
+** 設定した問題点の重要性を議論する
 **** 数学を使用して予想することによって、指針を出すことができる。
 ***** よって開発コストの削減にもつながる。
-*** 問題をとくために使う方法
-*** HOLD 得られた結果を説明する
-*** HOLD 得られた結果の価値を検討する
-*** HOLD 本論文の構成を述べる
-* 構成テンプレート
+** 問題をとくために使う方法
+** HOLD 得られた結果を説明する
+** HOLD 得られた結果の価値を検討する
+** HOLD 本論文の構成を述べる
+* COMMENT 構成テンプレート
 ** 序論
 *** 背景説明
 - 他分野である可能性が高い。
@@ -156,7 +178,7 @@
 *** 得られた結果を説明する
 *** 得られた結果の価値を検討する
 *** 本論文の構成を述べる
-* プロットテンプレート
+* COMMENT プロットテンプレート
 ** Authors　著者
 ** Title　題名
 ** Keyword list　キーワード
